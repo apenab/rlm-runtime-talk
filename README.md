@@ -41,7 +41,7 @@ This presentation covers:
 ### View the Presentation
 
 **Option 1: GitHub Pages (Recommended)**
-Visit: <https://apenab.github.io/rlm-presentation/>
+Visit: <https://apenab.github.io/rlm-runtime-talk/>
 
 **Option 2: Download PDF**
 [Download PDF](./presentation.pdf)
@@ -149,7 +149,7 @@ The presentation is written in Markdown with Marp directives. Each slide is sepa
 
 ### Implementation
 
-- **Repository:** [alexzhang13/rlm-runtime](https://github.com/alexzhang13/rlm-runtime)
+- **Repository:** [apenab/rlm-runtime](https://github.com/apenab/rlm-runtime)
 - **Models:** RLM-Qwen3-8B on HuggingFace
 - **Blog:** [alexzhang13.github.io/blog/2025/rlm](https://alexzhang13.github.io/blog/2025/rlm/)
 
@@ -225,7 +225,7 @@ The original RLM paper and research belongs to MIT CSAIL authors.
 ## 🔗 Links
 
 - **Paper:** <https://arxiv.org/abs/2512.24601>
-- **rlm-runtime:** <https://github.com/alexzhang13/rlm-runtime>
+- **rlm-runtime:** <https://github.com/apenab/rlm-runtime>
 - **Author's Blog:** <https://alexzhang13.github.io/blog/2025/rlm/>
 - **Presentation Repo:** <https://github.com/apenab/rlm-presentation>
 

@@ -44,8 +44,6 @@ style: |
 
 **Rethinking how LLMs handle long contexts**
 
-Alex Zhang (MIT CSAIL) et al.
-Implementation: rlm-runtime
 
 ---
 
