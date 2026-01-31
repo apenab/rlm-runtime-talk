@@ -238,7 +238,7 @@ return pick_first_answer(answers)
 | **OOLONG** | 44% | **56.5%** | +28.4% |
 | **OOLONG-Pairs** | 0.04% | **58%** | +145000% 🤯 |
 
-*GPT-5 with medium reasoning, December 2024*
+*GPT-5 with medium reasoning, December 2025*
 
 **Key insight:** Baseline fails when context > window, RLM scales
 
@@ -262,7 +262,7 @@ As context grows (8K → 1M tokens):
 
 # 🎯 Breakthrough: RLM-Qwen3-8B
 
-**The first natively trained RLM model** (December 2024)
+**The first natively trained RLM model** (January 2026)
 
 **Training:**
 - Base model: Qwen3-8B
@@ -305,7 +305,7 @@ Pairs:    0.06%          23%              23%
 - ✅ Production features (caching, parallel, tracing)
 - ✅ Compatible with RLM-Qwen3-8B
 
-**Repository:** github.com/alexzhang13/rlm-runtime
+**Repository:** github.com/apenab/rlm-runtime
 
 ---
 
@@ -621,7 +621,7 @@ async def process_long_context(
 # 🤝 Community & Contributions
 
 **Open Source:**
-- Repository: github.com/alexzhang13/rlm-runtime
+- Repository: github.com/apenab/rlm-runtime
 - MIT License
 - Contributions welcome!
 
@@ -668,7 +668,7 @@ async def process_long_context(
 - Authors: Alex L. Zhang, Tim Kraska, Omar Khattab
 
 **Implementation:**
-- rlm-runtime: github.com/alexzhang13/rlm-runtime
+- rlm-runtime: github.com/apenab/rlm-runtime
 - Documentation: [your docs URL]
 - Examples: examples/ directory in repo
 
@@ -681,9 +681,8 @@ async def process_long_context(
 # 🙋 Questions?
 
 **Contact:**
-- GitHub: github.com/alexzhang13
-- Paper: https://arxiv.org/abs/2512.24601
-- Repository: github.com/alexzhang13/rlm-runtime
+- GitHub: github.com/apeanb
+- Repository: github.com/apenab/rlm-runtime
 
 **Try it yourself:**
 ```bash
