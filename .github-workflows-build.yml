@@ -1,0 +1,62 @@
+name: Build and Deploy Presentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install Marp CLI
+      run: npm install -g @marp-team/marp-cli
+    
+    - name: Build HTML presentation
+      run: marp rlm-presentation.md -o index.html
+    
+    - name: Build PDF presentation
+      run: marp rlm-presentation.md -o presentation.pdf --allow-local-files
+    
+    - name: Upload HTML artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: presentation-html
+        path: index.html
+    
+    - name: Upload PDF artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: presentation-pdf
+        path: presentation.pdf
+    
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main'
+      uses: actions/configure-pages@v4
+    
+    - name: Upload Pages artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+    
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      id: deployment
+      uses: actions/deploy-pages@v4

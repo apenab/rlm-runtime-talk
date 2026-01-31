@@ -1,0 +1,33 @@
+{
+  "name": "rlm-presentation",
+  "version": "1.0.0",
+  "description": "Recursive Language Models: From Theory to Practice - Technical Presentation",
+  "scripts": {
+    "build": "npm run build:html && npm run build:pdf",
+    "build:html": "marp rlm-presentation.md -o index.html",
+    "build:pdf": "marp rlm-presentation.md -o presentation.pdf --allow-local-files",
+    "preview": "marp -p rlm-presentation.md",
+    "watch": "marp -w rlm-presentation.md -o index.html"
+  },
+  "keywords": [
+    "rlm",
+    "recursive-language-models",
+    "llm",
+    "long-context",
+    "presentation",
+    "marp"
+  ],
+  "author": "Antonio Martinez",
+  "license": "MIT",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^3.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/[your-username]/rlm-presentation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/[your-username]/rlm-presentation/issues"
+  },
+  "homepage": "https://github.com/[your-username]/rlm-presentation#readme"
+}
