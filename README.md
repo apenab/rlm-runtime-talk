@@ -43,10 +43,7 @@ This presentation covers:
 **Option 1: GitHub Pages (Recommended)**
 Visit: <https://apenab.github.io/rlm-runtime-talk/>
 
-**Option 2: Download PDF**
-[Download PDF](./presentation.pdf)
-
-**Option 3: Local Preview**
+**Option 2: Local Preview**
 
 ```bash
 # Install Marp CLI
@@ -60,23 +57,6 @@ marp rlm-presentation.md -o index.html
 
 # Generate PDF
 marp rlm-presentation.md -o presentation.pdf
-```
-
-## 📦 Repository Contents
-
-```
-rlm-presentation/
-├── rlm-presentation.md    # Main presentation (Marp format)
-├── README.md              # This file
-├── index.html             # Generated HTML presentation
-├── presentation.pdf       # Generated PDF version
-├── assets/                # Images and diagrams
-│   ├── algorithm1.png
-│   ├── algorithm2.png
-│   └── benchmark-graph.png
-└── .github/
-    └── workflows/
-        └── build.yml      # Auto-generate on push
 ```
 
 ## 🛠️ Building Locally
@@ -226,15 +206,12 @@ The original RLM paper and research belongs to MIT CSAIL authors.
 
 - **Paper:** <https://arxiv.org/abs/2512.24601>
 - **rlm-runtime:** <https://github.com/apenab/rlm-runtime>
-- **Author's Blog:** <https://alexzhang13.github.io/blog/2025/rlm/>
-- **Presentation Repo:** <https://github.com/apenab/rlm-presentation>
 
 ## 📧 Contact
 
 Questions about the presentation or RLMs?
 
 - **GitHub Issues:** [Open an issue](https://github.com/apenab/rlm-presentation/issues)
-- **Original Author:** [@alexzhang13](https://github.com/alexzhang13)
 
 ---
 
