@@ -4,7 +4,7 @@
 
 1. Ve a https://github.com/new
 2. **Repository name:** `rlm-presentation`
-3. **Description:** `Recursive Language Models: From Theory to Practice - Technical Presentation`
+3. **Description:** `When Context Becomes a Systems Problem: Recursive Language Models - Technical Presentation`
 4. **Visibility:** ✅ Public
 5. ❌ NO marques "Add a README file" (ya lo tenemos)
 6. Click **"Create repository"**

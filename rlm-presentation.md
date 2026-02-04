@@ -39,7 +39,7 @@ style: |
   }
 ---
 
-# 🧠 Recursive Language Models
+# 🧠 When Context Becomes a Systems Problem: Recursive Language Models
 ## From MIT Paper to Practical Implementation
 
 **Rethinking how LLMs handle long contexts**
@@ -700,4 +700,3 @@ answer, trace = rlm.run("Your question", context)
 ```
 
 **Thank you!** 🚀
-

@@ -1,13 +1,28 @@
-# 🧠 Recursive Language Models: From Theory to Practice
+# 🧠 When Context Becomes a Systems Problem: Recursive Language Models
+
 Rethinking how LLMs handle long contexts
 
-CFP:
+<details>
+<summary>CFP English</summary>
+
+Today’s language models show a severe degradation in quality as input size and complexity grow, a phenomenon known as context rot. This limit is not only due to the size of the context window, but to a deeper constraint: LLMs are forced to manipulate long strings entirely within their token space, where attention and memory do not scale.
+
+In this talk I present Recursive Language Models (RLMs), a general inference paradigm proposed by MIT CSAIL that reframes the context problem as a systems problem. Instead of introducing the full prompt into the model’s context window, RLMs place it in a persistent external environment, accessible via a REPL, and allow the LLM itself to generate code to inspect, filter, decompose, and process that context through recursive calls to other models. On benchmarks such as CodeQA and BrowseComp+, RLMs reach up to 91% accuracy where traditional approaches fail completely.
+
+RLMs scale effective context by orders of magnitude without relying on long-context architectures, and show how training natively recursive models (such as RLM-Qwen3-8B) can become a new scaling axis. Throughout the talk, I will show how RLMs work, why they outperform classic approaches such as truncation or summarization, and how to implement them in practice through rlm-runtime, an open-source runtime that materializes the RLM paradigm and reproduces the paper’s key results.
+
+</details>
+
+<details>
+<summary>CFP Español</summary>
+
 Los modelos de lenguaje actuales muestran una degradación severa de calidad a medida que crece el tamaño y la complejidad de la información de entrada, un fenómeno conocido como context rot. Este límite no se debe únicamente al tamaño de la ventana de contexto, sino a una restricción más profunda: los LLMs están obligados a manipular cadenas largas exclusivamente dentro de su espacio de tokens, donde la atención y la memoria no escalan.
 
 En esta charla presento Recursive Language Models (RLMs), un paradigma general de inferencia propuesto por MIT CSAIL que replantea el problema del contexto como un problema de sistemas. En lugar de introducir el prompt completo en la ventana del modelo, los RLMs lo colocan en un entorno externo persistente, accesible mediante un REPL, y permiten que el propio LLM genere código para inspeccionar, filtrar, descomponer y procesar ese contexto mediante llamadas recursivas a otros modelos. En benchmarks como CodeQA y BrowseComp+, los RLMs alcanzan hasta un 91 % de precisión donde los enfoques tradicionales fallan por completo.
 
 Los RLMs escalan el contexto efectivo en órdenes de magnitud sin depender de arquitecturas de contexto largo, y muestran cómo el entrenamiento de modelos nativamente recursivos (como RLM-Qwen3-8B) puede convertirse en un nuevo eje de escala. A lo largo de la charla mostraré cómo funcionan los RLMs, por qué superan a enfoques clásicos como la truncación o la resumización, y cómo implementarlos en la práctica a través de rlm-runtime, un runtime open-source que materializa el paradigma RLM y reproduce los resultados clave del paper.
 
+</details>
 
 ## 📚 About
 
