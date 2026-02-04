@@ -33,6 +33,12 @@ This presentation covers:
 - **rlm-runtime**: Production-ready implementation
 - Benchmarks, use cases, and future directions
 
+## 🔧 Implementation Repository
+
+This repo contains only the talk materials. The actual runtime implementation lives here:
+
+- **rlm-runtime:** `https://github.com/apenab/rlm-runtime`
+
 ## 🎯 Presentation Structure
 
 **Part 1: RLM Fundamentals** (~12 min, 12 slides)
