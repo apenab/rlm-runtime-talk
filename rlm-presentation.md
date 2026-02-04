@@ -146,6 +146,17 @@ From the paper (MIT CSAIL 2025):
 
 ---
 
+# 🖼️ Visuals (Draft)
+
+> **[🚧 TODO: Add diagrams and trace screenshots]**
+
+**Planned assets:**
+- RLM loop diagram (Algorithm 1 flow)
+- Baseline vs RLM benchmark chart
+- Trace visualization (vanilla vs post-trained)
+
+---
+
 # ⚙️ Algorithm 1: The Correct Design
 
 ```python
@@ -299,7 +310,7 @@ Pairs:    0.06%          23%              23%
 
 **The paper was promising...**
 
-**So I built a production-ready runtime:**
+**So I built a feature-complete runtime prototype:**
 - ✅ Implements Algorithm 1 exactly
 - ✅ Multi-adapter support (OpenAI, Anthropic, Ollama, vLLM)
 - ✅ Production features (caching, parallel, tracing)
@@ -378,7 +389,7 @@ From `examples/rlm_vs_baseline.py`:
 
 ---
 
-# 🎯 DEMO: Vanilla vs Post-trained
+# 🎯 DEMO: Vanilla vs Post-trained (Draft)
 
 > **[🚧 TODO: IMPLEMENT THIS BENCHMARK]**
 
@@ -402,7 +413,7 @@ adapter_tuned = OpenAICompatAdapter(
 
 ---
 
-# 📊 Expected Results: Efficiency Gains
+# 📊 Expected Results: Efficiency Gains (Draft)
 
 > **[🚧 NUMBERS TO BE UPDATED AFTER RUNNING BENCHMARK]**
 
@@ -420,7 +431,7 @@ adapter_tuned = OpenAICompatAdapter(
 
 ---
 
-# 🔬 Trace Analysis Comparison
+# 🔬 Trace Analysis Comparison (Draft)
 
 > **[🚧 TODO: CAPTURE REAL TRACES]**
 
@@ -667,7 +678,7 @@ async def process_long_context(
 - arXiv: 2512.24601
 - Authors: Alex L. Zhang, Tim Kraska, Omar Khattab
 
-**Implementation:**
+**Implementation (runtime code):**
 - rlm-runtime: github.com/apenab/rlm-runtime
 - Documentation: [your docs URL]
 - Examples: examples/ directory in repo
@@ -681,7 +692,7 @@ async def process_long_context(
 # 🙋 Questions?
 
 **Contact:**
-- GitHub: github.com/apeanb
+- GitHub: github.com/apenab
 - Repository: github.com/apenab/rlm-runtime
 
 **Try it yourself:**
