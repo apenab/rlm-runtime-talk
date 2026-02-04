@@ -40,10 +40,10 @@ style: |
 ---
 
 # 🧠 When Context Becomes a Systems Problem: Recursive Language Models
+
 ## From MIT Paper to Practical Implementation
 
 **Rethinking how LLMs handle long contexts**
-
 
 ---
 
@@ -57,6 +57,7 @@ GPT-4: "I'm sorry, the context is too long... 🤷"
 ```
 
 **Current solutions:**
+
 - ❌ **Truncation**: Loses crucial information
 - ❌ **RAG**: Requires complex infrastructure
 - ❌ **Long-context models**: Expensive and still have limits
@@ -69,6 +70,7 @@ GPT-4: "I'm sorry, the context is too long... 🤷"
 <div>
 
 **What happens:**
+
 - Model sees the beginning
 - Model sees the end
 - **But forgets the middle**
@@ -79,6 +81,7 @@ Performance degrades as context grows, even within the model's supposed "window"
 <div>
 
 **Example:**
+
 ```
 "In chapter 1, Bob was alive...
 
@@ -97,9 +100,10 @@ Model: "Alice" ❌
 
 # 💡 The Brilliant Insight from MIT
 
-> **What if we treat the context as part of the *environment* instead of loading it all into memory?**
+> **What if we treat the context as part of the _environment_ instead of loading it all into memory?**
 
 Like a programmer with a huge file:
+
 - Doesn't load it all into RAM
 - Opens it, searches what's needed
 - Can call functions recursively
@@ -146,14 +150,9 @@ From the paper (MIT CSAIL 2025):
 
 ---
 
-# 🖼️ Visuals (Draft)
+# 🖼️ Visuals
 
-> **[🚧 TODO: Add diagrams and trace screenshots]**
-
-**Planned assets:**
-- RLM loop diagram (Algorithm 1 flow)
-- Baseline vs RLM benchmark chart
-- Trace visualization (vanilla vs post-trained)
+![width:800px](./images/RLM-Arch-Visualization.png)
 
 ---
 
@@ -164,12 +163,12 @@ def RLM(prompt_P):
     state = InitREPL(prompt=P)
     state.add_function(sub_RLM)  # Recursive calls!
     hist = [Metadata(state)]
-    
+
     while True:
         code = LLM(hist)
         (state, stdout) = REPL(state, code)
         hist = hist || code || Metadata(stdout)
-        
+
         if state[Final] is set:
             return state[Final]
 ```
@@ -184,16 +183,16 @@ def RLM(prompt_P):
 def PoorDesign(prompt_P):
     actions = {Finish, Exec, Search, sub_LLM}
     hist = [Metadata(actions), P]  # Flaw #1: P in hist
-    
+
     while True:
         (action, val) = LLM(hist)  # Flaw #2: sees P directly
-        
+
         if action is Finish:
             return val
-            
+
         out = RUN(action, val)  # Flaw #3: limited actions
         hist = hist || (action, val, out)
-        
+
         if len(hist) > K:
             hist = Compact(hist)  # Flaw #4: lossy
 ```
@@ -210,9 +209,10 @@ def PoorDesign(prompt_P):
 <div>
 
 **Baseline (fails):**
+
 ```python
 # Truncates at 128K tokens
-answer = llm("Find key in: " + 
+answer = llm("Find key in: " +
              context[:128000])
 # Key was at position 500K
 # ❌ Lost in truncation
@@ -222,6 +222,7 @@ answer = llm("Find key in: " +
 <div>
 
 **RLM (succeeds):**
+
 ```python
 # Phase 0: Try deterministic
 key = extract_after('key term is:')
@@ -242,14 +243,14 @@ return pick_first_answer(answers)
 
 # 📊 MIT Paper Results: GPT-5
 
-| Task | GPT-5 Base | RLM(GPT-5) | Improvement |
-|------|------------|------------|-------------|
-| **CodeQA** | 24% | **62%** | +158% 🚀 |
-| **BrowseComp+ (1K docs)** | 0% | **91.33%** | ∞ |
-| **OOLONG** | 44% | **56.5%** | +28.4% |
-| **OOLONG-Pairs** | 0.04% | **58%** | +145000% 🤯 |
+| Task                      | GPT-5 Base | RLM(GPT-5) | Improvement |
+| ------------------------- | ---------- | ---------- | ----------- |
+| **CodeQA**                | 24%        | **62%**    | +158% 🚀    |
+| **BrowseComp+ (1K docs)** | 0%         | **91.33%** | ∞           |
+| **OOLONG**                | 44%        | **56.5%**  | +28.4%      |
+| **OOLONG-Pairs**          | 0.04%      | **58%**    | +145000% 🤯 |
 
-*GPT-5 with medium reasoning, December 2025*
+_GPT-5 with medium reasoning, December 2025_
 
 **Key insight:** Baseline fails when context > window, RLM scales
 
@@ -265,6 +266,7 @@ As context grows (8K → 1M tokens):
 - **RLM(GPT-5):** 95% → 90% accuracy ✅
 
 **Why?**
+
 - Baseline truncates → loses information
 - RLM programmatically inspects → no truncation
 - RLM cost scales log-linearly, not exponentially
@@ -276,12 +278,14 @@ As context grows (8K → 1M tokens):
 **The first natively trained RLM model** (January 2026)
 
 **Training:**
+
 - Base model: Qwen3-8B
 - Training data: ~1000 RLM trajectories
 - Domains: Unrelated to eval benchmarks
 - Result: Learned recursive strategies from minimal data
 
 **Performance boost:**
+
 - Base Qwen3-8B: 4% on CodeQA
 - RLM(Qwen3-8B) scaffold: 26%
 - **RLM-Qwen3-8B post-trained: 32%** 🚀
@@ -300,6 +304,7 @@ Pairs:    0.06%          23%              23%
 ```
 
 **Insight:** Post-training teaches the model to use the scaffold more efficiently
+
 - Fewer subcalls needed
 - Better chunking strategies
 - Optimal from the first step
@@ -311,6 +316,7 @@ Pairs:    0.06%          23%              23%
 **The paper was promising...**
 
 **So I built a feature-complete runtime prototype:**
+
 - ✅ Implements Algorithm 1 exactly
 - ✅ Multi-adapter support (OpenAI, Anthropic, Ollama, vLLM)
 - ✅ Production features (caching, parallel, tracing)
@@ -376,11 +382,13 @@ print(f"Tokens used: {trace.total_tokens}")
 From `examples/rlm_vs_baseline.py`:
 
 **Small context (5 docs, ~3K chars):**
+
 - Baseline: ✅ Correct, 890 tokens, 0.45s
 - RLM: ✅ Correct, 1250 tokens, 1.23s
 - **Winner:** Baseline (less overhead)
 
 **Large context (120 docs, ~68K chars):**
+
 - Baseline: ❌ Truncated, missed answer, 920 tokens
 - RLM: ✅ Correct, 1890 tokens, 2.15s
 - **Winner:** RLM (baseline failed)
@@ -406,7 +414,7 @@ adapter_vanilla = OpenAICompatAdapter(
 
 # Model 2: RLM-Qwen3-8B (post-trained)
 adapter_tuned = OpenAICompatAdapter(
-    base_url="http://localhost:8000/v1", 
+    base_url="http://localhost:8000/v1",
     model="alexzhang/RLM-Qwen3-8B"
 )
 ```
@@ -419,13 +427,13 @@ adapter_tuned = OpenAICompatAdapter(
 
 **Preliminary expectations:**
 
-| Metric | Qwen3-8B Vanilla | RLM-Qwen3-8B | Improvement |
-|--------|------------------|--------------|-------------|
-| **Subcalls** | ~120 | ~15 | ⬇️ 92% |
-| **Total tokens** | ~45,000 | ~8,500 | ⬇️ 81% |
-| **Steps** | ~18 | ~4 | ⬇️ 77% |
-| **Time (sec)** | ~127s | ~22s | ⬇️ 82% |
-| **Correct** | ✅ | ✅ | Same |
+| Metric           | Qwen3-8B Vanilla | RLM-Qwen3-8B | Improvement |
+| ---------------- | ---------------- | ------------ | ----------- |
+| **Subcalls**     | ~120             | ~15          | ⬇️ 92%      |
+| **Total tokens** | ~45,000          | ~8,500       | ⬇️ 81%      |
+| **Steps**        | ~18              | ~4           | ⬇️ 77%      |
+| **Time (sec)**   | ~127s            | ~22s         | ⬇️ 82%      |
+| **Correct**      | ✅               | ✅           | Same        |
 
 **Why?** Post-trained model knows the optimal strategy immediately
 
@@ -436,12 +444,14 @@ adapter_tuned = OpenAICompatAdapter(
 > **[🚧 TODO: CAPTURE REAL TRACES]**
 
 **Qwen3-8B vanilla:**
+
 - Tries to process line-by-line
 - Makes 120 small subcalls (inefficient)
 - Discovers strategy through trial-and-error
 - Eventually gets correct answer
 
 **RLM-Qwen3-8B post-trained:**
+
 - Starts with `extract_after()` (deterministic Phase 0)
 - If that fails, uses optimal chunking (5000 chars)
 - Parallel subcalls from the beginning
@@ -454,17 +464,19 @@ adapter_tuned = OpenAICompatAdapter(
 # ⚡ Advanced Features
 
 **1. Parallel Subcalls**
+
 ```python
 # Process chunks concurrently
 answers = ask_chunks(
-    "Extract key", 
-    chunks, 
+    "Extract key",
+    chunks,
     parallel=True,           # ⚡
     max_workers=8
 )
 ```
 
 **2. Automatic Caching**
+
 ```python
 # Identical subcalls cached automatically
 cache = FileCache(".rlm_cache")
@@ -476,6 +488,7 @@ cache = FileCache(".rlm_cache")
 # 🛠️ More Advanced Features
 
 **3. Skills System**
+
 ```python
 # Built-in document processing
 from rlm_runtime.skills import DocxSkill, PptxSkill
@@ -488,6 +501,7 @@ rlm.add_skill(PdfSkill())   # PDFs
 ```
 
 **4. Smart Router**
+
 ```python
 # Automatically decides baseline vs RLM
 router = SmartRouter(adapter, threshold=8000)
@@ -502,15 +516,16 @@ result = router.run(query, context)
 
 **My results on custom tasks:**
 
-| Feature | Paper (GPT-5) | My Implementation |
-|---------|---------------|-------------------|
-| **CodeQA** | 62% | ✅ Reproduced |
-| **OOLONG** | 56.5% | ✅ Reproduced |
-| **Cost @ 1M tokens** | ~$2.50 | ~$2.30 (optimized) |
-| **Cache hit rate** | Not reported | ~40% on repeated queries |
-| **Parallel speedup** | Not reported | ~3.2x with 8 workers |
+| Feature              | Paper (GPT-5) | My Implementation        |
+| -------------------- | ------------- | ------------------------ |
+| **CodeQA**           | 62%           | ✅ Reproduced            |
+| **OOLONG**           | 56.5%         | ✅ Reproduced            |
+| **Cost @ 1M tokens** | ~$2.50        | ~$2.30 (optimized)       |
+| **Cache hit rate**   | Not reported  | ~40% on repeated queries |
+| **Parallel speedup** | Not reported  | ~3.2x with 8 workers     |
 
 **Additional optimizations in my runtime:**
+
 - Deterministic Phase 0 (0 subcalls when possible)
 - Aggressive caching
 - Parallel execution
@@ -548,16 +563,19 @@ result = router.run(query, context)
 # 🎯 Real Use Cases
 
 **1. Code Repository Understanding**
+
 - Analyze entire codebases (900K+ tokens)
 - Find implementations across multiple files
 - Understand architectural decisions
 
 **2. Deep Research**
+
 - Process 100s of academic papers
 - Multi-hop reasoning across documents
 - Evidence synthesis
 
 **3. Document Analysis**
+
 - Legal contract review (100+ page contracts)
 - Medical records analysis
 - Technical documentation processing
@@ -567,6 +585,7 @@ result = router.run(query, context)
 # 🎯 More Use Cases
 
 **4. Integration with Model Context Protocol (MCP)**
+
 ```python
 # Expose RLM as MCP server
 from mcp.server import Server
@@ -575,7 +594,7 @@ server = Server("rlm-processor")
 
 @server.tool()
 async def process_long_context(
-    query: str, 
+    query: str,
     documents: list[str]
 ) -> str:
     context = Context.from_documents(documents)
@@ -613,16 +632,19 @@ async def process_long_context(
 # 🚀 Roadmap & Future Work
 
 **Near-term:**
+
 - ✅ Validate with RLM-Qwen3-8B (in progress)
 - Additional benchmarks (LongBench-Pro)
 - Performance optimizations (async subcalls)
 
 **Mid-term:**
+
 - Fine-tune larger models as RLMs (Llama-70B, Qwen-480B)
 - MCP server integration
 - GUI for trajectory visualization
 
 **Long-term:**
+
 - Multi-modal RLMs (vision + text)
 - Collaborative RLMs (multiple agents)
 - Domain-specific RLM training
@@ -632,11 +654,13 @@ async def process_long_context(
 # 🤝 Community & Contributions
 
 **Open Source:**
+
 - Repository: github.com/apenab/rlm-runtime
 - MIT License
 - Contributions welcome!
 
 **What you can do:**
+
 - Try it on your long-context tasks
 - Report issues and edge cases
 - Contribute benchmarks
@@ -644,6 +668,7 @@ async def process_long_context(
 - Build domain-specific skills
 
 **Research opportunities:**
+
 - Training larger RLM models
 - Novel prompting strategies
 - Cost optimization techniques
@@ -674,16 +699,19 @@ async def process_long_context(
 # 📚 References & Resources
 
 **Paper:**
+
 - "Recursive Language Models" (MIT CSAIL, 2025)
 - arXiv: 2512.24601
 - Authors: Alex L. Zhang, Tim Kraska, Omar Khattab
 
 **Implementation (runtime code):**
+
 - rlm-runtime: github.com/apenab/rlm-runtime
 - Documentation: [your docs URL]
 - Examples: examples/ directory in repo
 
 **Models:**
+
 - RLM-Qwen3-8B: HuggingFace (alexzhang/RLM-Qwen3-8B)
 - Recommended: vLLM for inference
 
@@ -692,10 +720,12 @@ async def process_long_context(
 # 🙋 Questions?
 
 **Contact:**
+
 - GitHub: github.com/apenab
 - Repository: github.com/apenab/rlm-runtime
 
 **Try it yourself:**
+
 ```bash
 pip install rlm-runtime
 ```
