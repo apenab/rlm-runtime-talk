@@ -49,11 +49,11 @@ style: |
 
 # 🤔 The Problem We All Know
 
-Imagine giving GPT-4 an entire 500-page book...
+Imagine giving GPT-5 an entire 500-page book...
 
 ```
 User: "What happened in chapter 37?"
-GPT-4: "I'm sorry, the context is too long... 🤷"
+GPT-5: "I'm sorry, the context is too long... 🤷"
 ```
 
 **Current solutions:**
@@ -363,7 +363,7 @@ documents = [
 context = Context.from_documents(documents)
 
 # Initialize RLM
-adapter = OpenAICompatAdapter(model="gpt-4")
+adapter = OpenAICompatAdapter(model="gpt-5")
 rlm = RLM(adapter=adapter)
 
 # Ask questions over the entire context
