@@ -83,14 +83,18 @@ Performance degrades as context grows, even within the model's supposed "window"
 **Example:**
 
 ```
-"In chapter 1, Bob was alive...
+"In chapter 1, Alice and Bob are alive...
 
 [1000 pages of content]
 
-...In chapter 50, who died?"
+...In chapter 25, Bob died.
+
+[1000 pages of content]
+
+...In chapter 50, who died in chapter 25?"
 
 Model: "Alice" ❌
-(It forgot Bob from chapter 1)
+(It forgot the middle)
 ```
 
 </div>
