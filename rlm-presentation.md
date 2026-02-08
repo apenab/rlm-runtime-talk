@@ -133,226 +133,190 @@ From the paper (MIT CSAIL 2025):
 
 # 🎯 Architecture: RLM High-Level View
 
-<!-- High-level recursive architecture (paper Figure 2 + blog diagram) -->
-
-<div style="display:grid; grid-template-rows: auto auto; gap: 18px; margin-top: 8px;">
-
-<!-- ── ROOT RLM (depth=0) ── -->
-<div style="background:#eff6ff; border:2px solid #93c5fd; border-radius:14px; padding:14px; position:relative;">
-  <div style="font-size:16px; font-weight:800; color:#1e40af; margin-bottom:10px;">
-    RLM &nbsp;(root / depth = 0)
-  </div>
-
-  <div style="display:grid; grid-template-columns: 120px 1fr 120px; align-items:center; gap:12px;">
-
-    <!-- Inputs -->
-    <div style="display:flex; flex-direction:column; gap:6px;">
-      <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">📋 query</div>
-      <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">📄 context<br><span style="font-size:11px;">(500 pages, 1M tokens)</span></div>
+<!-- Root RLM (depth=0) -->
+<table style="width:100%; border-collapse:separate; border-spacing:0; background:#eff6ff; border:2px solid #93c5fd; border-radius:14px; margin-top:10px;">
+<tr><td colspan="5" style="padding:8px 14px; font-size:20px; font-weight:800; color:#1e40af; border:none;">RLM (root / depth = 0)</td></tr>
+<tr style="vertical-align:middle;">
+  <td style="border:none; padding:10px; width:15%; text-align:center;">
+    <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:10px; font-weight:600; font-size:18px; margin-bottom:8px;">📋 query</div>
+    <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:14px;">(1M tokens)</span></div>
+  </td>
+  <td style="border:none; padding:5px; font-size:28px; color:#475569; text-align:center; width:5%;">→</td>
+  <td style="border:none; padding:10px; text-align:center; width:50%;">
+    <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">🧠 Language Model</div>
+    <div style="font-size:16px; color:#64748b; margin:4px 0;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#2563eb; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</div>
+    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:10px; font-weight:600; font-size:19px;">⚙️ Environment E (Python REPL)<br>
+      <span style="font-size:14px; font-weight:400;">P = context · llm_query() · extract_after() · peek()</span>
     </div>
+    <div style="font-size:15px; color:#64748b; font-style:italic; margin-top:4px;">Context stays here — never sent to LLM directly</div>
+  </td>
+  <td style="border:none; padding:5px; font-size:28px; color:#475569; text-align:center; width:5%;">→</td>
+  <td style="border:none; padding:10px; width:15%; text-align:center;">
+    <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">✅ final<br>response</div>
+    <div style="font-size:14px; color:#64748b; font-style:italic; margin-top:4px;">FINAL: / FINAL_VAR:</div>
+  </td>
+</tr>
+<tr><td colspan="5" style="border:none; text-align:center; padding:6px; font-size:16px;">
+  <span style="color:#64748b;">REPL calls </span>
+  <code style="font-size:16px; color:#ef4444; font-weight:700;">llm_query(sub_context)</code>
+  <span style="color:#64748b;"> → spawns child RLMs ↓</span>
+</td></tr>
+</table>
 
-    <!-- Core: LM + REPL loop -->
-    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-      <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; width:220px; padding:12px; text-align:center; font-weight:600; font-size:15px;">
-        🧠 Language Model<br>
-        <span style="font-size:12px; font-weight:400;">Generates code at each step</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-size:13px; color:#64748b;">code ↓</span>
-        <span style="font-size:20px; color:#2563eb; font-weight:800;">⟳</span>
-        <span style="font-size:13px; color:#64748b;">↑ stdout</span>
-      </div>
-      <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; width:280px; padding:10px; text-align:center; font-weight:600; font-size:15px;">
-        <div>⚙️ Environment E &nbsp;(Python REPL)</div>
-        <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:12px; padding:6px 10px; border-radius:6px; text-align:left; line-height:1.4; margin-top:6px;">
-          P = context &nbsp; &nbsp;# symbolic handle<br>
-          llm_query() &nbsp;# recursive subcalls<br>
-          extract_after(), peek(), chunk()
-        </div>
-      </div>
-      <div style="font-size:12px; color:#64748b; font-style:italic; text-align:center;">Context stays here — never goes to LLM directly</div>
+<!-- Child RLMs (depth=1) -->
+<table style="width:100%; border-collapse:separate; border-spacing:12px 0; margin-top:10px;">
+<tr>
+  <td style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:12px; width:50%; vertical-align:top;">
+    <div style="font-size:17px; font-weight:700; color:#475569; margin-bottom:8px;">RLM (depth=1) — chunk 1</div>
+    <div style="text-align:center; font-size:17px;">
+      <span style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
+      &nbsp;→&nbsp;
+      <span style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
+      &nbsp;<span style="color:#2563eb; font-size:20px;">⟳</span>&nbsp;
+      <span style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
+      &nbsp;→&nbsp;
+      <span style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
     </div>
-
-    <!-- Output -->
-    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-      <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:8px 12px; text-align:center; font-weight:600; font-size:13px;">✅ final<br>response</div>
-      <div style="font-size:12px; color:#64748b; font-style:italic; text-align:center;">FINAL: or<br>FINAL_VAR:</div>
+  </td>
+  <td style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:12px; width:50%; vertical-align:top;">
+    <div style="font-size:17px; font-weight:700; color:#475569; margin-bottom:8px;">RLM (depth=1) — chunk 2</div>
+    <div style="text-align:center; font-size:17px;">
+      <span style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
+      &nbsp;→&nbsp;
+      <span style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
+      &nbsp;<span style="color:#2563eb; font-size:20px;">⟳</span>&nbsp;
+      <span style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
+      &nbsp;→&nbsp;
+      <span style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
     </div>
+    <div style="text-align:center; margin-top:6px; font-size:22px; color:#94a3b8; letter-spacing:8px;">⋯ ⋯ ⋯</div>
+  </td>
+</tr>
+</table>
 
-  </div>
+<!--
+NOTAS — Slide: Architecture High-Level View
 
-  <!-- Subcall arrows -->
-  <div style="display:flex; justify-content:center; margin-top:8px; gap:6px; align-items:center;">
-    <span style="font-size:13px; color:#64748b;">REPL calls</span>
-    <span style="font-size:13px; color:#ef4444; font-family:monospace; font-weight:700;">llm_query(sub_context)</span>
-    <span style="font-size:13px; color:#64748b;"> → spawns child RLMs &nbsp;↓</span>
-  </div>
-</div>
+Este diagrama muestra la vista de pájaro de cómo funciona un RLM (paper MIT CSAIL, Figure 2).
 
-<!-- ── CHILD RLMs (depth=1) ── -->
-<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+ZONA SUPERIOR — RLM Root (depth=0):
+- A la izquierda entran el query y el contexto (puede ser 500 páginas, 1M+ tokens).
+- El contexto NO se envía al LLM. Se almacena como variable P en un Python REPL.
+- El LLM (verde) solo recibe metadata: longitud, estructura, nº de documentos.
+- El LLM genera código → se ejecuta en el REPL → stdout vuelve al LLM. Esto forma un loop iterativo (⟳).
+- El REPL tiene funciones clave: llm_query() para subcalls recursivos, extract_after() para búsqueda determinista, peek()/chunk().
+- El loop termina cuando el LLM emite FINAL: o FINAL_VAR:.
 
-  <!-- Child 1 -->
-  <div style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:10px;">
-    <div style="font-size:14px; font-weight:700; color:#475569; margin-bottom:8px;">
-      RLM (depth = 1) — sub-query 1
-    </div>
-    <div style="display:flex; align-items:center; gap:10px; justify-content:center;">
-      <div style="display:flex; flex-direction:column; gap:4px;">
-        <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-query 1</div>
-        <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-context 1</div>
-      </div>
-      <span style="color:#475569; font-size:18px; font-weight:bold;">→</span>
-      <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">🧠 LM</div>
-      <span style="font-size:16px; color:#2563eb;">⟳</span>
-      <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">⚙️ REPL</div>
-      <span style="color:#475569; font-size:18px; font-weight:bold;">→</span>
-      <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-response 1</div>
-    </div>
-  </div>
+ZONA INFERIOR — Child RLMs (depth=1):
+- Cuando el Root LLM llama a llm_query(sub_context), se crea un RLM hijo.
+- Cada hijo tiene su propio sub-query, sub-context, LM y REPL.
+- Los hijos pueden crear más hijos (depth=2, 3...) — recursión arbitraria.
+- Los resultados vuelven al REPL del padre como variables.
 
-  <!-- Child 2 -->
-  <div style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:10px;">
-    <div style="font-size:14px; font-weight:700; color:#475569; margin-bottom:8px;">
-      RLM (depth = 1) — sub-query 2
-    </div>
-    <div style="display:flex; align-items:center; gap:10px; justify-content:center;">
-      <div style="display:flex; flex-direction:column; gap:4px;">
-        <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-query 2</div>
-        <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-context 2</div>
-      </div>
-      <span style="color:#475569; font-size:18px; font-weight:bold;">→</span>
-      <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">🧠 LM</div>
-      <span style="font-size:16px; color:#2563eb;">⟳</span>
-      <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:6px 10px; text-align:center; font-weight:600; font-size:13px;">⚙️ REPL</div>
-      <span style="color:#475569; font-size:18px; font-weight:bold;">→</span>
-      <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:3px 6px; text-align:center; font-size:11px; font-weight:600;">sub-response 2</div>
-    </div>
-    <div style="text-align:center; margin-top:6px; font-size:18px; color:#94a3b8; letter-spacing:6px;">⋯ ⋯ ⋯</div>
-  </div>
-
-</div>
-
-</div>
+ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo abre, busca con grep/regex, y delega trozos a funciones auxiliares."
+-->
 
 ---
 
 # 🔄 Architecture: The Iterative REPL Loop
 
-<!-- Detailed REPL loop flow (paper Figure 2 + blog detailed diagram) -->
+<!-- Detailed REPL loop flow — table layout for Marp -->
 
-<div style="display:grid; grid-template-columns: 200px 1fr; gap:16px; margin-top:4px;">
+<table style="width:100%; border-collapse:collapse; margin-top:4px;">
+<tr style="vertical-align:top;">
 
-<!-- Left column: Root LM Context Window -->
-<div style="display:flex; flex-direction:column; gap:0; align-items:center;">
-
-  <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; width:180px; padding:10px; text-align:center; font-weight:600; font-size:14px;">
-    🧠 Root LM<br><span style="font-size:12px; font-weight:400;">(depth = 0)</span>
+<!-- Left column: Root LM flow -->
+<td style="border:none; width:22%; padding-right:14px;">
+  <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:17px;">
+    🧠 Root LM<br><span style="font-size:13px; font-weight:400;">(depth = 0)</span>
   </div>
-
-  <div style="color:#475569; font-size:16px; font-weight:bold; text-align:center;">↓</div>
-
-  <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:8px; padding:8px; width:180px; font-size:12px; text-align:left;">
+  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
+  <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:8px; padding:8px; font-size:14px;">
     <strong>System prompt:</strong><br>
-    "Answer {query}.<br>
-    Interact with REPL,<br>
-    which has <code style="font-size:11px;">context</code>..."
+    "Answer {query}. Interact with REPL which has <code style="font-size:13px;">context</code>..."
   </div>
-
-  <div style="color:#475569; font-size:16px; font-weight:bold; text-align:center;">↓</div>
-
-  <div style="background:#f0fdf4; border:2px solid #22c55e; border-radius:8px; padding:8px; width:180px; font-size:12px;">
+  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
+  <div style="background:#f0fdf4; border:2px solid #22c55e; border-radius:8px; padding:8px; font-size:14px;">
     <strong>LM Output:</strong><br>
-    <code style="font-size:11px; background:#1e293b; color:#a5f3fc; padding:2px 4px; border-radius:3px;">execute_code(...)</code>
+    <code style="font-size:13px; background:#1e293b; color:#a5f3fc; padding:2px 6px; border-radius:3px;">execute_code(...)</code>
   </div>
-
-  <div style="color:#475569; font-size:16px; font-weight:bold; text-align:center;">↓</div>
-
-  <div style="background:#fef2f2; border:2px solid #ef4444; border-radius:8px; padding:8px; width:180px; font-size:12px;">
+  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
+  <div style="background:#fef2f2; border:2px solid #ef4444; border-radius:8px; padding:8px; font-size:14px;">
     <strong>REPL stdout:</strong><br>
-    <span style="font-family:monospace; font-size:11px;">"Best match: Ally of<br>Justice Catastor..."</span>
+    <span style="font-family:monospace; font-size:13px;">"Best match: Ally of Justice Catastor..."</span>
   </div>
-
-  <div style="font-size:28px; color:#2563eb; font-weight:900; margin:2px 0;">⟳</div>
-  <div style="font-size:12px; color:#64748b; font-style:italic; text-align:center;">Loop until FINAL</div>
-
-  <div style="color:#475569; font-size:16px; font-weight:bold; text-align:center;">↓</div>
-
-  <div style="background:#f5f3ff; border:2px solid #a855f7; border-radius:8px; padding:8px; width:180px; font-size:12px;">
+  <div style="text-align:center; font-size:30px; color:#2563eb; font-weight:900;">⟳</div>
+  <div style="text-align:center; font-size:13px; color:#64748b; font-style:italic;">Loop until FINAL</div>
+  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
+  <div style="background:#f5f3ff; border:2px solid #a855f7; border-radius:8px; padding:8px; font-size:14px;">
     <strong>LM Output:</strong><br>
-    <code style="font-size:11px; background:#1e293b; color:#c4b5fd; padding:2px 4px; border-radius:3px;">FINAL(answer)</code>
+    <code style="font-size:13px; background:#1e293b; color:#c4b5fd; padding:2px 6px; border-radius:3px;">FINAL(answer)</code>
   </div>
+</td>
 
-</div>
-
-<!-- Right column: REPL Python Notebook -->
-<div style="display:flex; flex-direction:column; gap:10px;">
-
-  <div style="font-size:20px; font-weight:800; color:#1e293b; font-family:'Consolas',monospace;">
+<!-- Right column: REPL Notebook -->
+<td style="border:none; padding-left:14px;">
+  <div style="font-size:22px; font-weight:800; color:#1e293b; font-family:'Consolas',monospace; margin-bottom:8px;">
     📓 REPL Python Notebook
   </div>
 
   <!-- In[1] -->
-  <div>
-    <div style="font-size:13px; font-weight:700; color:#64748b;">In[1]</div>
-    <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:11px; padding:6px 10px; border-radius:6px; text-align:left; line-height:1.4;">
-      <span style="color:#6ee7b7;"># Split context for sub-LLM processing</span><br>
-      half = len(context) // 2<br>
-      first_half = "\n".join(context[:half])<br>
-      second_half = "\n".join(context[half:])<br><br>
-      <span style="color:#6ee7b7;"># Recursive LM subcall</span><br>
-      query = "Find the card matching all clues..."<br>
-      ans1 = <span style="color:#fbbf24; font-weight:700;">llm_query</span>(query + first_half)<br>
-      print(ans1[:2000])
-    </div>
-    <div style="display:flex; align-items:center; gap:8px; margin:4px 0;">
-      <div style="font-size:13px; font-weight:700; color:#64748b;">Out[1]</div>
-      <div style="flex:1; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:11px; font-family:monospace;">
-        Best single match: Ally of Justice Catastor → clue ✓ evidence ✓
-      </div>
-      <div style="background:#fef3c7; border:1px solid #f59e0b; border-radius:6px; padding:4px 8px; font-size:11px; text-align:center; white-space:nowrap;">
-        ↗️ <strong>llm_query()</strong><br>
-        <span style="font-size:10px;">Recursive LM Call<br>depth = 1</span>
-      </div>
-    </div>
+  <div style="font-size:15px; font-weight:700; color:#64748b;">In[1]</div>
+  <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5;">
+    <span style="color:#6ee7b7;"># Split context for sub-LLM processing</span><br>
+    half = len(context) // 2<br>
+    first_half = "\n".join(context[:half])<br>
+    <span style="color:#6ee7b7;"># Recursive LM subcall</span><br>
+    ans1 = <span style="color:#fbbf24; font-weight:700;">llm_query</span>(query + first_half)<br>
+    print(ans1[:2000])
   </div>
+  <table style="width:100%; border-collapse:collapse; margin:6px 0;"><tr>
+    <td style="border:none; font-size:15px; font-weight:700; color:#64748b; width:50px;">Out[1]</td>
+    <td style="border:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace;">Best single match: Ally of Justice Catastor → ✓</td>
+    <td style="border:none; width:120px; background:#fef3c7; border:1px solid #f59e0b; border-radius:6px; padding:4px 8px; font-size:13px; text-align:center;">↗️ <strong>llm_query()</strong><br><span style="font-size:11px;">Recursive d=1</span></td>
+  </tr></table>
 
-  <!-- ⋮ -->
-  <div style="text-align:center; font-size:22px; color:#94a3b8; letter-spacing:4px;">⋮ &nbsp; ⋮ &nbsp; ⋮</div>
+  <div style="text-align:center; font-size:24px; color:#94a3b8; letter-spacing:6px;">⋮ &nbsp; ⋮ &nbsp; ⋮</div>
 
   <!-- In[N] -->
-  <div>
-    <div style="font-size:13px; font-weight:700; color:#64748b;">In[N]</div>
-    <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:11px; padding:6px 10px; border-radius:6px; text-align:left; line-height:1.4;">
-      <span style="color:#6ee7b7;"># Verify chunk 18 contains the evidence</span><br>
-      def find_excerpt(txt, term, window=200):<br>
-      &nbsp;&nbsp;i = txt.lower().find(term.lower())<br>
-      &nbsp;&nbsp;if i == -1: return None<br>
-      &nbsp;&nbsp;return txt[max(0,i-window):i+len(term)+window]<br><br>
-      chunk18 = context[18]<br>
-      excerpt = find_excerpt(chunk18, "illegal to play")<br>
-      print("Excerpt:", excerpt or "Not Found")
-    </div>
-    <div style="margin-top:4px;">
-      <div style="font-size:13px; font-weight:700; color:#64748b;">Out[N]</div>
-      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:11px; font-family:monospace;">
-        Excerpt from chunk 18: "...Catastor appears in the artwork of Blue Pollinator..."
-      </div>
-    </div>
+  <div style="font-size:15px; font-weight:700; color:#64748b;">In[N]</div>
+  <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5;">
+    <span style="color:#6ee7b7;"># Verify chunk 18 contains the evidence</span><br>
+    chunk18 = context[18]<br>
+    excerpt = find_excerpt(chunk18, "illegal to play")<br>
+    print("Excerpt:", excerpt or "Not Found")
   </div>
-
-  <!-- Key insight -->
-  <div style="background:linear-gradient(135deg, #eff6ff, #f0fdf4); border:2px solid #3b82f6; border-radius:10px; padding:10px 14px; margin-top:2px;">
-    <div style="font-size:14px; font-weight:700; color:#1e40af;">💡 Key insight: The LLM never sees the full context</div>
-    <div style="font-size:12px; color:#475569; margin-top:4px;">
-      It only sees <strong>metadata</strong> + <strong>REPL stdout</strong> (truncated). All inspection happens via code.
-      The <code style="font-size:11px;">llm_query()</code> function triggers recursive sub-RLM calls on smaller snippets.
-    </div>
+  <div style="font-size:15px; font-weight:700; color:#64748b; margin-top:4px;">Out[N]</div>
+  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace;">
+    Excerpt: "...Catastor appears in the artwork of Blue Pollinator..."
   </div>
+</td>
 
-</div>
+</tr>
+</table>
 
-</div>
+<!--
+NOTAS — Slide: The Iterative REPL Loop
+
+Este diagrama muestra el flujo paso a paso de una ejecución RLM (Figure 2 del paper + diagrama del blog).
+
+COLUMNA IZQUIERDA — Flujo del Root LM:
+- El Root LM recibe un system prompt: "Tienes un contexto en la variable context, interactúa con el REPL."
+- En cada iteración, el LM genera código (execute_code).
+- El REPL ejecuta el código y devuelve stdout (truncado a ~2000 chars).
+- El stdout vuelve al LM como parte del historial. El LM decide: generar más código o emitir FINAL.
+- El loop (⟳) se repite hasta FINAL(respuesta) o FINAL_VAR(variable).
+
+COLUMNA DERECHA — REPL Python Notebook:
+- In[1]: Ejemplo real del paper (BrowseComp+). El LLM divide el contexto en mitades y usa llm_query() para hacer un subcall recursivo — esto crea un RLM hijo (depth=1).
+- Out[1]: El resultado del subcall vuelve como texto al REPL. El badge amarillo indica que se hizo una llamada recursiva.
+- In[N]: En iteraciones posteriores, el LLM escribe funciones de verificación para confirmar evidencia antes de dar la respuesta final.
+
+PUNTO CLAVE para decir en voz alta:
+"El LLM NUNCA ve el contexto completo. Solo ve metadata y stdout truncado del REPL. Toda la inspección ocurre mediante código. Las llamadas a llm_query() disparan sub-RLMs recursivos sobre trozos más pequeños."
+
+DATO: El coste escala log-linealmente, no exponencialmente, porque cada subcall solo procesa un trozo del contexto.
+-->
 
 ---
 
