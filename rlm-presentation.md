@@ -486,9 +486,9 @@ OJO: Este ejemplo es simplificado. En la realidad, las tareas son más complejas
 | Task                      | GPT-5 Base | RLM(GPT-5) | Gain      |
 | ------------------------- | ---------- | ---------- | --------- |
 | **CodeQA**                | 24%\*      | **62%**    | 2.6x 🚀   |
-| **BrowseComp+ (1K docs)** | 0%\*       | **91.33%** | N/A -> ✅ |
+| **BrowseComp+ (1K docs)** | 0%\*       | **91.3%**  | N/A -> ✅ |
 | **OOLONG**                | 44%        | **56.5%**  | 1.3x      |
-| **OOLONG-Pairs**          | 0.04%      | **58%**    | 1450x 🤯  |
+| **OOLONG-Pairs**          | 0.1%       | **58%**    | 580x 🤯   |
 
 _\* Hit context limits. Source: Table 1, MIT CSAIL paper (2025)_
 
@@ -514,13 +514,15 @@ CodeQA (23K-4.2M tokens): Comprensión de repositorios de código. Base 24%* (tr
 
 62 / 24 = 2.58 = 2.6x.
 
-BrowseComp+ (6M-11M tokens): Búsqueda en 1000 documentos. El base literalmente no puede procesar esto (0%*, N/A). RLM logra 91.33% a un coste de ~$0.99, mientras que meter 6-11M tokens en GPT-5-mini costaría $1.50-$2.75.
+BrowseComp+ (6M-11M tokens): Búsqueda en 1000 documentos. El base literalmente no puede procesar esto (0%*, N/A). RLM logra 91.3% a un coste de ~$0.99, mientras que meter 6-11M tokens en GPT-5-mini costaría $1.50-$2.75.
 
 OOLONG (131K tokens): Agregación semántica sobre miles de entradas. Cabe en la ventana de GPT-5, pero aún así el RLM mejora un 28.4%. Esto demuestra que no es solo cuestión de tamaño: el processing style importa.
 
-OOLONG-Pairs (32K tokens): Razonamiento cuadrático sobre pares. ¡Solo 32K tokens! Cabe perfectamente en GPT-5. Pero el base saca 0.04% F1 y el RLM 58%. El paper dice que esto es una "emergent capability" — el RLM puede manejar tareas con complejidad de procesamiento O(N²) que el base simplemente no puede.
+OOLONG-Pairs (32K tokens): Razonamiento cuadrático sobre pares. ¡Solo 32K tokens! Cabe perfectamente en GPT-5. Pero el base saca 0.1% F1 (redondeo mínimo) y el RLM 58%. El paper dice que esto es una "emergent capability" — el RLM puede manejar tareas con complejidad de procesamiento O(N²) que el base simplemente no puede.
 
-COSTE: La mediana del RLM es más barata que la mediana del base (Observation 4 del paper). Pero hay alta varianza: el percentil 95 del RLM puede ser significativamente más caro.
+COSTE: La mediana del RLM es más barata que la mediana del base (observación del paper sobre coste). Pero hay alta varianza: el percentil 95 del RLM puede ser significativamente más caro.
+
+NUEVO BASELINE: El paper agrega "CodeAct (+ sub-calls)" para aislar el efecto de offloading de contexto al REPL. Reporta CodeQA 24.0%*, OOLONG 40.0%, OOLONG-Pairs 28.4% (vs 58% de RLM(GPT-5) en Pairs).
 -->
 
 ---
@@ -550,7 +552,7 @@ TRES BENCHMARKS escalados de 8K a 1M tokens:
 - OOLONG (complejidad lineal): Cada entrada del dataset necesita ser procesada. GPT-5 degrada más rápido. RLM mantiene rendimiento.
 - OOLONG-Pairs (complejidad cuadrática): Cada PAR de entradas. GPT-5 colapsa rápidamente. RLM escala mucho mejor.
 
-PUNTO CLAVE (Observation 3 del paper): "GPT-5 performance degrades significantly faster for more complex tasks, while RLM performance degrades but at a much slower rate." A partir de 16K tokens (2^14), el RLM consistentemente supera a GPT-5.
+PUNTO CLAVE (observación del paper sobre degradación): "GPT-5 performance degrades significantly faster for more complex tasks, while RLM performance degrades but at a much slower rate." A partir de 16K tokens (2^14), el RLM consistentemente supera a GPT-5.
 
 COSTE: El RLM escala proporcionalmente a la complejidad de la tarea, pero se mantiene en el mismo orden de magnitud que GPT-5. En BrowseComp+ el RLM es hasta 3x más barato que el summary agent.
 
@@ -567,6 +569,10 @@ NOTA IMPORTANTE: El base LM supera al RLM en contextos pequeños. Hay un "crosso
 
 - Base model: Qwen3-8B
 - Training data: ~1000 RLM trajectories
+- Trajectories collected from: Qwen3-Coder-480B-A35B on 750 LongBenchPro tasks
+- 2,250 candidate trajectories → 1,072 filtered (+ per-turn filtering)
+- Training: prime-rl, batch size 64, 300 steps, ~48 H100 hours
+- Data fixes: 16% turns had incorrect FINAL; 13% used FINAL_VAR incorrectly (fixed programmatically)
 - Domains: Unrelated to eval benchmarks
 - Result: Learned recursive strategies from minimal data
 
@@ -591,6 +597,8 @@ POST-TRAINING vs SCAFFOLD:
 - RLM-Qwen3-8B (post-trained): 32% — el modelo ha "aprendido" las estrategias óptimas del entrenamiento. Menos subcalls, mejor chunking, más eficiente desde el primer paso.
 
 IMPLICACIÓN: Runtime + modelo post-trained se complementan. El runtime provee la infraestructura (REPL, subcalls, caching), el modelo provee la inteligencia optimizada. Mi primera impresión era que el modelo post-trained iba a sustituir al runtime, pero no: se complementan.
+
+OBSERVACIÓN NUEVA: Entrenar RLMs en un dominio puede mejorar el rendimiento general downstream (Observation 6 en la nueva versión del paper). Aquí se reporta un +28.3% promedio vs base Qwen3-8B.
 -->
 
 ---
@@ -600,13 +608,14 @@ IMPLICACIÓN: Runtime + modelo post-trained se complementan. El runtime provee l
 From benchmarks (multiple tasks):
 
 ```
-        Base Model    RLM Scaffold    RLM Post-trained
-CodeQA:     4%            26%              32% ⬆️
-OOLONG:    36%            48%              48%
-Pairs:    0.06%          23%              23%
+              Base Model    RLM Scaffold    RLM (fine-tuned)
+CodeQA:          4.0%*         26.0%            32.0%
+BrowseComp+:     0.0%*          2.0%            14.0%
+OOLONG:          0.0%*         24.0%            32.0%
+Pairs:           0.1%           4.3%             5.2%
 ```
 
-**Insight:** Post-training teaches the model to use the scaffold more efficiently
+**Insight:** Fine-tuning teaches the model to use the scaffold more efficiently
 
 - Fewer subcalls needed
 - Better chunking strategies
@@ -727,7 +736,7 @@ From `examples/rlm_vs_baseline.py`:
 <!--
 NOTAS — Demo: Baseline vs RLM Crossover
 
-Este demo es de mi ejemplo examples/rlm_vs_baseline.py. Muestra el "crossover point" mencionado en el paper (Observation 3).
+Este demo es de mi ejemplo examples/rlm_vs_baseline.py. Muestra el "crossover point" mencionado en el paper (la observación sobre degradación vs complejidad).
 
 SMALL CONTEXT (5 docs, ~3K chars): El baseline gana porque el overhead del REPL no compensa. El RLM tiene que inicializar el REPL, ejecutar código, parsear stdout... todo eso tarda más que simplemente meter el contexto en el prompt.
 
@@ -851,9 +860,9 @@ result = router.run(query, context)
 
 ---
 
-# 📊 My Benchmarks vs Paper
+# 📊 My Benchmarks vs Paper (Draft)
 
-> **[🚧 TODO: FAKE NUMBERS-Needs to implement]**
+> **[🚧 DRAFT — UNVERIFIED PLACEHOLDER DATA]**
 
 **My results on custom tasks:**
 
@@ -872,7 +881,7 @@ result = router.run(query, context)
 - Parallel execution
 
 <!--
-NOTAS — My Benchmarks vs Paper
+NOTAS — My Benchmarks vs Paper (Draft)
 
 CONTEXTO: Estos son resultados de correr mi rlm-runtime sobre las mismas tareas que el paper, pero con mis optimizaciones adicionales.
 
@@ -884,7 +893,7 @@ CACHE HIT RATE: 40% en queries repetidos. El paper no reporta caching porque cad
 
 PARALLEL SPEEDUP: 3.2x con 8 workers. El paper menciona en Appendix A que "RLMs without asynchronous LM calls are slow" y que su implementación usa "blocking/sequential calls." Mi runtime implementa ThreadPoolExecutor para subcalls paralelos.
 
-NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script examples/rlm_vs_baseline.py. No he corrido los benchmarks completos del paper (OOLONG full, BrowseComp+ 1K docs) porque requieren mucho compute y acceso a los datasets.
+NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script examples/rlm_vs_baseline.py. No he corrido los benchmarks completos del paper (OOLONG full, BrowseComp+ 1K docs) porque requieren mucho compute y acceso a los datasets. Mantener esta slide como borrador hasta tener números reales.
 -->
 
 ---
