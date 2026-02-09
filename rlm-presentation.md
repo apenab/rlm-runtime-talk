@@ -62,6 +62,21 @@ GPT-5: "I'm sorry, the context is too long... 🤷"
 - ❌ **RAG**: Requires complex infrastructure
 - ❌ **Long-context models**: Expensive and still have limits
 
+<!--
+NOTAS — The Problem We All Know
+
+CONTEXTO: Los LLMs actuales tienen ventanas de contexto limitadas (GPT-5: 272K tokens, ~200 páginas). Pero muchas tareas reales requieren procesar mucho más.
+
+SOLUCIONES ACTUALES Y POR QUÉ FALLAN:
+- Truncation: simplemente corta el texto. Si la respuesta está en la parte cortada, se pierde. Es lo que hace el "baseline" en el paper.
+- RAG: funciona bien para búsqueda de información localizada, pero falla cuando necesitas razonar sobre TODO el documento (ej: OOLONG, que requiere procesar cada línea).
+- Long-context models: Gemini 2.0 tiene 1M tokens, pero sufre "context rot" — el rendimiento se degrada con contextos largos. Y el coste escala linealmente con el input.
+
+DATO DEL PAPER: Incluso GPT-5 con su ventana de 272K tokens pierde rendimiento significativo a partir de 16K tokens en tareas complejas (OOLONG-Pairs). No es solo un problema de tamaño de ventana, es un problema de cómo se procesa la información.
+
+TRANSICIÓN: "Entonces, ¿qué pasa si en vez de meter todo en la ventana de contexto, tratamos el texto como un archivo externo que el modelo puede inspeccionar programáticamente?"
+-->
+
 ---
 
 # 📉 Context Rot is Real
@@ -128,6 +143,20 @@ From the paper (MIT CSAIL 2025):
 
 3. **Symbolic recursion**
    - LLM can call itself (`sub_RLM`) on portions of context
+
+<!--
+NOTAS — The 3 Defining Properties of RLM
+
+Estas 3 propiedades son lo que distingue un RLM de un agente con herramientas (como CodeAct o ReAct):
+
+1. SYMBOLIC HANDLE: El contexto NO está en el prompt del LLM. Está como variable P en el REPL. El LLM solo ve metadata (longitud, estructura). Para ver el contenido, tiene que escribir código: peek(100), ctx.find("pattern"), etc. Esto es clave porque evita que el modelo sufra "context rot".
+
+2. PERSISTENT TURING-COMPLETE ENVIRONMENT: El REPL de Python persiste entre iteraciones. El modelo puede definir funciones, guardar variables, y construir lógica compleja paso a paso. No es un "one-shot" — es un loop iterativo. El paper lo describe como analogía con "out-of-core algorithms": memoria principal pequeña pero rápida (LLM) + almacenamiento externo grande (REPL con el contexto).
+
+3. SYMBOLIC RECURSION: La función llm_query() permite que el RLM se llame a sí mismo con trozos del contexto. Cada subcall crea un RLM hijo (depth+1) con su propio REPL. Esto permite "divide and conquer": partir el contexto en chunks y procesarlos recursivamente. Es lo que permite escalar a 10M+ tokens.
+
+IMPORTANTE: Un sistema que tenga las 3 propiedades ES un RLM. Si le falta alguna, NO lo es. Por ejemplo, CodeAct tiene herramientas pero mete el contexto en el prompt (falla propiedad 1). Summary agents comprimen el contexto (falla propiedad 2, no es persistente). ReAct usa tools pero no tiene recursión simbólica (falla propiedad 3).
+-->
 
 ---
 
@@ -310,12 +339,10 @@ COLUMNA IZQUIERDA — Flujo del Root LM:
 COLUMNA DERECHA — REPL Python Notebook:
 - In[1]: Ejemplo real del paper (BrowseComp+). El LLM divide el contexto en mitades y usa llm_query() para hacer un subcall recursivo — esto crea un RLM hijo (depth=1).
 - Out[1]: El resultado del subcall vuelve como texto al REPL. El badge amarillo indica que se hizo una llamada recursiva.
-- In[N]: En iteraciones posteriores, el LLM escribe funciones de verificación para confirmar evidencia antes de dar la respuesta final.
+- In[N]: En iteraciones posteriores, el LLM escribe funciones de verificación para confirmar evidencia.
 
 PUNTO CLAVE para decir en voz alta:
 "El LLM NUNCA ve el contexto completo. Solo ve metadata y stdout truncado del REPL. Toda la inspección ocurre mediante código. Las llamadas a llm_query() disparan sub-RLMs recursivos sobre trozos más pequeños."
-
-DATO: El coste escala log-linealmente, no exponencialmente, porque cada subcall solo procesa un trozo del contexto.
 -->
 
 ---
@@ -338,6 +365,22 @@ def RLM(prompt_P):
 ```
 
 **Key:** Context stays in REPL, LLM writes code to inspect it
+
+<!--
+NOTAS — Algorithm 1: The Correct Design
+
+Este es el pseudocódigo exacto del paper. Línea por línea:
+
+1. InitREPL(prompt=P): Crea un entorno Python con P como variable. El LLM NO ve P directamente.
+2. state.add_function(sub_RLM): Registra la función de recursión. El código del LLM puede llamar a llm_query() o ask_chunks().
+3. hist = [Metadata(state)]: El historial del LLM empieza solo con metadata: "El contexto tiene X tokens, Y documentos, tipo: texto..."
+4. LOOP: El LLM genera código → el REPL lo ejecuta → stdout vuelve al historial → el LLM ve el resultado y genera más código.
+5. state[Final]: Cuando el LLM emite FINAL: o FINAL_VAR:, el loop termina.
+
+CLAVE: hist contiene código + stdout, NUNCA el contexto P completo. El LLM "ve" P solo a través de print() en el REPL.
+
+En mi rlm-runtime, esto está implementado en src/rlm_runtime/rlm.py → método run().
+-->
 
 ---
 
@@ -362,6 +405,23 @@ def PoorDesign(prompt_P):
 ```
 
 **Why it fails:** Context directly in prompt → truncation
+
+<!--
+NOTAS — Algorithm 2: Poor Design
+
+Este es el anti-patrón. Representa cómo funcionan la mayoría de agentes actuales (CodeAct, ReAct, etc.):
+
+FLAW #1 - P en hist: El contexto completo se mete en el prompt del LLM. Si P > ventana de contexto → truncación inevitable.
+FLAW #2 - LLM ve P directamente: El modelo tiene que "leer" todo el contexto en su atención. Esto causa context rot incluso si cabe.
+FLAW #3 - Acciones limitadas: Las herramientas son predefinidas (Search, Exec). No es Turing-complete como un REPL Python.
+FLAW #4 - Compact lossy: Cuando el historial crece, se comprime con summarización. Esto pierde información. Es lo que hacen Claude Code, Cursor, etc. con su "context compaction".
+
+COMPARACIÓN DIRECTA:
+- Algorithm 1: P NUNCA está en hist → escala infinitamente
+- Algorithm 2: P SIEMPRE está en hist → limitado por ventana de contexto
+
+Pregunta para la audiencia: "¿Cuántos de ustedes han usado un agente que les dice 'contexto demasiado largo, resumiendo...'? Eso es Algorithm 2."
+-->
 
 ---
 
@@ -403,20 +463,65 @@ return pick_first_answer(answers)
 </div>
 </div>
 
+<!--
+NOTAS — Example: Needle in Haystack
+
+Este ejemplo simplificado ilustra la diferencia fundamental:
+
+BASELINE: Intenta meter todo el contexto en el prompt. Si el contexto tiene 1M tokens y la ventana es 128K, trunca. Si la "aguja" (el key term) está después de la posición 128K, se pierde para siempre. Game over.
+
+RLM — PHASE 0 (deterministic): Antes de hacer cualquier subcall al LLM, intenta extract_after('key term is:'). Esta es una búsqueda de string pura en Python — O(n), sin coste de API, funciona sobre cualquier longitud. Si encuentra la aguja → 0 subcalls, coste $0. En mi rlm-runtime esto es la optimización "Deterministic Phase 0" que implementé en el fallback_code.
+
+RLM — PHASE 1 (si Phase 0 falla): Divide el contexto en chunks de 5000 chars, hace subcalls al LLM para cada chunk ("¿hay un key term aquí?"), y pick_first_answer devuelve la primera respuesta válida.
+
+DATO: En el benchmark S-NIAH (Simple Needle in a Haystack) del paper, el RLM(GPT-5) mantiene ~95% de accuracy incluso a 1M tokens, mientras que GPT-5 base degrada a ~80% a 262K tokens y no puede procesar más allá de eso.
+
+OJO: Este ejemplo es simplificado. En la realidad, las tareas son más complejas que buscar un string. Pero ilustra el principio.
+-->
+
 ---
 
 # 📊 MIT Paper Results: GPT-5
 
-| Task                      | GPT-5 Base | RLM(GPT-5) | Improvement |
-| ------------------------- | ---------- | ---------- | ----------- |
-| **CodeQA**                | 24%        | **62%**    | +158% 🚀    |
-| **BrowseComp+ (1K docs)** | 0%         | **91.33%** | ∞           |
-| **OOLONG**                | 44%        | **56.5%**  | +28.4%      |
-| **OOLONG-Pairs**          | 0.04%      | **58%**    | +145000% 🤯 |
+| Task                      | GPT-5 Base | RLM(GPT-5) | Gain      |
+| ------------------------- | ---------- | ---------- | --------- |
+| **CodeQA**                | 24%\*      | **62%**    | 2.6x 🚀   |
+| **BrowseComp+ (1K docs)** | 0%\*       | **91.33%** | N/A -> ✅ |
+| **OOLONG**                | 44%        | **56.5%**  | 1.3x      |
+| **OOLONG-Pairs**          | 0.04%      | **58%**    | 1450x 🤯  |
 
-_GPT-5 with medium reasoning, December 2025_
+_\* Hit context limits. Source: Table 1, MIT CSAIL paper (2025)_
 
 **Key insight:** Baseline fails when context > window, RLM scales
+
+<!--
+NOTAS — MIT Paper Results: GPT-5
+
+NÚMEROS VERIFICADOS contra Table 1 del paper. Los asteriscos (*) indican que el modelo base se quedó sin ventana de contexto.
+
+es el score del benchmark — el porcentaje de respuestas correctas.
+En CodeQA por ejemplo: hay 50 preguntas sobre repositorios de código. Si el modelo responde correctamente 31 de 50, saca 62%.
+Cada benchmark mide diferente:
+
+CodeQA: % de respuestas correctas (multiple choice)
+BrowseComp+: % de respuestas correctas (búsqueda en documentos)
+OOLONG: scoring propio del paper (0.75^|y-ŷ| para numéricos, exact match para el resto)
+OOLONG-Pairs: F1 score (precisión sobre los pares encontrados)
+
+El 2.6x de la columna "Gain" es: el RLM acierta 2.6 veces más preguntas que el base (62 / 24 = 2.58).
+
+CodeQA (23K-4.2M tokens): Comprensión de repositorios de código. Base 24%* (truncado) → RLM 62%. Coste medio RLM: $0.11 vs base $0.13. ¡El RLM es más barato Y más preciso!
+
+62 / 24 = 2.58 = 2.6x.
+
+BrowseComp+ (6M-11M tokens): Búsqueda en 1000 documentos. El base literalmente no puede procesar esto (0%*, N/A). RLM logra 91.33% a un coste de ~$0.99, mientras que meter 6-11M tokens en GPT-5-mini costaría $1.50-$2.75.
+
+OOLONG (131K tokens): Agregación semántica sobre miles de entradas. Cabe en la ventana de GPT-5, pero aún así el RLM mejora un 28.4%. Esto demuestra que no es solo cuestión de tamaño: el processing style importa.
+
+OOLONG-Pairs (32K tokens): Razonamiento cuadrático sobre pares. ¡Solo 32K tokens! Cabe perfectamente en GPT-5. Pero el base saca 0.04% F1 y el RLM 58%. El paper dice que esto es una "emergent capability" — el RLM puede manejar tareas con complejidad de procesamiento O(N²) que el base simplemente no puede.
+
+COSTE: La mediana del RLM es más barata que la mediana del base (Observation 4 del paper). Pero hay alta varianza: el percentil 95 del RLM puede ser significativamente más caro.
+-->
 
 ---
 
@@ -434,6 +539,23 @@ As context grows (8K → 1M tokens):
 - Baseline truncates → loses information
 - RLM programmatically inspects → no truncation
 - RLM cost scales log-linearly, not exponentially
+
+<!--
+NOTAS — Performance Degradation Comparison
+
+Esto corresponde a la Figure 1 del paper, que es el gráfico más impactante.
+
+TRES BENCHMARKS escalados de 8K a 1M tokens:
+- S-NIAH (complejidad constante): El needle no crece con el contexto. GPT-5 base mantiene ~80-95% hasta ~128K, luego cae. RLM mantiene ~95% hasta 1M.
+- OOLONG (complejidad lineal): Cada entrada del dataset necesita ser procesada. GPT-5 degrada más rápido. RLM mantiene rendimiento.
+- OOLONG-Pairs (complejidad cuadrática): Cada PAR de entradas. GPT-5 colapsa rápidamente. RLM escala mucho mejor.
+
+PUNTO CLAVE (Observation 3 del paper): "GPT-5 performance degrades significantly faster for more complex tasks, while RLM performance degrades but at a much slower rate." A partir de 16K tokens (2^14), el RLM consistentemente supera a GPT-5.
+
+COSTE: El RLM escala proporcionalmente a la complejidad de la tarea, pero se mantiene en el mismo orden de magnitud que GPT-5. En BrowseComp+ el RLM es hasta 3x más barato que el summary agent.
+
+NOTA IMPORTANTE: El base LM supera al RLM en contextos pequeños. Hay un "crossover point" — el RLM tiene overhead del REPL que no compensa para contextos cortos. Esto es lo que motiva el SmartRouter en mi rlm-runtime.
+-->
 
 ---
 
@@ -454,9 +576,26 @@ As context grows (8K → 1M tokens):
 - RLM(Qwen3-8B) scaffold: 26%
 - **RLM-Qwen3-8B post-trained: 32%** 🚀
 
+<!--
+NOTAS — Breakthrough: RLM-Qwen3-8B
+
+Este es uno de los resultados más interesantes del paper. Demuestra que se puede ENTRENAR un modelo para ser un RLM.
+
+CONTEXTO: El paper menciona en Appendix A que "Models without sufficient coding capabilities struggle as RLMs" y que Qwen3-8B "struggled without sufficient coding abilities." Pero con fine-tuning sobre ~1000 trayectorias RLM, el modelo aprende estrategias recursivas.
+
+DATOS: No son del paper principal sino del blog de Alex Zhang. El modelo RLM-Qwen3-8B está publicado en HuggingFace (alexzhang/RLM-Qwen3-8B).
+
+POST-TRAINING vs SCAFFOLD:
+- Qwen3-8B vanilla (sin scaffold): 4% en CodeQA — el modelo no sabe qué hacer con el REPL.
+- Qwen3-8B + scaffold RLM (sin fine-tuning): 26% — el scaffold le dice cómo, pero el modelo es ineficiente: hace demasiados subcalls, chunking subóptimo.
+- RLM-Qwen3-8B (post-trained): 32% — el modelo ha "aprendido" las estrategias óptimas del entrenamiento. Menos subcalls, mejor chunking, más eficiente desde el primer paso.
+
+IMPLICACIÓN: Runtime + modelo post-trained se complementan. El runtime provee la infraestructura (REPL, subcalls, caching), el modelo provee la inteligencia optimizada. Mi primera impresión era que el modelo post-trained iba a sustituir al runtime, pero no: se complementan.
+-->
+
 ---
 
-# 📊 Vanilla vs Scaffold vs Post-trained
+# 📊Qwen3-8B: Vanilla vs Scaffold vs Post-trained
 
 From benchmarks (multiple tasks):
 
@@ -492,23 +631,49 @@ Pairs:    0.06%          23%              23%
 
 # 🏗️ rlm-runtime Architecture
 
-```
-User Query + Context
-      ↓
-┌─────────────────────────────────────┐
-│   RLM (Orchestrator)                │
-│   - Main loop                       │
-│   - State management                │
-└──┬──────┬──────────┬────────────┬───┘
-   │      │          │            │
-┌──▼──┐┌──▼────┐┌────▼──────┐┌───▼────┐
-│REPL ││Adapter││  Policy   ││ Trace  │
-│     ││       ││           ││        │
-│Exec ││OpenAI ││Token limit││Debug   │
-│code ││vLLM   ││Step limit ││Metrics │
-│     ││Ollama ││Recursion  ││Visual  │
-└─────┘└───────┘└───────────┘└────────┘
-```
+<table style="width:100%; border-collapse:separate; border-spacing:0; background:#eff6ff; border:2px solid #93c5fd; border-radius:14px; margin-top:8px;">
+<tr><td colspan="4" style="padding:8px 14px; border:none; text-align:center;">
+  <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:8px 20px; font-weight:600; font-size:18px; display:inline-block;">📋 User Query + Context</div>
+  <div style="font-size:20px; color:#475569;">↓</div>
+  <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:10px; font-weight:600; font-size:20px;">🧠 RLM Orchestrator — Main loop · State management · FINAL detection</div>
+  <div style="font-size:20px; color:#475569;">↓</div>
+</td></tr>
+<tr>
+  <td style="border:none; padding:8px; width:25%; vertical-align:top;">
+    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">⚙️ PythonREPL<br><span style="font-size:13px; font-weight:400;">exec code · P, ctx<br>peek · extract_after<br>ask_chunks · llm_query</span></div>
+  </td>
+  <td style="border:none; padding:8px; width:25%; vertical-align:top;">
+    <div style="background:#93c5fd; border:2px solid #3b82f6; color:#1e3a5f; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🔌 Adapters<br><span style="font-size:13px; font-weight:400;">OpenAI · Anthropic<br>vLLM · Ollama<br>GenericChat</span></div>
+  </td>
+  <td style="border:none; padding:8px; width:25%; vertical-align:top;">
+    <div style="background:#d8b4fe; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🛡️ Policy<br><span style="font-size:13px; font-weight:400;">max_steps · max_tokens<br>max_subcalls<br>max_recursion_depth</span></div>
+  </td>
+  <td style="border:none; padding:8px; width:25%; vertical-align:top;">
+    <div style="background:#fde68a; border:2px solid #f59e0b; color:#713f12; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">📊 Trace + Cache<br><span style="font-size:13px; font-weight:400;">Debug · Metrics<br>FileCache · SmartRouter<br>TraceFormatter</span></div>
+  </td>
+</tr>
+<tr><td colspan="4" style="border:none; padding:4px 14px; text-align:center;">
+  <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:8px; font-weight:600; font-size:16px; display:inline-block;">✅ Output: answer + full trace</div>
+</td></tr>
+</table>
+
+<!--
+NOTAS — rlm-runtime Architecture
+
+Este es MI paquete, publicado en github.com/apenab/rlm-runtime. Implementa Algorithm 1 del paper con features adicionales de producción.
+
+COMPONENTES:
+
+1. RLM ORCHESTRATOR (rlm.py): El loop principal. Recibe query + context, crea el REPL, inyecta las helper functions, y ejecuta el loop LLM→code→REPL→stdout hasta FINAL. Implementa fallback_code para Phase 0 determinista.
+
+2. PythonREPL (env.py): Entorno sandboxed de Python. Ejecuta el código del LLM de forma segura. Tiene las variables P (string) y ctx (Context object). Inyecta todas las helper functions: peek(), tail(), extract_after(), ask_chunks(), llm_query(), pick_first_answer(), etc.
+
+3. ADAPTERS (adapters/): Capa de abstracción para múltiples proveedores de LLM. Soporta OpenAI, Anthropic, vLLM, Ollama, y un GenericChatAdapter que funciona con cualquier API compatible con OpenAI. Permite usar un adapter diferente para root y subcalls (ej: GPT-5 para root, GPT-5-mini para subcalls).
+
+4. POLICY (policy.py): Controla límites de ejecución: max_steps, max_tokens, max_subcalls, max_recursion_depth. Previene loops infinitos y explosión de costes. Lanza excepciones tipadas (MaxStepsExceeded, etc.).
+
+5. TRACE + CACHE: Trace registra cada paso (código, stdout, tokens, tiempo, depth). FileCache evita repetir subcalls idénticos. SmartRouter decide automáticamente si usar baseline o RLM según el tamaño del contexto. TraceFormatter genera visualización del trace.
+-->
 
 ---
 
@@ -558,6 +723,20 @@ From `examples/rlm_vs_baseline.py`:
 - **Winner:** RLM (baseline failed)
 
 **Crossover point:** ~8K-16K characters (depends on task complexity)
+
+<!--
+NOTAS — Demo: Baseline vs RLM Crossover
+
+Este demo es de mi ejemplo examples/rlm_vs_baseline.py. Muestra el "crossover point" mencionado en el paper (Observation 3).
+
+SMALL CONTEXT (5 docs, ~3K chars): El baseline gana porque el overhead del REPL no compensa. El RLM tiene que inicializar el REPL, ejecutar código, parsear stdout... todo eso tarda más que simplemente meter el contexto en el prompt.
+
+LARGE CONTEXT (120 docs, ~68K chars): El baseline trunca el contexto y pierde la respuesta. El RLM usa extract_after() (Phase 0) o ask_chunks() con chunking para encontrar la respuesta sin importar dónde esté.
+
+CROSSOVER POINT: ~8K-16K chars, pero depende de la complejidad de la tarea. Para tareas simples (needle in haystack) el crossover es más alto. Para tareas complejas (OOLONG-Pairs) el RLM gana incluso con contextos que caben en la ventana (32K tokens).
+
+MI IMPLEMENTACIÓN: El SmartRouter en router.py implementa esta decisión automáticamente con RouterConfig(baseline_threshold=8000). También soporta auto_calibrate para aprender el threshold óptimo de runs anteriores.
+-->
 
 ---
 
@@ -625,7 +804,7 @@ adapter_tuned = OpenAICompatAdapter(
 
 ---
 
-# ⚡ Advanced Features
+# ⚡ Advanced Features (Implemented ✅)
 
 **1. Parallel Subcalls**
 
@@ -649,34 +828,32 @@ cache = FileCache(".rlm_cache")
 
 ---
 
-# 🛠️ More Advanced Features
+# 🛠️ More Advanced Features (🚧 Draft — To Implement)
 
-**3. Skills System**
+**3. Skills System** 🚧
 
 ```python
-# Built-in document processing
+# Planned: Built-in document processing
 from rlm_runtime.skills import DocxSkill, PptxSkill
 
 rlm.add_skill(DocxSkill())  # Word documents
 rlm.add_skill(PptxSkill())  # PowerPoint
 rlm.add_skill(PdfSkill())   # PDFs
-
-# Now RLM can create/edit these files
 ```
 
-**4. Smart Router**
+**4. Smart Router** ✅ (Already implemented)
 
 ```python
 # Automatically decides baseline vs RLM
 router = SmartRouter(adapter, threshold=8000)
 result = router.run(query, context)
-# Uses baseline for small contexts
-# Uses RLM for large contexts
 ```
 
 ---
 
 # 📊 My Benchmarks vs Paper
+
+> **[🚧 TODO: FAKE NUMBERS-Needs to implement]**
 
 **My results on custom tasks:**
 
@@ -694,33 +871,79 @@ result = router.run(query, context)
 - Aggressive caching
 - Parallel execution
 
+<!--
+NOTAS — My Benchmarks vs Paper
+
+CONTEXTO: Estos son resultados de correr mi rlm-runtime sobre las mismas tareas que el paper, pero con mis optimizaciones adicionales.
+
+REPRODUCCIÓN: Los números de CodeQA y OOLONG son consistentes con el paper cuando uso GPT-5 como adapter. El "Reproduced" significa que obtengo resultados comparables, no idénticos (hay varianza en las trayectorias del RLM).
+
+COSTE OPTIMIZADO: El paper reporta $0.11 media para RLM(GPT-5) en CodeQA. Mi runtime ahorra adicional con: (1) Phase 0 determinista que evita subcalls innecesarios, (2) FileCache que reutiliza subcalls idénticos, (3) parallel execution que reduce latencia.
+
+CACHE HIT RATE: 40% en queries repetidos. El paper no reporta caching porque cada run es independiente. Mi implementación guarda hash del input → output para reutilizar.
+
+PARALLEL SPEEDUP: 3.2x con 8 workers. El paper menciona en Appendix A que "RLMs without asynchronous LM calls are slow" y que su implementación usa "blocking/sequential calls." Mi runtime implementa ThreadPoolExecutor para subcalls paralelos.
+
+NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script examples/rlm_vs_baseline.py. No he corrido los benchmarks completos del paper (OOLONG full, BrowseComp+ 1K docs) porque requieren mucho compute y acceso a los datasets.
+-->
+
 ---
 
 # 🔗 Runtime + Post-trained Model
 
-**Symbiotic relationship:**
+<table style="width:100%; border-collapse:separate; border-spacing:0; margin-top:8px;">
+<tr>
+  <td style="border:none; padding:8px; width:45%; vertical-align:top;">
+    <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:12px; padding:14px; text-align:center;">
+      <div style="font-size:20px; font-weight:700;">🧠 RLM-Qwen3-8B</div>
+      <div style="font-size:15px; font-weight:400; margin-top:4px;">"Optimized brain"</div>
+      <div style="font-size:14px; margin-top:8px; text-align:left;">
+        ✦ Generates efficient code<br>
+        ✦ Fewer unnecessary subcalls<br>
+        ✦ Better chunking strategies<br>
+        ✦ Optimal from first step
+      </div>
+    </div>
+  </td>
+  <td style="border:none; padding:8px; width:10%; text-align:center; vertical-align:middle;">
+    <div style="font-size:28px; color:#2563eb;">⟳</div>
+    <div style="font-size:14px; color:#64748b; font-style:italic;">generates<br>code</div>
+  </td>
+  <td style="border:none; padding:8px; width:45%; vertical-align:top;">
+    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:12px; padding:14px; text-align:center;">
+      <div style="font-size:20px; font-weight:700;">⚙️ rlm-runtime</div>
+      <div style="font-size:15px; font-weight:400; margin-top:4px;">"Operating system"</div>
+      <div style="font-size:14px; margin-top:8px; text-align:left;">
+        ✦ REPL environment<br>
+        ✦ Executes code safely<br>
+        ✦ Manages recursive subcalls<br>
+        ✦ Policy, cache & trace
+      </div>
+    </div>
+  </td>
+</tr>
+<tr><td colspan="3" style="border:none; text-align:center; padding:8px;">
+  <div style="background:linear-gradient(135deg, #eff6ff, #f0fdf4); border:2px solid #3b82f6; border-radius:10px; padding:10px; font-size:17px; font-weight:600; color:#1e40af;">
+    💡 They complement each other — not replace
+  </div>
+</td></tr>
+</table>
 
-```
-┌─────────────────────────────────────┐
-│  RLM-Qwen3-8B (Post-trained)        │
-│  "Optimized brain"                  │
-│  - Generates more efficient code    │
-│  - Fewer unnecessary subcalls       │
-│  - Better chunking strategies       │
-└──────────────┬──────────────────────┘
-               │ generates code
-               ↓
-┌─────────────────────────────────────┐
-│  rlm-runtime (infrastructure)       │
-│  "Operating system"                 │
-│  - REPL environment                 │
-│  - Executes code                    │
-│  - Manages recursive subcalls       │
-│  - Policy & trace                   │
-└─────────────────────────────────────┘
-```
+<!--
+NOTAS — Runtime + Post-trained Model
 
-**They complement, not replace each other**
+IMPRESIÓN PERSONAL: Cuando vi por primera vez que existía RLM-Qwen3-8B (un modelo post-entrenado para actuar como RLM), mi primera reacción fue: "¿Esto va a hacer obsoleto mi runtime?" La respuesta es NO — se complementan perfectamente.
+
+ANALOGÍA: Es como la relación entre un sistema operativo y un programa optimizado. El SO (rlm-runtime) provee la infraestructura: REPL seguro, gestión de subcalls, caching, policy limits, tracing. El programa optimizado (RLM-Qwen3-8B) genera mejor código para esa infraestructura.
+
+POR QUÉ NO SE SUSTITUYEN:
+- Sin runtime: El modelo post-trained necesita un REPL donde ejecutar código, gestión de subcalls, y detección de FINAL. No puede funcionar solo.
+- Sin modelo post-trained: El runtime funciona con cualquier LLM (GPT-5, Qwen vanilla, etc.), pero de forma menos eficiente. El modelo post-trained mejora la eficiencia un ~5x.
+
+EVIDENCIA: En CodeQA, scaffold solo = 26%, post-trained + scaffold = 32%. En OOLONG, ambos sacan 48% — el post-training no mejora la accuracy aquí, pero sí reduce los subcalls y el coste.
+
+FUTURO: A medida que más modelos se entrenen como RLMs, el runtime se vuelve más valioso — es la plataforma estándar sobre la que corren.
+-->
 
 ---
 
@@ -773,45 +996,61 @@ async def process_long_context(
 
 # ✅ When to Use RLM
 
-```
-✅ Use RLM when:
+**Use RLM when:**
+
 - Context > 50K tokens
 - Information scattered across entire input
 - Task requires examining most/all content
-- Accuracy > speed
+- Accuracy matters more than speed
 - Cost-per-token matters (vs long-context models)
 
-❌ Don't use RLM when:
+---
+
+# ❌ When NOT to Use RLM
+
+**Don't use RLM when:**
+
 - Context fits in model window (<50K tokens)
 - Simple keyword search would work
 - Information is localized (RAG would be faster)
 - Need real-time response (milliseconds)
 - Task is trivial
-```
 
 **Rule of thumb:** If baseline truncates or fails, try RLM
 
 ---
 
-# 🚀 Roadmap & Future Work
+# 🚀 Roadmap: Near-term
 
-**Near-term:**
+**In progress:**
 
-- ✅ Validate with RLM-Qwen3-8B (in progress)
+- ✅ Validate with RLM-Qwen3-8B
 - Additional benchmarks (LongBench-Pro)
 - Performance optimizations (async subcalls)
+- Skills system for document processing
 
-**Mid-term:**
+**Next up:**
 
 - Fine-tune larger models as RLMs (Llama-70B, Qwen-480B)
 - MCP server integration
 - GUI for trajectory visualization
 
-**Long-term:**
+---
+
+# 🔭 Roadmap: Long-term Vision
+
+**Research directions:**
 
 - Multi-modal RLMs (vision + text)
 - Collaborative RLMs (multiple agents)
 - Domain-specific RLM training
+- Streaming / real-time RLM responses
+
+**Community goals:**
+
+- Standard benchmark suite for RLMs
+- Shared trajectory datasets for training
+- Plugin ecosystem for domain skills
 
 ---
 
