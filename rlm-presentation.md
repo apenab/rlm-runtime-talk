@@ -1,36 +1,107 @@
 ---
 marp: true
-theme: default
+theme: uncover
+class: invert
 paginate: true
-backgroundColor: #fff
-backgroundImage: url('https://marp.app/assets/hero-background.svg')
 style: |
   section {
-    font-size: 26px;
+    font-size: 24px;
+    justify-content: flex-start;
   }
   h1 {
-    color: #2563eb;
-    font-size: 48px;
+    color: #60a5fa;
   }
   h2 {
-    color: #1e40af;
-    font-size: 36px;
+    color: #93c5fd;
+  }
+  ul, ol {
+    margin-left: 0;
+    padding-left: 1.2em;
+  }
+  li {
+    text-align: left;
+    margin-bottom: 0.3em;
+    padding-left: 0.3em;
+  }
+  /* Cool custom bullets */
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  ul > li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  ul > li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #60a5fa;
+    font-weight: 700;
+    font-size: 1.1em;
+  }
+  /* Nested bullets get a different marker */
+  ul > li > ul > li::before {
+    content: "›";
+    color: #818cf8;
+  }
+  /* Numbered lists: glowing accent */
+  ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: ol-counter;
+  }
+  ol > li {
+    position: relative;
+    padding-left: 2em;
+    counter-increment: ol-counter;
+  }
+  ol > li::before {
+    content: counter(ol-counter);
+    position: absolute;
+    left: 0;
+    background: rgba(96,165,250,0.2);
+    color: #60a5fa;
+    font-weight: 700;
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    border-radius: 50%;
+    font-size: 0.85em;
   }
   code {
-    background: #f1f5f9;
+    background: rgba(255,255,255,0.1);
     padding: 2px 6px;
     border-radius: 4px;
-    font-size: 20px;
+    font-size: 0.85em;
   }
   pre {
-    background: #1e293b;
+    background: #0f172a;
     color: #e2e8f0;
-    padding: 20px;
+    padding: 16px;
     border-radius: 8px;
-    font-size: 18px;
+    font-size: 0.75em;
   }
+  pre code {
+    background: transparent;
+    font-size: inherit;
+  }
+
   table {
-    font-size: 22px;
+    font-size: 0.85em;
+  }
+  th {
+    background: rgba(96,165,250,0.2);
+  }
+  blockquote {
+    border-left-color: #60a5fa;
+    color: #cbd5e1;
+  }
+  a {
+    color: #60a5fa;
+  }
+  strong {
+    color: #f1f5f9;
   }
   .columns {
     display: grid;
@@ -58,9 +129,20 @@ GPT-5: "I'm sorry, the context is too long... 🤷"
 
 **Current solutions:**
 
-- ❌ **Truncation**: Loses crucial information
-- ❌ **RAG**: Requires complex infrastructure
-- ❌ **Long-context models**: Expensive and still have limits
+<div style="display:flex; gap:12px; margin-top:12px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Requires complex infrastructure</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Expensive and still have limits</div>
+  </div>
+</div>
 
 <!--
 NOTAS — The Problem We All Know
@@ -86,11 +168,19 @@ TRANSICIÓN: "Entonces, ¿qué pasa si en vez de meter todo en la ventana de con
 
 **What happens:**
 
-- Model sees the beginning
-- Model sees the end
-- **But forgets the middle**
+<div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+  <div style="background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:10px;">
+    <div style="font-size:1.1em;">👁️ Sees the beginning</div>
+  </div>
+  <div style="background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:10px;">
+    <div style="font-size:1.1em;">👁️ Sees the end</div>
+  </div>
+  <div style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; border-radius:10px; padding:10px;">
+    <div style="font-size:1.1em;">🧠 <strong>But forgets the middle</strong></div>
+  </div>
+</div>
 
-Performance degrades as context grows, even within the model's supposed "window"
+<div style="color:#94a3b8; font-size:0.85em; margin-top:10px;">Performance degrades as context grows, even within the model's supposed "window"</div>
 
 </div>
 <div>
@@ -123,11 +213,27 @@ Model: "Alice" ❌
 
 Like a programmer with a huge file:
 
-- Doesn't load it all into RAM
-- Opens it, searches what's needed
-- Can call functions recursively
+<div style="display:flex; gap:12px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🚫</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fca5a5; font-weight:600;">Don't load everything</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">RAM would explode — so why do we do this with LLMs?</div>
+  </div>
+  <div style="flex:1; background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🔎</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fde68a; font-weight:600;">Search on demand</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Open, grep, filter — inspect only what matters</div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.12); border:1px solid #22c55e; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🧬</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#86efac; font-weight:600;">Recurse & conquer</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Split the problem, delegate to sub-calls, merge results</div>
+  </div>
+</div>
 
-**This is RLM: Recursive Language Models**
+<div style="background:linear-gradient(135deg, rgba(96,165,250,0.2), rgba(168,85,247,0.2)); border:2px solid #60a5fa; border-radius:12px; padding:12px; text-align:center !important; margin-top:16px; font-size:1.15em; font-weight:700; color:#e2e8f0;">
+  🧠 This is <span style="color:#60a5fa;">RLM</span>: Recursive Language Models
+</div>
 
 ---
 
@@ -135,14 +241,35 @@ Like a programmer with a huge file:
 
 From the paper (MIT CSAIL 2025):
 
-1. **Symbolic handle** to the prompt
-   - Context stored as variable `P`, not in neural network
-
-2. **Persistent Turing-complete environment**
-   - Python REPL where LLM can execute code
-
-3. **Symbolic recursion**
-   - LLM can call itself (`sub_RLM`) on portions of context
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(96,165,250,0.15); border:2px solid #3b82f6; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">🔄</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#93c5fd;">3 · Symbolic recursion</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">LLM calls itself via <code style="background:rgba(255,255,255,0.08); color:#60a5fa;">sub_RLM</code> on context portions — divide and conquer at any depth</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!--
 NOTAS — The 3 Defining Properties of RLM
@@ -163,64 +290,33 @@ IMPORTANTE: Un sistema que tenga las 3 propiedades ES un RLM. Si le falta alguna
 # 🎯 Architecture: RLM High-Level View
 
 <!-- Root RLM (depth=0) -->
-<table style="width:100%; border-collapse:separate; border-spacing:0; background:#eff6ff; border:2px solid #93c5fd; border-radius:14px; margin-top:10px;">
-<tr><td colspan="5" style="padding:8px 14px; font-size:20px; font-weight:800; color:#1e40af; border:none;">RLM (root / depth = 0)</td></tr>
+<table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-radius:14px; margin-top:10px;">
+<tr><td colspan="5" style="padding:8px 14px; font-size:20px; font-weight:800; color:#93c5fd; border:none;">RLM (root / depth = 0)</td></tr>
 <tr style="vertical-align:middle;">
   <td style="border:none; padding:10px; width:15%; text-align:center;">
-    <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:10px; font-weight:600; font-size:18px; margin-bottom:8px;">📋 query</div>
-    <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:14px;">(1M tokens)</span></div>
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px; font-weight:600; font-size:18px; margin-bottom:8px;">📋 query</div>
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:14px;">(1M tokens)</span></div>
   </td>
-  <td style="border:none; padding:5px; font-size:28px; color:#475569; text-align:center; width:5%;">→</td>
+  <td style="border:none; padding:5px; font-size:28px; color:#94a3b8; text-align:center; width:5%;">→</td>
   <td style="border:none; padding:10px; text-align:center; width:50%;">
-    <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">🧠 Language Model</div>
-    <div style="font-size:16px; color:#64748b; margin:4px 0;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#2563eb; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</div>
-    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:10px; font-weight:600; font-size:19px;">⚙️ Environment E (Python REPL)<br>
-      <span style="font-size:14px; font-weight:400;">P = context · llm_query() · extract_after() · peek()</span>
+    <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">🧠 Language Model</div>
+    <div style="font-size:16px; color:#94a3b8; margin:4px 0;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#60a5fa; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</div>
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px; font-weight:600; font-size:19px;">⚙️ Environment E (Python REPL)<br>
+      <span style="font-size:14px; font-weight:400; color:#cbd5e1;">P = context · llm_query() · extract_after() · peek()</span>
     </div>
-    <div style="font-size:15px; color:#64748b; font-style:italic; margin-top:4px;">Context stays here — never sent to LLM directly</div>
+    <div style="font-size:15px; color:#94a3b8; font-style:italic; margin-top:4px;">Context stays here — never sent to LLM directly</div>
   </td>
-  <td style="border:none; padding:5px; font-size:28px; color:#475569; text-align:center; width:5%;">→</td>
+  <td style="border:none; padding:5px; font-size:28px; color:#94a3b8; text-align:center; width:5%;">→</td>
   <td style="border:none; padding:10px; width:15%; text-align:center;">
-    <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">✅ final<br>response</div>
-    <div style="font-size:14px; color:#64748b; font-style:italic; margin-top:4px;">FINAL: / FINAL_VAR:</div>
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:10px; font-weight:600; font-size:18px;">✅ final<br>response</div>
+    <div style="font-size:14px; color:#94a3b8; font-style:italic; margin-top:4px;">FINAL: / FINAL_VAR:</div>
   </td>
 </tr>
 <tr><td colspan="5" style="border:none; text-align:center; padding:6px; font-size:16px;">
-  <span style="color:#64748b;">REPL calls </span>
-  <code style="font-size:16px; color:#ef4444; font-weight:700;">llm_query(sub_context)</code>
-  <span style="color:#64748b;"> → spawns child RLMs ↓</span>
+  <span style="color:#94a3b8;">REPL calls </span>
+  <code style="font-size:16px; color:#f87171; font-weight:700; background:transparent;">llm_query(sub_context)</code>
+  <span style="color:#94a3b8;"> → spawns child RLMs ↓</span>
 </td></tr>
-</table>
-
-<!-- Child RLMs (depth=1) -->
-<table style="width:100%; border-collapse:separate; border-spacing:12px 0; margin-top:10px;">
-<tr>
-  <td style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:12px; width:50%; vertical-align:top;">
-    <div style="font-size:17px; font-weight:700; color:#475569; margin-bottom:8px;">RLM (depth=1) — chunk 1</div>
-    <div style="text-align:center; font-size:17px;">
-      <span style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
-      &nbsp;→&nbsp;
-      <span style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
-      &nbsp;<span style="color:#2563eb; font-size:20px;">⟳</span>&nbsp;
-      <span style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
-      &nbsp;→&nbsp;
-      <span style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
-    </div>
-  </td>
-  <td style="background:#f8fafc; border:2px dashed #94a3b8; border-radius:12px; padding:12px; width:50%; vertical-align:top;">
-    <div style="font-size:17px; font-weight:700; color:#475569; margin-bottom:8px;">RLM (depth=1) — chunk 2</div>
-    <div style="text-align:center; font-size:17px;">
-      <span style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
-      &nbsp;→&nbsp;
-      <span style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
-      &nbsp;<span style="color:#2563eb; font-size:20px;">⟳</span>&nbsp;
-      <span style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
-      &nbsp;→&nbsp;
-      <span style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
-    </div>
-    <div style="text-align:center; margin-top:6px; font-size:22px; color:#94a3b8; letter-spacing:8px;">⋯ ⋯ ⋯</div>
-  </td>
-</tr>
 </table>
 
 <!--
@@ -247,6 +343,40 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 
 ---
 
+# 🎯 Architecture: RLM High-Level View
+
+<!-- Child RLMs (depth=1) -->
+  <div style="background:rgba(148,163,184,0.1); border:2px dashed #64748b; border-radius:12px; padding:12px;">
+    <div style="font-size:17px; font-weight:700; color:#cbd5e1; margin-bottom:8px;">RLM (depth=1) — chunk 1</div>
+    <div style="text-align:center; font-size:17px;">
+      <span style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
+      &nbsp;→&nbsp;
+      <span style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
+      &nbsp;<span style="color:#60a5fa; font-size:20px;">⟳</span>&nbsp;
+      <span style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
+      &nbsp;→&nbsp;
+      <span style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
+    </div>
+  </div>
+  <br/>
+  <br/>
+  <br/>
+<div style="background:rgba(148,163,184,0.1); border:2px dashed #64748b; border-radius:12px; padding:12px;">
+    <div style="font-size:17px; font-weight:700; color:#cbd5e1; margin-bottom:8px;">RLM (depth=1) — chunk 2</div>
+    <div style="text-align:center; font-size:17px;">
+      <span style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:8px; padding:4px 10px; font-weight:600;">sub-query</span>
+      &nbsp;→&nbsp;
+      <span style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:8px; padding:4px 10px; font-weight:600;">🧠 LM</span>
+      &nbsp;<span style="color:#60a5fa; font-size:20px;">⟳</span>&nbsp;
+      <span style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:8px; padding:4px 10px; font-weight:600;">⚙️ REPL</span>
+      &nbsp;→&nbsp;
+      <span style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:8px; padding:4px 10px; font-weight:600;">sub-response</span>
+    </div>
+    <div style="text-align:center; margin-top:6px; font-size:22px; color:#64748b; letter-spacing:8px;">⋯ ⋯ ⋯</div>
+  </div>
+
+---
+
 # 🔄 Architecture: The Iterative REPL Loop
 
 <!-- Detailed REPL loop flow — table layout for Marp -->
@@ -256,42 +386,42 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 
 <!-- Left column: Root LM flow -->
 <td style="border:none; width:22%; padding-right:14px;">
-  <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:17px;">
-    🧠 Root LM<br><span style="font-size:13px; font-weight:400;">(depth = 0)</span>
+  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:17px;">
+    🧠 Root LM<br><span style="font-size:13px; font-weight:400; color:#94a3b8;">(depth = 0)</span>
   </div>
-  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
-  <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:8px; padding:8px; font-size:14px;">
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(234,179,8,0.15); border:2px solid #f59e0b; border-radius:8px; padding:8px; font-size:14px; color:#fde68a;">
     <strong>System prompt:</strong><br>
-    "Answer {query}. Interact with REPL which has <code style="font-size:13px;">context</code>..."
+    <span style="color:#cbd5e1;">"Answer {query}. Interact with REPL which has <code style="font-size:13px; background:transparent; color:#60a5fa;">context</code>..."</span>
   </div>
-  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
-  <div style="background:#f0fdf4; border:2px solid #22c55e; border-radius:8px; padding:8px; font-size:14px;">
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; border-radius:8px; padding:8px; font-size:14px; color:#86efac;">
     <strong>LM Output:</strong><br>
-    <code style="font-size:13px; background:#1e293b; color:#a5f3fc; padding:2px 6px; border-radius:3px;">execute_code(...)</code>
+    <code style="font-size:13px; background:#0f172a; color:#a5f3fc; padding:2px 6px; border-radius:3px;">execute_code(...)</code>
   </div>
-  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
-  <div style="background:#fef2f2; border:2px solid #ef4444; border-radius:8px; padding:8px; font-size:14px;">
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(239,68,68,0.1); border:2px solid #ef4444; border-radius:8px; padding:8px; font-size:14px; color:#fca5a5;">
     <strong>REPL stdout:</strong><br>
-    <span style="font-family:monospace; font-size:13px;">"Best match: Ally of Justice Catastor..."</span>
+    <span style="font-family:monospace; font-size:13px; color:#cbd5e1;">"Best match: Ally of Justice Catastor..."</span>
   </div>
-  <div style="text-align:center; font-size:30px; color:#2563eb; font-weight:900;">⟳</div>
-  <div style="text-align:center; font-size:13px; color:#64748b; font-style:italic;">Loop until FINAL</div>
-  <div style="text-align:center; font-size:18px; color:#475569; font-weight:bold;">↓</div>
-  <div style="background:#f5f3ff; border:2px solid #a855f7; border-radius:8px; padding:8px; font-size:14px;">
+  <div style="text-align:center; font-size:30px; color:#60a5fa; font-weight:900;">⟳</div>
+  <div style="text-align:center; font-size:13px; color:#94a3b8; font-style:italic;">Loop until FINAL</div>
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; border-radius:8px; padding:8px; font-size:14px; color:#d8b4fe;">
     <strong>LM Output:</strong><br>
-    <code style="font-size:13px; background:#1e293b; color:#c4b5fd; padding:2px 6px; border-radius:3px;">FINAL(answer)</code>
+    <code style="font-size:13px; background:#0f172a; color:#c4b5fd; padding:2px 6px; border-radius:3px;">FINAL(answer)</code>
   </div>
 </td>
 
 <!-- Right column: REPL Notebook -->
 <td style="border:none; padding-left:14px;">
-  <div style="font-size:22px; font-weight:800; color:#1e293b; font-family:'Consolas',monospace; margin-bottom:8px;">
+  <div style="font-size:22px; font-weight:800; color:#e2e8f0; font-family:'Consolas',monospace; margin-bottom:8px;">
     📓 REPL Python Notebook
   </div>
 
   <!-- In[1] -->
-  <div style="font-size:15px; font-weight:700; color:#64748b;">In[1]</div>
-  <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5;">
+  <div style="font-size:15px; font-weight:700; color:#94a3b8;">In[1]</div>
+  <div style="background:#0f172a; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5; text-align:left !important;">
     <span style="color:#6ee7b7;"># Split context for sub-LLM processing</span><br>
     half = len(context) // 2<br>
     first_half = "\n".join(context[:half])<br>
@@ -300,23 +430,23 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
     print(ans1[:2000])
   </div>
   <table style="width:100%; border-collapse:collapse; margin:6px 0;"><tr>
-    <td style="border:none; font-size:15px; font-weight:700; color:#64748b; width:50px;">Out[1]</td>
-    <td style="border:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace;">Best single match: Ally of Justice Catastor → ✓</td>
-    <td style="border:none; width:120px; background:#fef3c7; border:1px solid #f59e0b; border-radius:6px; padding:4px 8px; font-size:13px; text-align:center;">↗️ <strong>llm_query()</strong><br><span style="font-size:11px;">Recursive d=1</span></td>
+    <td style="border:none; font-size:15px; font-weight:700; color:#94a3b8; width:50px;">Out[1]</td>
+    <td style="border:none; background:rgba(148,163,184,0.1); border:1px solid #475569; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace; color:#cbd5e1; text-align:left !important; ">Best single match: Ally of Justice Catastor → ✓</td>
+    <td style="border:none; width:120px; background:rgba(234,179,8,0.15); border:1px solid #f59e0b; border-radius:6px; padding:4px 8px; font-size:13px; text-align:center; color:#fde68a;">↗️ <strong>llm_query()</strong><br><span style="font-size:11px;">Recursive d=1</span></td>
   </tr></table>
 
-  <div style="text-align:center; font-size:24px; color:#94a3b8; letter-spacing:6px;">⋮ &nbsp; ⋮ &nbsp; ⋮</div>
+  <div style="text-align:center; font-size:24px; color:#64748b; letter-spacing:6px;">⋮ &nbsp; ⋮ &nbsp; ⋮</div>
 
   <!-- In[N] -->
-  <div style="font-size:15px; font-weight:700; color:#64748b;">In[N]</div>
-  <div style="background:#1e293b; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5;">
+  <div style="font-size:15px; font-weight:700; color:#94a3b8;text-align:left !important; margin-bottom:3px;">In[N]</div>
+  <div style="background:#0f172a; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5; text-align:left !important; margin-bottom: 20px">
     <span style="color:#6ee7b7;"># Verify chunk 18 contains the evidence</span><br>
     chunk18 = context[18]<br>
     excerpt = find_excerpt(chunk18, "illegal to play")<br>
     print("Excerpt:", excerpt or "Not Found")
   </div>
-  <div style="font-size:15px; font-weight:700; color:#64748b; margin-top:4px;">Out[N]</div>
-  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace;">
+  <div style="font-size:15px; font-weight:700; color:#94a3b8; margin-top:4px;text-align:left !important; margin-bottom:3px">Out[N]</div>
+  <div style="background:rgba(148,163,184,0.1); border:1px solid #475569; border-radius:6px; padding:6px 10px; font-size:13px; font-family:monospace; color:#cbd5e1; text-align:left !important">
     Excerpt: "...Catastor appears in the artwork of Blue Pollinator..."
   </div>
 </td>
@@ -529,18 +659,45 @@ NUEVO BASELINE: El paper agrega "CodeAct (+ sub-calls)" para aislar el efecto de
 
 # 📈 Performance Degradation Comparison
 
-**S-NIAH, OOLONG, OOLONG-Pairs benchmarks**
+**S-NIAH, OOLONG, OOLONG-Pairs benchmarks** — As context grows (8K → 1M tokens):
 
-As context grows (8K → 1M tokens):
-
-- **GPT-5 baseline:** 80% → 20% accuracy 📉
-- **RLM(GPT-5):** 95% → 90% accuracy ✅
-
-**Why?**
-
-- Baseline truncates → loses information
-- RLM programmatically inspects → no truncation
-- RLM cost scales log-linearly, not exponentially
+<div style="display:flex; gap:14px; margin-top:12px;">
+  <div style="flex:1; background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:12px; padding:16px;">
+    <div style="font-size:1.4em; margin-bottom:6px; text-align:center !important;">📉</div>
+    <div style="font-size:1em; font-weight:700; color:#fca5a5; text-align:center !important;">GPT-5 baseline</div>
+    <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:8px;">
+      <span style="font-size:1.4em; font-weight:700; color:#86efac;">80%</span>
+      <span style="color:#64748b; font-size:1.2em;">→</span>
+      <span style="font-size:1.4em; font-weight:700; color:#ef4444;">20%</span>
+    </div>
+    <div style="font-size:0.75em; color:#94a3b8; text-align:center !important; margin-top:4px;">accuracy collapses</div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:16px;">
+    <div style="font-size:1.4em; margin-bottom:6px; text-align:center !important;">✅</div>
+    <div style="font-size:1em; font-weight:700; color:#86efac; text-align:center !important;">RLM(GPT-5)</div>
+    <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:8px;">
+      <span style="font-size:1.4em; font-weight:700; color:#86efac;">95%</span>
+      <span style="color:#64748b; font-size:1.2em;">→</span>
+      <span style="font-size:1.4em; font-weight:700; color:#86efac;">90%</span>
+    </div>
+    <div style="font-size:0.75em; color:#94a3b8; text-align:center !important; margin-top:4px;">barely degrades</div>
+  </div>
+</div>
+<div style="display:flex; gap:10px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid #475569; border-radius:8px; padding:10px; display:flex; align-items:center; gap:10px;">
+    <span style="font-size:1.3em;">✂️</span>
+    <div><span style="color:#fca5a5; font-weight:600;">Baseline truncates</span><span style="color:#94a3b8;"> → loses information</span></div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid #475569; border-radius:8px; padding:10px; display:flex; align-items:center; gap:10px;">
+    <span style="font-size:1.3em;">🔍</span>
+    <div><span style="color:#86efac; font-weight:600;">RLM inspects</span><span style="color:#94a3b8;"> → no truncation</span></div>
+  </div>
+</div>
+<br/>
+<div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid #475569; border-radius:8px; padding:10px; display:flex; align-items:center; gap:10px; justify-content:center">
+    <span style="font-size:1.3em;">💰</span>
+    <div><span style="color:#93c5fd; font-weight:600;">Cost</span><span style="color:#94a3b8;"> → log-linear, not exponential</span></div>
+  </div>
 
 <!--
 NOTAS — Performance Degradation Comparison
@@ -640,29 +797,29 @@ Pairs:           0.1%           4.3%             5.2%
 
 # 🏗️ rlm-runtime Architecture
 
-<table style="width:100%; border-collapse:separate; border-spacing:0; background:#eff6ff; border:2px solid #93c5fd; border-radius:14px; margin-top:8px;">
+<table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.4); border:2px solid #3b82f6; border-radius:14px; margin-top:8px;">
 <tr><td colspan="4" style="padding:8px 14px; border:none; text-align:center;">
-  <div style="background:#fef9c3; border:2px solid #eab308; color:#713f12; border-radius:10px; padding:8px 20px; font-weight:600; font-size:18px; display:inline-block;">📋 User Query + Context</div>
-  <div style="font-size:20px; color:#475569;">↓</div>
-  <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:10px; padding:10px; font-weight:600; font-size:20px;">🧠 RLM Orchestrator — Main loop · State management · FINAL detection</div>
-  <div style="font-size:20px; color:#475569;">↓</div>
+  <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:8px 20px; font-weight:600; font-size:18px; display:inline-block;">📋 User Query + Context</div>
+  <div style="font-size:20px; color:#94a3b8;">↓</div>
+  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; font-weight:600; font-size:20px;">🧠 RLM Orchestrator — Main loop · State management · FINAL detection</div>
+  <div style="font-size:20px; color:#94a3b8;">↓</div>
 </td></tr>
 <tr>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
-    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">⚙️ PythonREPL<br><span style="font-size:13px; font-weight:400;">exec code · P, ctx<br>peek · extract_after<br>ask_chunks · llm_query</span></div>
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">⚙️ PythonREPL<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">exec code · P, ctx<br>peek · extract_after<br>ask_chunks · llm_query</span></div>
   </td>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
-    <div style="background:#93c5fd; border:2px solid #3b82f6; color:#1e3a5f; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🔌 Adapters<br><span style="font-size:13px; font-weight:400;">OpenAI · Anthropic<br>vLLM · Ollama<br>GenericChat</span></div>
+    <div style="background:rgba(59,130,246,0.15); border:2px solid #3b82f6; color:#93c5fd; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🔌 Adapters<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">OpenAI · Anthropic<br>vLLM · Ollama<br>GenericChat</span></div>
   </td>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
-    <div style="background:#d8b4fe; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🛡️ Policy<br><span style="font-size:13px; font-weight:400;">max_steps · max_tokens<br>max_subcalls<br>max_recursion_depth</span></div>
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🛡️ Policy<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">max_steps · max_tokens<br>max_subcalls<br>max_recursion_depth</span></div>
   </td>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
-    <div style="background:#fde68a; border:2px solid #f59e0b; color:#713f12; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">📊 Trace + Cache<br><span style="font-size:13px; font-weight:400;">Debug · Metrics<br>FileCache · SmartRouter<br>TraceFormatter</span></div>
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #f59e0b; color:#fde68a; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">📊 Trace + Cache<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">Debug · Metrics<br>FileCache · SmartRouter<br>TraceFormatter</span></div>
   </td>
 </tr>
 <tr><td colspan="4" style="border:none; padding:4px 14px; text-align:center;">
-  <div style="background:#e9d5ff; border:2px solid #a855f7; color:#581c87; border-radius:10px; padding:8px; font-weight:600; font-size:16px; display:inline-block;">✅ Output: answer + full trace</div>
+  <div style="background:rgba(168,85,247,0.2); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:8px; font-weight:600; font-size:16px; display:inline-block;">✅ Output: answer + full trace</div>
 </td></tr>
 </table>
 
@@ -903,10 +1060,10 @@ NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script ex
 <table style="width:100%; border-collapse:separate; border-spacing:0; margin-top:8px;">
 <tr>
   <td style="border:none; padding:8px; width:45%; vertical-align:top;">
-    <div style="background:#bbf7d0; border:2px solid #22c55e; color:#14532d; border-radius:12px; padding:14px; text-align:center;">
+    <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:12px; padding:14px; text-align:center;">
       <div style="font-size:20px; font-weight:700;">🧠 RLM-Qwen3-8B</div>
-      <div style="font-size:15px; font-weight:400; margin-top:4px;">"Optimized brain"</div>
-      <div style="font-size:14px; margin-top:8px; text-align:left;">
+      <div style="font-size:15px; font-weight:400; margin-top:4px; color:#94a3b8;">"Optimized brain"</div>
+      <div style="font-size:14px; margin-top:8px; text-align:left; color:#cbd5e1;">
         ✦ Generates efficient code<br>
         ✦ Fewer unnecessary subcalls<br>
         ✦ Better chunking strategies<br>
@@ -915,14 +1072,14 @@ NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script ex
     </div>
   </td>
   <td style="border:none; padding:8px; width:10%; text-align:center; vertical-align:middle;">
-    <div style="font-size:28px; color:#2563eb;">⟳</div>
-    <div style="font-size:14px; color:#64748b; font-style:italic;">generates<br>code</div>
+    <div style="font-size:28px; color:#60a5fa;">⟳</div>
+    <div style="font-size:14px; color:#94a3b8; font-style:italic;">generates<br>code</div>
   </td>
   <td style="border:none; padding:8px; width:45%; vertical-align:top;">
-    <div style="background:#fca5a5; border:2px solid #ef4444; color:#7f1d1d; border-radius:12px; padding:14px; text-align:center;">
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:12px; padding:14px; text-align:center;">
       <div style="font-size:20px; font-weight:700;">⚙️ rlm-runtime</div>
-      <div style="font-size:15px; font-weight:400; margin-top:4px;">"Operating system"</div>
-      <div style="font-size:14px; margin-top:8px; text-align:left;">
+      <div style="font-size:15px; font-weight:400; margin-top:4px; color:#94a3b8;">"Operating system"</div>
+      <div style="font-size:14px; margin-top:8px; text-align:left; color:#cbd5e1;">
         ✦ REPL environment<br>
         ✦ Executes code safely<br>
         ✦ Manages recursive subcalls<br>
@@ -932,7 +1089,7 @@ NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script ex
   </td>
 </tr>
 <tr><td colspan="3" style="border:none; text-align:center; padding:8px;">
-  <div style="background:linear-gradient(135deg, #eff6ff, #f0fdf4); border:2px solid #3b82f6; border-radius:10px; padding:10px; font-size:17px; font-weight:600; color:#1e40af;">
+  <div style="background:rgba(59,130,246,0.15); border:2px solid #3b82f6; border-radius:10px; padding:10px; font-size:17px; font-weight:600; color:#93c5fd;">
     💡 They complement each other — not replace
   </div>
 </td></tr>
@@ -949,7 +1106,7 @@ POR QUÉ NO SE SUSTITUYEN:
 - Sin runtime: El modelo post-trained necesita un REPL donde ejecutar código, gestión de subcalls, y detección de FINAL. No puede funcionar solo.
 - Sin modelo post-trained: El runtime funciona con cualquier LLM (GPT-5, Qwen vanilla, etc.), pero de forma menos eficiente. El modelo post-trained mejora la eficiencia un ~5x.
 
-EVIDENCIA: En CodeQA, scaffold solo = 26%, post-trained + scaffold = 32%. En OOLONG, ambos sacan 48% — el post-training no mejora la accuracy aquí, pero sí reduce los subcalls y el coste.
+EVIDENCIA: En CodeQA, scaffold solo = 26%, post-trained + scaffold = 32%. En OOLONG, scaffold = 24%, fine-tuned = 32% — el post-training mejora tanto la accuracy como la eficiencia, reduciendo subcalls y coste.
 
 FUTURO: A medida que más modelos se entrenen como RLMs, el runtime se vuelve más valioso — es la plataforma estándar sobre la que corren.
 -->
