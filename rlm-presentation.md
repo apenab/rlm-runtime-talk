@@ -156,7 +156,7 @@ SOLUCIONES ACTUALES Y POR QUÉ FALLAN:
 
 DATO DEL PAPER: Incluso GPT-5 con su ventana de 272K tokens pierde rendimiento significativo a partir de 16K tokens en tareas complejas (OOLONG-Pairs). No es solo un problema de tamaño de ventana, es un problema de cómo se procesa la información.
 
-TRANSICIÓN: "Entonces, ¿qué pasa si en vez de meter todo en la ventana de contexto, tratamos el texto como un archivo externo que el modelo puede inspeccionar programáticamente?"
+TRANSICIÓN: Context ROT
 -->
 
 ---
@@ -204,6 +204,11 @@ Model: "Alice" ❌
 
 </div>
 </div>
+
+<!--
+"Entonces, ¿qué pasa si en vez de meter todo en la ventana de contexto, tratamos el texto como un archivo externo que el modelo puede inspeccionar programáticamente?"
+
+-->
 
 ---
 
@@ -613,12 +618,12 @@ OJO: Este ejemplo es simplificado. En la realidad, las tareas son más complejas
 
 # 📊 MIT Paper Results: GPT-5
 
-| Task                      | GPT-5 Base | RLM(GPT-5) | Gain      |
-| ------------------------- | ---------- | ---------- | --------- |
-| **CodeQA**                | 24%\*      | **62%**    | 2.6x 🚀   |
-| **BrowseComp+ (1K docs)** | 0%\*       | **91.3%**  | N/A -> ✅ |
-| **OOLONG**                | 44%        | **56.5%**  | 1.3x      |
-| **OOLONG-Pairs**          | 0.1%       | **58%**    | 580x 🤯   |
+| Task                      | GPT-5 Base | RLM(GPT-5) | Gain    |
+| ------------------------- | ---------- | ---------- | ------- |
+| **CodeQA**                | 24%\*      | **62%**    | 2.6x 🚀 |
+| **BrowseComp+ (1K docs)** | 0%\*       | **91.3%**  | ∞ -> ✅ |
+| **OOLONG**                | 44%        | **56.5%**  | 1.3x    |
+| **OOLONG-Pairs**          | 0.1%       | **58%**    | 580x 🤯 |
 
 _\* Hit context limits. Source: Table 1, MIT CSAIL paper (2025)_
 
