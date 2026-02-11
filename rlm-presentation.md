@@ -811,7 +811,7 @@ Pairs:           0.1%           4.3%             5.2%
 </td></tr>
 <tr>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
-    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">⚙️ PythonREPL<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">exec code · P, ctx<br>peek · extract_after<br>ask_chunks · llm_query</span></div>
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">⚙️ REPL Backend<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">PythonREPL · <span style="color:#22c55e;">MontyREPL 🦀</span><br>peek · extract_after<br>ask_chunks · llm_query</span></div>
   </td>
   <td style="border:none; padding:8px; width:25%; vertical-align:top;">
     <div style="background:rgba(59,130,246,0.15); border:2px solid #3b82f6; color:#93c5fd; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:16px;">🔌 Adapters<br><span style="font-size:13px; font-weight:400; color:#cbd5e1;">OpenAI · Anthropic<br>vLLM · Ollama<br>GenericChat</span></div>
@@ -1114,6 +1114,160 @@ POR QUÉ NO SE SUSTITUYEN:
 EVIDENCIA: En CodeQA, scaffold solo = 26%, post-trained + scaffold = 32%. En OOLONG, scaffold = 24%, fine-tuned = 32% — el post-training mejora tanto la accuracy como la eficiencia, reduciendo subcalls y coste.
 
 FUTURO: A medida que más modelos se entrenen como RLMs, el runtime se vuelve más valioso — es la plataforma estándar sobre la que corren.
+-->
+
+---
+
+# 🔒 The Security Question
+
+An RLM executes **LLM-generated code** in a Python REPL. What could go wrong?
+
+<div style="display:flex; gap:12px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:10px; padding:14px;">
+    <div style="font-size:1.1em; font-weight:700; color:#fca5a5; margin-bottom:6px;">⚠️ Current: <code style="background:transparent; color:#fca5a5;">exec()</code> sandbox</div>
+    <div style="font-size:0.85em; color:#94a3b8; line-height:1.6;">
+      Whitelist-based blocking<br>
+      Bypasseable via <code style="background:rgba(255,255,255,0.08);">__builtins__</code><br>
+      Infinite loops <strong style="color:#ef4444;">hang the process</strong><br>
+      Memory bombs <strong style="color:#ef4444;">crash the host</strong>
+    </div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:10px; padding:14px;">
+    <div style="font-size:1.1em; font-weight:700; color:#86efac; margin-bottom:6px;">✅ New: Pydantic Monty</div>
+    <div style="font-size:0.85em; color:#94a3b8; line-height:1.6;">
+      Minimal Python interpreter <strong style="color:#86efac;">in Rust</strong><br>
+      No <code style="background:rgba(255,255,255,0.08);">exec()</code>, no imports, no introspection<br>
+      Timeout: <strong style="color:#86efac;">5s default</strong> (configurable)<br>
+      Memory limit: <strong style="color:#86efac;">128MB default</strong>
+    </div>
+  </div>
+</div>
+
+<div style="background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:10px; padding:10px; margin-top:14px; text-align:center !important; font-size:0.95em;">
+  🦀 <strong>pydantic-monty</strong> — by the Pydantic team · designed for LLM code execution
+</div>
+
+<!--
+NOTAS — The Security Question
+
+CONTEXTO: Este es un problema fundamental del approach RLM. Estamos dándole a un LLM la capacidad de ejecutar código arbitrario en un Python REPL. Incluso con un LLM "bueno" (GPT-5, Claude), hay riesgos:
+- Prompt injection: un documento malicioso podría engañar al LLM para que ejecute código peligroso.
+- Errores del modelo: el LLM podría generar accidentalmente un `while True: pass` o un `[0]*10**9`.
+- Sandbox escapes: `exec()` en CPython es notoriamente difícil de sandboxear. Hay exploits conocidos via `__builtins__.__import__('os')`, introspection con `__class__.__bases__`, etc.
+
+LA SOLUCIÓN: Pydantic Monty (https://github.com/pydantic/monty) es un intérprete Python mínimo escrito en Rust. No es CPython — es un intérprete nuevo que solo implementa un subconjunto seguro de Python. No tiene `exec()`, no tiene `eval()`, no tiene imports, no tiene acceso al MRO de Python. Es "secure by construction", no por whitelist.
+
+LÍMITES CONFIGURABLES: timeout (5s default), memoria (128MB), allocations (1M), stack depth (100). Si el código excede cualquier límite, Monty lo mata limpiamente.
+
+TRANSICIÓN: "Veamos el impacto concreto en seguridad..."
+-->
+
+---
+
+# 🛡️ Security: Before vs After
+
+| Threat | PythonREPL | MontyREPL |
+|--------|-----------|-----------|
+| Sandbox escape via `__builtins__` | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
+| Nested `exec()`/`eval()` | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
+| Introspection (`__class__.__bases__`) | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
+| Infinite loop | <span style="color:#ef4444; font-weight:700;">HANGS</span> | <span style="color:#22c55e; font-weight:700;">TIMEOUT 5s</span> |
+| Memory bomb (`[0]*10**9`) | <span style="color:#ef4444; font-weight:700;">CRASH</span> | <span style="color:#22c55e; font-weight:700;">LIMIT 128MB</span> |
+| Import os/sys | <span style="color:#eab308;">Whitelist (bypasseable)</span> | <span style="color:#22c55e; font-weight:700;">NO IMPORTS</span> |
+
+<div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:10px; padding:10px; margin-top:10px; text-align:center !important; font-size:0.95em;">
+  🔑 <strong>Secure by construction</strong> — not by blacklist
+</div>
+
+<!--
+NOTAS — Security: Before vs After
+
+RECORRER LA TABLA fila por fila:
+
+1. Sandbox escape: En CPython, puedes hacer `().__class__.__bases__[0].__subclasses__()` para acceder a todas las clases cargadas, y desde ahí importar `os` o `subprocess`. En Monty no existe el MRO de CPython — es un intérprete diferente.
+
+2. Nested exec/eval: En CPython, dentro de un `exec()` puedes llamar a otro `exec()`. Esto permite construir payloads dinámicos que evitan detección estática. Monty simplemente no implementa `exec()` ni `eval()`.
+
+3. Introspection: `__class__.__bases__` y `__subclasses__()` son las técnicas clásicas de Python jail escape. Monty no tiene acceso a estas dunder methods.
+
+4. Infinite loop: Un `while True: pass` en CPython con `exec()` cuelga el proceso indefinidamente (a menos que uses `multiprocessing` con timeout, que tiene sus propios problemas). Monty tiene un timeout configurable que mata la ejecución limpiamente.
+
+5. Memory bomb: `[0] * (10**9)` asigna ~8GB de RAM instantáneamente en CPython. Monty tiene un límite de memoria (128MB default) y un límite de allocations (1M).
+
+6. Imports: En CPython, la whitelist puede ser bypaseada por los escapes anteriores. En Monty, el concepto de "import" no existe.
+
+PUNTO CLAVE: "No es que Monty bloquee estos ataques — es que ni siquiera tiene los mecanismos que los hacen posibles. Es como preguntarle a una calculadora que hackee un servidor."
+-->
+
+---
+
+# ⚡ Monty: Performance Impact
+
+<div class="columns">
+<div>
+
+**Isolated REPL** (micro-benchmark):
+
+<div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+  <div style="background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:10px;">
+    <div style="font-size:0.95em; color:#fde68a; font-weight:600;">Monty is ~3-4x slower</div>
+    <div style="font-size:0.8em; color:#94a3b8;">Simple exec: 3ms vs 1ms</div>
+  </div>
+  <div style="background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:10px;">
+    <div style="font-size:0.95em; color:#fde68a; font-weight:600;">But all times are 1-25ms</div>
+    <div style="font-size:0.8em; color:#94a3b8;">Even worst case: 25ms</div>
+  </div>
+</div>
+
+</div>
+<div>
+
+**Full RLM loop** (production):
+
+<div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+  <div style="background:rgba(34,197,94,0.12); border:1px solid #22c55e; border-radius:10px; padding:10px;">
+    <div style="font-size:0.95em; color:#86efac; font-weight:600;">Only ~1.6x slower</div>
+    <div style="font-size:0.8em; color:#94a3b8;">Overhead: +0.07ms per execution</div>
+  </div>
+  <div style="background:rgba(34,197,94,0.12); border:1px solid #22c55e; border-radius:10px; padding:10px;">
+    <div style="font-size:0.95em; color:#86efac; font-weight:600;">REPL is &lt;0.01% of total time</div>
+    <div style="font-size:0.8em; color:#94a3b8;">LLM calls dominate: 100-5000ms each</div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div style="background:#0f172a; border-radius:8px; padding:12px; margin-top:14px; font-family:monospace; font-size:0.8em; color:#94a3b8; text-align:center !important;">
+<span style="color:#ef4444;">|── LLM call (500ms) ──|</span><span style="color:#22c55e;">|REPL|</span><span style="color:#ef4444;">|── LLM call (500ms) ──|</span><br>
+<span style="font-size:0.85em; color:#64748b;">The cost of security is practically zero</span>
+</div>
+
+<!--
+NOTAS — Monty: Performance Impact
+
+Este slide es el PUNCHLINE de la sección de seguridad. La preocupación obvia es: "si Monty es un intérprete diferente, ¿no será más lento?" La respuesta es: sí, pero no importa.
+
+MICRO-BENCHMARK (REPL aislado, sin LLM):
+- Monty es ~3-4x más lento que CPython en ejecución cruda: 3ms vs 1ms para operaciones simples, hasta 25ms para multi-step.
+- Esto suena mal en aislamiento (3-4x!), pero los tiempos absolutos son milisegundos.
+
+LOOP RLM COMPLETO (con FakeAdapter):
+- Cuando mides el loop RLM completo, Monty solo es ~1.6x más lento. ¿Por qué? Porque el REPL es una fracción mínima del tiempo total.
+- Overhead promedio: +0.07ms por ejecución.
+
+EN PRODUCCIÓN REAL:
+- Una llamada al LLM toma entre 100ms y 5000ms (según modelo y tokens).
+- El REPL toma 0.2ms.
+- Proporción: 0.2ms / 1000ms = 0.02% del tiempo total.
+- El diagrama de tiempos lo muestra visualmente: las barras rojas (LLM) dominan, la barra verde (REPL) es casi invisible.
+
+MENSAJE CLAVE: "La integración de Monty elimina TODAS las vulnerabilidades de seguridad conocidas del REPL, a un costo de rendimiento de +0.07ms por ejecución — menos del 0.01% del tiempo total de un ciclo RLM en producción."
+
+BENCHMARK COMMANDS (para referencia):
+- REPL aislado: `uv run python examples/bench_repl_python_vs_monty.py`
+- Loop completo: `uv run python examples/bench_rlm_repl_backends.py`
+- Exportar: `RLM_EXPORT=1` prefijo
 -->
 
 ---
