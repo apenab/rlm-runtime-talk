@@ -468,7 +468,7 @@ COLUMNA IZQUIERDA — Flujo del Root LM:
 - El Root LM recibe un system prompt: "Tienes un contexto en la variable context, interactúa con el REPL."
 - En cada iteración, el LM genera código (execute_code).
 - El REPL ejecuta el código y devuelve stdout (truncado a ~2000 chars).
-- El stdout vuelve al LM como parte del historial. El LM decide: generar más código o emitir FINAL.
+- CONVERSATION HISTORY: El stdout Y la respuesta del LM se appenden al historial acumulativo. En la siguiente iteración, el LM ve TODOS sus intentos anteriores (código + resultados). Esto permite autocorrección: si el código falla, el LM ve el error Y su código anterior.
 - El loop (⟳) se repite hasta FINAL(respuesta) o FINAL_VAR(variable).
 
 COLUMNA DERECHA — REPL Python Notebook:
@@ -477,7 +477,7 @@ COLUMNA DERECHA — REPL Python Notebook:
 - In[N]: En iteraciones posteriores, el LLM escribe funciones de verificación para confirmar evidencia.
 
 PUNTO CLAVE para decir en voz alta:
-"El LLM NUNCA ve el contexto completo. Solo ve metadata y stdout truncado del REPL. Toda la inspección ocurre mediante código. Las llamadas a llm_query() disparan sub-RLMs recursivos sobre trozos más pequeños."
+"El LLM NUNCA ve el contexto completo. Solo ve metadata y stdout truncado del REPL. Toda la inspección ocurre mediante código. Las llamadas a llm_query() disparan sub-RLMs recursivos sobre trozos más pequeños. Y gracias al historial conversacional multi-turno, el LLM puede autocorregirse viendo sus intentos anteriores — si un chunk no tenía la respuesta, el LLM ya lo sabe y prueba otro."
 -->
 
 ---
@@ -488,33 +488,37 @@ PUNTO CLAVE para decir en voz alta:
 def RLM(prompt_P):
     state = InitREPL(prompt=P)
     state.add_function(sub_RLM)  # Recursive calls!
-    hist = [Metadata(state)]
+    hist = [SystemPrompt, Metadata(state)]
 
     while True:
-        code = LLM(hist)
-        (state, stdout) = REPL(state, code)
-        hist = hist || code || Metadata(stdout)
+        response = LLM(hist)           # LLM sees FULL history
+        hist = hist || response         # Append assistant turn
+        (state, stdout) = REPL(state, response.code)
+        hist = hist || Result(stdout)   # Append REPL feedback
 
         if state[Final] is set:
             return state[Final]
 ```
 
-**Key:** Context stays in REPL, LLM writes code to inspect it
+**Key:** Context stays in REPL. LLM sees all previous attempts and self-corrects.
 
 <!--
 NOTAS — Algorithm 1: The Correct Design
 
-Este es el pseudocódigo exacto del paper. Línea por línea:
+Este es el pseudocódigo del paper, actualizado para reflejar nuestra implementación con conversation history multi-turno.
 
+Línea por línea:
 1. InitREPL(prompt=P): Crea un entorno Python con P como variable. El LLM NO ve P directamente.
 2. state.add_function(sub_RLM): Registra la función de recursión. El código del LLM puede llamar a llm_query() o ask_chunks().
-3. hist = [Metadata(state)]: El historial del LLM empieza solo con metadata: "El contexto tiene X tokens, Y documentos, tipo: texto..."
-4. LOOP: El LLM genera código → el REPL lo ejecuta → stdout vuelve al historial → el LLM ve el resultado y genera más código.
+3. hist = [SystemPrompt, Metadata(state)]: El historial empieza con el system prompt + metadata del contexto (longitud, tipo, nº documentos). El LLM NUNCA ve P completo.
+4. LOOP: El LLM recibe el historial COMPLETO (todos los turnos anteriores). Genera código → se ejecuta → el resultado se appenda como turno "user". Esto permite al LLM VER sus intentos anteriores y autocorregirse.
 5. state[Final]: Cuando el LLM emite FINAL: o FINAL_VAR:, el loop termina.
 
-CLAVE: hist contiene código + stdout, NUNCA el contexto P completo. El LLM "ve" P solo a través de print() en el REPL.
+CLAVE: hist crece como [system, user_initial, assistant(code), user(stdout), assistant(code), user(stdout), ...]. Cada iteración el LLM ve toda la conversación. Esto es FUNDAMENTAL para la autocorrección — si el código falla, el LLM ve el error Y su código anterior.
 
-En mi rlm-runtime, esto está implementado en src/rlm_runtime/rlm.py → método run().
+NUESTRA IMPLEMENTACIÓN: En src/pyrlm_runtime/rlm.py → método run(), el campo conversation_history=True activa este comportamiento. Con max_history_tokens se puede limitar el presupuesto de tokens para evitar desbordar la ventana de contexto. La función _trim_history() preserva siempre el system prompt + primer user message, y recorta turnos antiguos del medio.
+
+BACKWARD COMPAT: Con conversation_history=False se mantiene el comportamiento anterior (stateless, 2 mensajes por llamada).
 -->
 
 ---
@@ -554,6 +558,8 @@ FLAW #4 - Compact lossy: Cuando el historial crece, se comprime con summarizaci�
 COMPARACIÓN DIRECTA:
 - Algorithm 1: P NUNCA está en hist → escala infinitamente
 - Algorithm 2: P SIEMPRE está en hist → limitado por ventana de contexto
+
+NOTA SOBRE NUESTRO TRIMMING: En pyrlm-runtime implementamos _trim_history() que recorta turnos antiguos del MEDIO del historial, pero SIEMPRE preserva el system prompt + primer user message (que contiene la metadata del contexto). Esto es diferente del "Compact lossy" del Algorithm 2 porque: (1) nunca perdemos el contexto de la tarea original, (2) solo recortamos turnos intermedios de código+stdout que ya se procesaron, (3) siempre mantenemos los turnos más recientes que son los más relevantes para la autocorrección.
 
 Pregunta para la audiencia: "¿Cuántos de ustedes han usado un agente que les dice 'contexto demasiado largo, resumiendo...'? Eso es Algorithm 2."
 -->
@@ -806,7 +812,7 @@ Pairs:           0.1%           4.3%             5.2%
 <tr><td colspan="4" style="padding:8px 14px; border:none; text-align:center;">
   <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:8px 20px; font-weight:600; font-size:18px; display:inline-block;">📋 User Query + Context</div>
   <div style="font-size:20px; color:#94a3b8;">↓</div>
-  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; font-weight:600; font-size:20px;">🧠 RLM Orchestrator — Main loop · State management · FINAL detection</div>
+  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; font-weight:600; font-size:20px;">🧠 RLM Orchestrator — Main loop · Conversation history · FINAL detection</div>
   <div style="font-size:20px; color:#94a3b8;">↓</div>
 </td></tr>
 <tr>
@@ -835,7 +841,7 @@ Este es MI paquete, publicado en github.com/apenab/rlm-runtime. Implementa Algor
 
 COMPONENTES:
 
-1. RLM ORCHESTRATOR (rlm.py): El loop principal. Recibe query + context, crea el REPL, inyecta las helper functions, y ejecuta el loop LLM→code→REPL→stdout hasta FINAL. Implementa fallback_code para Phase 0 determinista.
+1. RLM ORCHESTRATOR (rlm.py): El loop principal. Recibe query + context, crea el REPL, inyecta las helper functions, y ejecuta el loop LLM→code→REPL→stdout hasta FINAL. Implementa conversation history multi-turno (el LLM ve todos sus intentos previos para autocorrección), _trim_history() inteligente para gestionar el presupuesto de tokens, y fallback_code para Phase 0 determinista.
 
 2. PythonREPL (env.py): Entorno sandboxed de Python. Ejecuta el código del LLM de forma segura. Tiene las variables P (string) y ctx (Context object). Inyecta todas las helper functions: peek(), tail(), extract_after(), ask_chunks(), llm_query(), pick_first_answer(), etc.
 
@@ -997,6 +1003,29 @@ cache = FileCache(".rlm_cache")
 # Second run of same query: instant!
 ```
 
+**3. Conversation History (Multi-turn)**
+
+```python
+# LLM sees its full interaction history
+rlm = RLM(
+    adapter=adapter,
+    conversation_history=True,   # default
+    max_history_tokens=50_000,   # optional trim budget
+)
+# system → user → assistant(code) → user(REPL result) → ...
+# Enables self-correction across iterations
+```
+
+<!--
+NOTAS — Advanced Features (Implemented ✅)
+
+PARALLEL SUBCALLS: ThreadPoolExecutor permite ejecutar múltiples subcalls en paralelo. ask_chunks() con parallel=True distribuye los chunks entre workers. Speedup real de ~3.2x con 8 workers en benchmarks internos.
+
+CACHING: FileCache guarda hash SHA-256 del input de cada subcall y su respuesta. Si el mismo subcall se repite (mismo chunk + misma query), se devuelve el resultado cacheado sin llamar al LLM. Hit rate de ~40% en queries repetidos.
+
+CONVERSATION HISTORY: Este es el cambio más reciente e impactante. Antes, cada iteración del loop reconstruía los mensajes desde cero — el LLM solo veía el último stdout/error. Ahora acumulamos el historial completo: system → user(initial) → assistant(code) → user(REPL result) → assistant(code) → ... Esto permite al LLM ver sus intentos previos y autocorregirse. _trim_history() mantiene system + primer user message y recorta los turnos más antiguos cuando se excede max_history_tokens. conversation_history=True es el default, conversation_history=False preserva el comportamiento anterior para backward compatibility.
+-->
+
 ---
 
 # 🛠️ More Advanced Features (🚧 Draft — To Implement)
@@ -1041,6 +1070,7 @@ result = router.run(query, context)
 - Deterministic Phase 0 (0 subcalls when possible)
 - Aggressive caching
 - Parallel execution
+- Multi-turn conversation history (self-correction)
 
 <!--
 NOTAS — My Benchmarks vs Paper (Draft)
@@ -1088,6 +1118,7 @@ NOTA: Estos benchmarks son sobre tareas tipo needle-in-haystack con mi script ex
         ✦ REPL environment<br>
         ✦ Executes code safely<br>
         ✦ Manages recursive subcalls<br>
+        ✦ Conversation history & self-correction<br>
         ✦ Policy, cache & trace
       </div>
     </div>
@@ -1105,7 +1136,7 @@ NOTAS — Runtime + Post-trained Model
 
 IMPRESIÓN PERSONAL: Cuando vi por primera vez que existía RLM-Qwen3-8B (un modelo post-entrenado para actuar como RLM), mi primera reacción fue: "¿Esto va a hacer obsoleto mi runtime?" La respuesta es NO — se complementan perfectamente.
 
-ANALOGÍA: Es como la relación entre un sistema operativo y un programa optimizado. El SO (rlm-runtime) provee la infraestructura: REPL seguro, gestión de subcalls, caching, policy limits, tracing. El programa optimizado (RLM-Qwen3-8B) genera mejor código para esa infraestructura.
+ANALOGÍA: Es como la relación entre un sistema operativo y un programa optimizado. El SO (rlm-runtime) provee la infraestructura: REPL seguro, gestión de subcalls, conversation history para autocorrección, caching, policy limits, tracing. El programa optimizado (RLM-Qwen3-8B) genera mejor código para esa infraestructura.
 
 POR QUÉ NO SE SUSTITUYEN:
 - Sin runtime: El modelo post-trained necesita un REPL donde ejecutar código, gestión de subcalls, y detección de FINAL. No puede funcionar solo.
@@ -1350,6 +1381,7 @@ async def process_long_context(
 **In progress:**
 
 - ✅ Validate with RLM-Qwen3-8B
+- ✅ Conversation history (multi-turn self-correction)
 - Additional benchmarks (LongBench-Pro)
 - Performance optimizations (async subcalls)
 - Skills system for document processing
@@ -1419,7 +1451,8 @@ async def process_long_context(
 
 4. **rlm-runtime is production-ready**
    - Multi-model support
-   - Advanced features (caching, parallel, tracing)
+   - Advanced features (caching, parallel, conversation history, tracing)
+   - Self-correction via multi-turn history
    - Compatible with post-trained models
 
 ---
