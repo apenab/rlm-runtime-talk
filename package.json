@@ -4,7 +4,7 @@
   "description": "When Context Becomes a Systems Problem: Recursive Language Models - Technical Presentation",
   "scripts": {
     "build": "npm run build:html && npm run build:pdf",
-    "build:html": "marp rlm-presentation.md -o index.html",
+    "build:html": "marp rlm-presentation.md --html -o index.html",
     "build:pdf": "marp rlm-presentation.md -o presentation.pdf --allow-local-files",
     "preview": "marp -p rlm-presentation.md",
     "watch": "marp -w rlm-presentation.md -o index.html"
