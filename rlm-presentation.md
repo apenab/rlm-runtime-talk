@@ -127,6 +127,99 @@ User: "What happened in chapter 37?"
 GPT-5: "I'm sorry, the context is too long... 🤷"
 ```
 
+<!--
+NOTAS — The Problem We All Know (0/3)
+
+SETUP: Plantear el problema de forma directa. Los LLMs tienen límites de contexto. Si el libro tiene 500 páginas y el modelo solo aguanta 200, ¿qué hace? Se rinde o corta.
+
+TRANSICIÓN: "¿Cuáles son las soluciones actuales? Vamos a verlas..."
+-->
+
+---
+
+# 🤔 The Problem We All Know
+
+Imagine giving GPT-5 an entire 500-page book...
+
+```
+User: "What happened in chapter 37?"
+GPT-5: "I'm sorry, the context is too long... 🤷"
+```
+
+**Current solutions:**
+
+<div style="display:flex; gap:12px; margin-top:12px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Requires complex infrastructure</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Expensive and still have limits</div>
+  </div>
+</div>
+
+<!--
+NOTAS — The Problem We All Know (1/3)
+
+CONTEXTO: Los LLMs actuales tienen ventanas de contexto limitadas (GPT-5: 272K tokens, ~200 páginas). Pero muchas tareas reales requieren procesar mucho más.
+
+TRUNCATION: Simplemente corta el texto. Si la respuesta está en la parte cortada, se pierde. Es lo que hace el "baseline" en el paper.
+
+TRANSICIÓN: "Bueno, truncar es malo. ¿Y si usamos RAG?"
+-->
+
+---
+
+# 🤔 The Problem We All Know
+
+Imagine giving GPT-5 an entire 500-page book...
+
+```
+User: "What happened in chapter 37?"
+GPT-5: "I'm sorry, the context is too long... 🤷"
+```
+
+**Current solutions:**
+
+<div style="display:flex; gap:12px; margin-top:12px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Requires complex infrastructure</div>
+  </div>
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
+    <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Expensive and still have limits</div>
+  </div>
+</div>
+
+<!--
+NOTAS — The Problem We All Know (2/3)
+
+RAG: Funciona bien para búsqueda de información localizada, pero falla cuando necesitas razonar sobre TODO el documento (ej: OOLONG, que requiere procesar cada línea).
+
+TRANSICIÓN: "Ok, ¿y los modelos con ventanas de contexto enormes?"
+-->
+
+---
+
+# 🤔 The Problem We All Know
+
+Imagine giving GPT-5 an entire 500-page book...
+
+```
+User: "What happened in chapter 37?"
+GPT-5: "I'm sorry, the context is too long... 🤷"
+```
+
 **Current solutions:**
 
 <div style="display:flex; gap:12px; margin-top:12px;">
@@ -145,14 +238,9 @@ GPT-5: "I'm sorry, the context is too long... 🤷"
 </div>
 
 <!--
-NOTAS — The Problem We All Know
+NOTAS — The Problem We All Know (3/3)
 
-CONTEXTO: Los LLMs actuales tienen ventanas de contexto limitadas (GPT-5: 272K tokens, ~200 páginas). Pero muchas tareas reales requieren procesar mucho más.
-
-SOLUCIONES ACTUALES Y POR QUÉ FALLAN:
-- Truncation: simplemente corta el texto. Si la respuesta está en la parte cortada, se pierde. Es lo que hace el "baseline" en el paper.
-- RAG: funciona bien para búsqueda de información localizada, pero falla cuando necesitas razonar sobre TODO el documento (ej: OOLONG, que requiere procesar cada línea).
-- Long-context models: Gemini 2.0 tiene 1M tokens, pero sufre "context rot" — el rendimiento se degrada con contextos largos. Y el coste escala linealmente con el input.
+LONG-CONTEXT MODELS: Gemini 2.0 tiene 1M tokens, pero sufre "context rot" — el rendimiento se degrada con contextos largos. Y el coste escala linealmente con el input.
 
 DATO DEL PAPER: Incluso GPT-5 con su ventana de 272K tokens pierde rendimiento significativo a partir de 16K tokens en tareas complejas (OOLONG-Pairs). No es solo un problema de tamaño de ventana, es un problema de cómo se procesa la información.
 
@@ -206,8 +294,102 @@ Model: "Alice" ❌
 </div>
 
 <!--
-"Entonces, ¿qué pasa si en vez de meter todo en la ventana de contexto, tratamos el texto como un archivo externo que el modelo puede inspeccionar programáticamente?"
+-->
 
+---
+
+# 💡 The Brilliant Insight from MIT
+
+> **What if we treat the context as part of the _environment_ instead of loading it all into memory?**
+
+Like a programmer with a huge file:
+
+<!--
+NOTAS — The Brilliant Insight from MIT (0/3)
+
+La pregunta clave del paper: ¿y si el contexto no es algo que cargas, sino algo con lo que interactúas?
+
+La analogía del programador: nadie carga un archivo de 10GB entero en memoria. Lo abres, buscas, filtras. ¿Por qué no hacemos lo mismo con los LLMs?
+
+TRANSICIÓN: "Veamos cómo se traduce eso en práctica..."
+-->
+
+---
+
+# 💡 The Brilliant Insight from MIT
+
+> **What if we treat the context as part of the _environment_ instead of loading it all into memory?**
+
+Like a programmer with a huge file:
+
+<div style="display:flex; gap:12px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🚫</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fca5a5; font-weight:600;">Don't load everything</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">RAM would explode — so why do we do this with LLMs?</div>
+  </div>
+  <div style="flex:1; background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:14px; text-align:center !important; visibility:hidden;">
+    <div style="font-size:1.6em;">🔎</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fde68a; font-weight:600;">Search on demand</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Open, grep, filter — inspect only what matters</div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.12); border:1px solid #22c55e; border-radius:10px; padding:14px; text-align:center !important; visibility:hidden;">
+    <div style="font-size:1.6em;">🧬</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#86efac; font-weight:600;">Recurse & conquer</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Split the problem, delegate to sub-calls, merge results</div>
+  </div>
+</div>
+
+<div style="background:linear-gradient(135deg, rgba(96,165,250,0.2), rgba(168,85,247,0.2)); border:2px solid #60a5fa; border-radius:12px; padding:12px; text-align:center !important; margin-top:16px; font-size:1.15em; font-weight:700; color:#e2e8f0; visibility:hidden;">
+  🧠 This is <span style="color:#60a5fa;">RLM</span>: Recursive Language Models
+</div>
+
+<!--
+NOTAS — The Brilliant Insight from MIT (1/3)
+
+"¿Qué pasa si tratamos el contexto como parte del ENTORNO en vez de cargarlo todo en memoria?"
+
+Pensémoslo como un programador: si tienes un archivo de 10GB, no lo cargas entero en RAM. Eso explotaría. Y sin embargo, eso es exactamente lo que hacemos con los LLMs — les metemos todo el contexto en el prompt.
+
+TRANSICIÓN: "Entonces, ¿qué hacemos en vez de cargar todo? Buscamos bajo demanda."
+-->
+
+---
+
+# 💡 The Brilliant Insight from MIT
+
+> **What if we treat the context as part of the _environment_ instead of loading it all into memory?**
+
+Like a programmer with a huge file:
+
+<div style="display:flex; gap:12px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🚫</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fca5a5; font-weight:600;">Don't load everything</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">RAM would explode — so why do we do this with LLMs?</div>
+  </div>
+  <div style="flex:1; background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:10px; padding:14px; text-align:center !important;">
+    <div style="font-size:1.6em;">🔎</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#fde68a; font-weight:600;">Search on demand</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Open, grep, filter — inspect only what matters</div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.12); border:1px solid #22c55e; border-radius:10px; padding:14px; text-align:center !important; visibility:hidden;">
+    <div style="font-size:1.6em;">🧬</div>
+    <div style="font-size:0.95em; margin-top:4px; color:#86efac; font-weight:600;">Recurse & conquer</div>
+    <div style="font-size:0.8em; color:#94a3b8; margin-top:2px;">Split the problem, delegate to sub-calls, merge results</div>
+  </div>
+</div>
+
+<div style="background:linear-gradient(135deg, rgba(96,165,250,0.2), rgba(168,85,247,0.2)); border:2px solid #60a5fa; border-radius:12px; padding:12px; text-align:center !important; margin-top:16px; font-size:1.15em; font-weight:700; color:#e2e8f0; visibility:hidden;">
+  🧠 This is <span style="color:#60a5fa;">RLM</span>: Recursive Language Models
+</div>
+
+<!--
+NOTAS — The Brilliant Insight from MIT (2/3)
+
+Buscar bajo demanda: abres el archivo, haces grep, filtras — solo inspeccionas lo que importa. No necesitas tener todo en memoria para encontrar lo que buscas.
+
+TRANSICIÓN: "Pero ¿qué pasa cuando el archivo es tan grande que ni grep alcanza? Recursión: divide el problema, delega a sub-procesos, y une los resultados."
 -->
 
 ---
@@ -256,6 +438,100 @@ From the paper (MIT CSAIL 2025):
       </div>
     </div>
   </div>
+  <div style="display:flex; align-items:stretch; gap:12px; visibility:hidden;">
+    <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:12px; visibility:hidden;">
+    <div style="background:rgba(96,165,250,0.15); border:2px solid #3b82f6; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">🔄</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#93c5fd;">3 · Symbolic recursion</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">LLM calls itself via <code style="background:rgba(255,255,255,0.08); color:#60a5fa;">sub_RLM</code> on context portions — divide and conquer at any depth</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+NOTAS — The 3 Defining Properties of RLM (1/3)
+
+Estas 3 propiedades son lo que distingue un RLM de un agente con herramientas (como CodeAct o ReAct). Vamos a verlas una por una.
+
+1. SYMBOLIC HANDLE: El contexto NO está en el prompt del LLM. Está como variable P en el REPL. El LLM solo ve metadata (longitud, estructura). Para ver el contenido, tiene que escribir código: peek(100), ctx.find("pattern"), etc. Esto es clave porque evita que el modelo sufra "context rot".
+
+Por ejemplo, CodeAct tiene herramientas pero mete el contexto en el prompt — falla esta propiedad.
+
+TRANSICIÓN: "Y si el contexto no está en el prompt... ¿dónde vive? En un entorno persistente."
+-->
+
+---
+
+# 🏗️ The 3 Defining Properties of RLM
+
+From the paper (MIT CSAIL 2025):
+
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:stretch; gap:12px; visibility:hidden;">
+    <div style="background:rgba(96,165,250,0.15); border:2px solid #3b82f6; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">🔄</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#93c5fd;">3 · Symbolic recursion</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">LLM calls itself via <code style="background:rgba(255,255,255,0.08); color:#60a5fa;">sub_RLM</code> on context portions — divide and conquer at any depth</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+NOTAS — The 3 Defining Properties of RLM (2/3)
+
+2. PERSISTENT TURING-COMPLETE ENVIRONMENT: El REPL de Python persiste entre iteraciones. El modelo puede definir funciones, guardar variables, y construir lógica compleja paso a paso. No es un "one-shot" — es un loop iterativo. El paper lo describe como analogía con "out-of-core algorithms": memoria principal pequeña pero rápida (LLM) + almacenamiento externo grande (REPL con el contexto).
+
+Summary agents comprimen el contexto — fallan esta propiedad porque no es persistente.
+
+TRANSICIÓN: "Ok, tenemos el contexto fuera del modelo y un entorno persistente. Pero ¿qué pasa cuando el contexto es TAN grande que ni el REPL puede procesarlo de una vez? Recursión."
+-->
+
+---
+
+# 🏗️ The 3 Defining Properties of RLM
+
+From the paper (MIT CSAIL 2025):
+
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+  <div style="display:flex; align-items:stretch; gap:12px;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
+      <div>
+        <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+      </div>
+    </div>
+  </div>
   <div style="display:flex; align-items:stretch; gap:12px;">
     <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
       <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
@@ -277,24 +553,21 @@ From the paper (MIT CSAIL 2025):
 </div>
 
 <!--
-NOTAS — The 3 Defining Properties of RLM
-
-Estas 3 propiedades son lo que distingue un RLM de un agente con herramientas (como CodeAct o ReAct):
-
-1. SYMBOLIC HANDLE: El contexto NO está en el prompt del LLM. Está como variable P en el REPL. El LLM solo ve metadata (longitud, estructura). Para ver el contenido, tiene que escribir código: peek(100), ctx.find("pattern"), etc. Esto es clave porque evita que el modelo sufra "context rot".
-
-2. PERSISTENT TURING-COMPLETE ENVIRONMENT: El REPL de Python persiste entre iteraciones. El modelo puede definir funciones, guardar variables, y construir lógica compleja paso a paso. No es un "one-shot" — es un loop iterativo. El paper lo describe como analogía con "out-of-core algorithms": memoria principal pequeña pero rápida (LLM) + almacenamiento externo grande (REPL con el contexto).
+NOTAS — The 3 Defining Properties of RLM (3/3)
 
 3. SYMBOLIC RECURSION: La función llm_query() permite que el RLM se llame a sí mismo con trozos del contexto. Cada subcall crea un RLM hijo (depth+1) con su propio REPL. Esto permite "divide and conquer": partir el contexto en chunks y procesarlos recursivamente. Es lo que permite escalar a 10M+ tokens.
 
+ReAct usa tools pero no tiene recursión simbólica — falla esta propiedad.
+
 IMPORTANTE: Un sistema que tenga las 3 propiedades ES un RLM. Si le falta alguna, NO lo es. Por ejemplo, CodeAct tiene herramientas pero mete el contexto en el prompt (falla propiedad 1). Summary agents comprimen el contexto (falla propiedad 2, no es persistente). ReAct usa tools pero no tiene recursión simbólica (falla propiedad 3).
+
+TRANSICIÓN: "Ahora que conocemos las 3 propiedades, veamos cómo se conectan en la arquitectura completa."
 -->
 
 ---
 
 # 🎯 Architecture: RLM High-Level View
 
-<!-- Root RLM (depth=0) -->
 <table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-radius:14px; margin-top:10px;">
 <tr><td colspan="5" style="padding:8px 14px; font-size:20px; font-weight:800; color:#93c5fd; border:none;">RLM (root / depth = 0)</td></tr>
 <tr style="vertical-align:middle;">
@@ -350,7 +623,6 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 
 # 🎯 Architecture: RLM High-Level View
 
-<!-- Child RLMs (depth=1) -->
   <div style="background:rgba(148,163,184,0.1); border:2px dashed #64748b; border-radius:12px; padding:12px;">
     <div style="font-size:17px; font-weight:700; color:#cbd5e1; margin-bottom:8px;">RLM (depth=1) — chunk 1</div>
     <div style="text-align:center; font-size:17px;">
@@ -384,12 +656,9 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 
 # 🔄 Architecture: The Iterative REPL Loop
 
-<!-- Detailed REPL loop flow — table layout for Marp -->
-
 <table style="width:100%; border-collapse:collapse; margin-top:4px;">
 <tr style="vertical-align:top;">
 
-<!-- Left column: Root LM flow -->
 <td style="border:none; width:22%; padding-right:14px;">
   <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:17px;">
     🧠 Root LM<br><span style="font-size:13px; font-weight:400; color:#94a3b8;">(depth = 0)</span>
@@ -418,13 +687,64 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
   </div>
 </td>
 
-<!-- Right column: REPL Notebook -->
+<td style="border:none; padding-left:14px; visibility:hidden;"></td>
+
+</tr>
+</table>
+
+<!--
+NOTAS — Architecture: The Iterative REPL Loop (1/2)
+
+COLUMNA IZQUIERDA — Flujo del Root LM:
+- El Root LM recibe un system prompt: "Tienes un contexto en la variable context, interactúa con el REPL."
+- En cada iteración, el LM genera código (execute_code).
+- El REPL ejecuta el código y devuelve stdout (truncado a ~2000 chars).
+- CONVERSATION HISTORY: El stdout Y la respuesta del LM se appenden al historial acumulativo. En la siguiente iteración, el LM ve TODOS sus intentos anteriores (código + resultados). Esto permite autocorrección.
+- El loop (⟳) se repite hasta FINAL(respuesta).
+
+TRANSICIÓN: "Ahora veamos qué pasa dentro del REPL..."
+-->
+
+---
+
+# 🔄 Architecture: The Iterative REPL Loop
+
+<table style="width:100%; border-collapse:collapse; margin-top:4px;">
+<tr style="vertical-align:top;">
+
+<td style="border:none; width:22%; padding-right:14px;">
+  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px; text-align:center; font-weight:600; font-size:17px;">
+    🧠 Root LM<br><span style="font-size:13px; font-weight:400; color:#94a3b8;">(depth = 0)</span>
+  </div>
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(234,179,8,0.15); border:2px solid #f59e0b; border-radius:8px; padding:8px; font-size:14px; color:#fde68a;">
+    <strong>System prompt:</strong><br>
+    <span style="color:#cbd5e1;">"Answer {query}. Interact with REPL which has <code style="font-size:13px; background:transparent; color:#60a5fa;">context</code>..."</span>
+  </div>
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; border-radius:8px; padding:8px; font-size:14px; color:#86efac;">
+    <strong>LM Output:</strong><br>
+    <code style="font-size:13px; background:#0f172a; color:#a5f3fc; padding:2px 6px; border-radius:3px;">execute_code(...)</code>
+  </div>
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(239,68,68,0.1); border:2px solid #ef4444; border-radius:8px; padding:8px; font-size:14px; color:#fca5a5;">
+    <strong>REPL stdout:</strong><br>
+    <span style="font-family:monospace; font-size:13px; color:#cbd5e1;">"Best match: Ally of Justice Catastor..."</span>
+  </div>
+  <div style="text-align:center; font-size:30px; color:#60a5fa; font-weight:900;">⟳</div>
+  <div style="text-align:center; font-size:13px; color:#94a3b8; font-style:italic;">Loop until FINAL</div>
+  <div style="text-align:center; font-size:18px; color:#94a3b8; font-weight:bold;">↓</div>
+  <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; border-radius:8px; padding:8px; font-size:14px; color:#d8b4fe;">
+    <strong>LM Output:</strong><br>
+    <code style="font-size:13px; background:#0f172a; color:#c4b5fd; padding:2px 6px; border-radius:3px;">FINAL(answer)</code>
+  </div>
+</td>
+
 <td style="border:none; padding-left:14px;">
   <div style="font-size:22px; font-weight:800; color:#e2e8f0; font-family:'Consolas',monospace; margin-bottom:8px;">
     📓 REPL Python Notebook
   </div>
 
-  <!-- In[1] -->
   <div style="font-size:15px; font-weight:700; color:#94a3b8;">In[1]</div>
   <div style="background:#0f172a; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5; text-align:left !important;">
     <span style="color:#6ee7b7;"># Split context for sub-LLM processing</span><br>
@@ -442,7 +762,6 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 
   <div style="text-align:center; font-size:24px; color:#64748b; letter-spacing:6px;">⋮ &nbsp; ⋮ &nbsp; ⋮</div>
 
-  <!-- In[N] -->
   <div style="font-size:15px; font-weight:700; color:#94a3b8;text-align:left !important; margin-bottom:3px;">In[N]</div>
   <div style="background:#0f172a; color:#a5f3fc; font-family:'Consolas',monospace; font-size:13px; padding:8px 12px; border-radius:6px; line-height:1.5; text-align:left !important; margin-bottom: 20px">
     <span style="color:#6ee7b7;"># Verify chunk 18 contains the evidence</span><br>
@@ -460,9 +779,6 @@ ANALOGÍA: "Es como un programador que no carga un archivo gigante en RAM. Lo ab
 </table>
 
 <!--
-NOTAS — Slide: The Iterative REPL Loop
-
-Este diagrama muestra el flujo paso a paso de una ejecución RLM (Figure 2 del paper + diagrama del blog).
 
 COLUMNA IZQUIERDA — Flujo del Root LM:
 - El Root LM recibe un system prompt: "Tienes un contexto en la variable context, interactúa con el REPL."
@@ -503,10 +819,6 @@ def RLM(prompt_P):
 **Key:** Context stays in REPL. LLM sees all previous attempts and self-corrects.
 
 <!--
-NOTAS — Algorithm 1: The Correct Design
-
-Este es el pseudocódigo del paper, actualizado para reflejar nuestra implementación con conversation history multi-turno.
-
 Línea por línea:
 1. InitREPL(prompt=P): Crea un entorno Python con P como variable. El LLM NO ve P directamente.
 2. state.add_function(sub_RLM): Registra la función de recursión. El código del LLM puede llamar a llm_query() o ask_chunks().
@@ -624,46 +936,66 @@ OJO: Este ejemplo es simplificado. En la realidad, las tareas son más complejas
 
 # 📊 MIT Paper Results: GPT-5
 
-| Task                      | GPT-5 Base | RLM(GPT-5) | Gain    |
-| ------------------------- | ---------- | ---------- | ------- |
-| **CodeQA**                | 24%\*      | **62%**    | 2.6x 🚀 |
-| **BrowseComp+ (1K docs)** | 0%\*       | **91.3%**  | ∞ -> ✅ |
-| **OOLONG**                | 44%        | **56.5%**  | 1.3x    |
-| **OOLONG-Pairs**          | 0.1%       | **58%**    | 580x 🤯 |
+<table style="width:100%; border-collapse:separate; border-spacing:0; margin-top:14px; font-size:1em;">
+  <thead>
+    <tr>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; border-radius:0; padding:10px 14px; text-align:center; color:#93c5fd; font-size:1em;">Task</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:10px 14px; text-align:center; color:#93c5fd; font-size:1em;">GPT-5 Base</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:10px 14px; text-align:center; color:#93c5fd; font-size:1em;">RLM(GPT-5)</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:10px 14px; text-align:center; color:#93c5fd; font-size:1em;">Gain</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">CodeQA</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fca5a5; font-size:1.1em;">24%<sup style="font-size:0.7em;">*</sup></td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">62%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fde68a; font-weight:700; font-size:1.1em;">2.6x 🚀</td>
+    </tr>
+    <tr style="background:rgba(255,255,255,0.03);">
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">BrowseComp+ <span style="color:#64748b; font-weight:400; font-size:0.85em;">(1K docs)</span></td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fca5a5; font-size:1.1em;">0%<sup style="font-size:0.7em;">*</sup></td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">91.3%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fde68a; font-weight:700; font-size:1.1em;">∞ ✅</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">OOLONG</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fcd34d; font-size:1.1em;">44%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">56.5%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fde68a; font-weight:700; font-size:1.1em;">1.3x</td>
+    </tr>
+    <tr style="background:rgba(255,255,255,0.03);">
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">OOLONG-Pairs</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fca5a5; font-size:1.1em;">0.1%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">58%</td>
+      <td style="border:1px solid #1e3a5f; padding:11px 14px; text-align:center; color:#fde68a; font-weight:700; font-size:1.1em;">580x 🤯</td>
+    </tr>
+  </tbody>
+</table>
 
-_\* Hit context limits. Source: Table 1, MIT CSAIL paper (2025)_
+<div style="color:#64748b; font-size:0.8em; margin-top:8px;">* Hit context limits — Source: Table 1, MIT CSAIL paper (2025)</div>
 
 **Key insight:** Baseline fails when context > window, RLM scales
 
 <!--
 NOTAS — MIT Paper Results: GPT-5
 
-NÚMEROS VERIFICADOS contra Table 1 del paper. Los asteriscos (*) indican que el modelo base se quedó sin ventana de contexto.
+QUÉ SON ESTOS BENCHMARKS (empezar por aquí):
+Antes de entrar en los números, hay que entender qué mide cada tarea — están diseñados para estresar el problema de contexto largo en distintas dimensiones.
 
-es el score del benchmark — el porcentaje de respuestas correctas.
-En CodeQA por ejemplo: hay 50 preguntas sobre repositorios de código. Si el modelo responde correctamente 31 de 50, saca 62%.
-Cada benchmark mide diferente:
+- CodeQA: comprensión de repositorios de código enteros (23K–4.2M tokens). El modelo responde preguntas sobre el repo. Métrica: % de aciertos.
+- BrowseComp+: búsqueda en 1000 documentos (6M–11M tokens). Literalmente imposible para un modelo con ventana finita. Métrica: % de aciertos.
+- OOLONG: agregación semántica sobre miles de entradas (131K tokens). Cabe en la ventana de GPT-5, pero requiere procesar todo. Métrica: scoring propio del paper.
+- OOLONG-Pairs: razonamiento sobre pares de entidades (32K tokens). Solo 32K — cabe perfectamente en GPT-5. Lo que falla no es el tamaño del contexto sino la complejidad de la tarea. Métrica: F1 score.
 
-CodeQA: % de respuestas correctas (multiple choice)
-BrowseComp+: % de respuestas correctas (búsqueda en documentos)
-OOLONG: scoring propio del paper (0.75^|y-ŷ| para numéricos, exact match para el resto)
-OOLONG-Pairs: F1 score (precisión sobre los pares encontrados)
+RESULTADOS fila a fila (números verificados contra Table 1 del paper — * = se quedó sin ventana):
 
-El 2.6x de la columna "Gain" es: el RLM acierta 2.6 veces más preguntas que el base (62 / 24 = 2.58).
+- CodeQA: Base 24%* → RLM 62%. Ganancia 2.6x.
+- BrowseComp+: Base 0%* (no puede procesarlo) → RLM 91.3%. Ganancia infinita.
+- OOLONG: Base 44% → RLM 56.5%. El contexto SÍ cabe en GPT-5 y aun así el RLM mejora — no es solo un problema de tamaño de ventana.
+- OOLONG-Pairs: Base 0.1% → RLM 58%. 580x. El más llamativo: 32K tokens caben perfectamente, pero el base no puede con la tarea.
 
-CodeQA (23K-4.2M tokens): Comprensión de repositorios de código. Base 24%* (truncado) → RLM 62%. Coste medio RLM: $0.11 vs base $0.13. ¡El RLM es más barato Y más preciso!
-
-62 / 24 = 2.58 = 2.6x.
-
-BrowseComp+ (6M-11M tokens): Búsqueda en 1000 documentos. El base literalmente no puede procesar esto (0%*, N/A). RLM logra 91.3% a un coste de ~$0.99, mientras que meter 6-11M tokens en GPT-5-mini costaría $1.50-$2.75.
-
-OOLONG (131K tokens): Agregación semántica sobre miles de entradas. Cabe en la ventana de GPT-5, pero aún así el RLM mejora un 28.4%. Esto demuestra que no es solo cuestión de tamaño: el processing style importa.
-
-OOLONG-Pairs (32K tokens): Razonamiento cuadrático sobre pares. ¡Solo 32K tokens! Cabe perfectamente en GPT-5. Pero el base saca 0.1% F1 (redondeo mínimo) y el RLM 58%. El paper dice que esto es una "emergent capability" — el RLM puede manejar tareas con complejidad de procesamiento O(N²) que el base simplemente no puede.
-
-COSTE: La mediana del RLM es más barata que la mediana del base (observación del paper sobre coste). Pero hay alta varianza: el percentil 95 del RLM puede ser significativamente más caro.
-
-NUEVO BASELINE: El paper agrega "CodeAct (+ sub-calls)" para aislar el efecto de offloading de contexto al REPL. Reporta CodeQA 24.0%*, OOLONG 40.0%, OOLONG-Pairs 28.4% (vs 58% de RLM(GPT-5) en Pairs).
+TRANSICIÓN: "¿Y qué pasa cuando escalamos el contexto? La siguiente slide lo muestra."
 -->
 
 ---
@@ -713,18 +1045,18 @@ NUEVO BASELINE: El paper agrega "CodeAct (+ sub-calls)" para aislar el efecto de
 <!--
 NOTAS — Performance Degradation Comparison
 
-Esto corresponde a la Figure 1 del paper, que es el gráfico más impactante.
+Esto corresponde a la Figure 1 del paper — el gráfico más impactante. Aquí ya no miramos los números absolutos sino cómo se comportan ambos modelos a medida que el contexto crece de 8K a 1M tokens.
 
-TRES BENCHMARKS escalados de 8K a 1M tokens:
-- S-NIAH (complejidad constante): El needle no crece con el contexto. GPT-5 base mantiene ~80-95% hasta ~128K, luego cae. RLM mantiene ~95% hasta 1M.
-- OOLONG (complejidad lineal): Cada entrada del dataset necesita ser procesada. GPT-5 degrada más rápido. RLM mantiene rendimiento.
-- OOLONG-Pairs (complejidad cuadrática): Cada PAR de entradas. GPT-5 colapsa rápidamente. RLM escala mucho mejor.
+COMPLEJIDAD DE LA TAREA importa más que el tamaño del contexto:
+- S-NIAH (complejidad O(1)): el needle no crece con el contexto. GPT-5 aguanta ~80-95% hasta 128K tokens, luego colapsa. RLM mantiene ~95% hasta 1M.
+- OOLONG (complejidad O(N)): cada entrada necesita procesarse. GPT-5 degrada progresivamente. RLM mantiene rendimiento.
+- OOLONG-Pairs (complejidad O(N²)): cada PAR de entradas. GPT-5 colapsa rápido. El paper lo llama "emergent capability" del RLM — puede manejar tareas cuadráticas que el base simplemente no puede.
 
-PUNTO CLAVE (observación del paper sobre degradación): "GPT-5 performance degrades significantly faster for more complex tasks, while RLM performance degrades but at a much slower rate." A partir de 16K tokens (2^14), el RLM consistentemente supera a GPT-5.
+CITA DEL PAPER: "GPT-5 performance degrades significantly faster for more complex tasks, while RLM performance degrades but at a much slower rate." A partir de ~16K tokens, el RLM consistentemente supera a GPT-5.
 
-COSTE: El RLM escala proporcionalmente a la complejidad de la tarea, pero se mantiene en el mismo orden de magnitud que GPT-5. En BrowseComp+ el RLM es hasta 3x más barato que el summary agent.
+COSTE: El RLM escala proporcionalmente a la complejidad, pero se mantiene en el mismo orden de magnitud. En BrowseComp+ es hasta 3x más barato que un summary agent equivalente. El coste es log-linear, no exponencial.
 
-NOTA IMPORTANTE: El base LM supera al RLM en contextos pequeños. Hay un "crossover point" — el RLM tiene overhead del REPL que no compensa para contextos cortos. Esto es lo que motiva el SmartRouter en mi rlm-runtime.
+CROSSOVER POINT: El base LM supera al RLM en contextos pequeños — el overhead del REPL no compensa para contextos cortos. Esto es exactamente lo que motiva el SmartRouter en rlm-runtime: enrutar al RLM solo cuando merece la pena.
 -->
 
 ---
@@ -733,22 +1065,26 @@ NOTA IMPORTANTE: El base LM supera al RLM en contextos pequeños. Hay un "crosso
 
 **The first natively trained RLM model** (January 2026)
 
-**Training:**
-
-- Base model: Qwen3-8B
-- Training data: ~1000 RLM trajectories
-- Trajectories collected from: Qwen3-Coder-480B-A35B on 750 LongBenchPro tasks
-- 2,250 candidate trajectories → 1,072 filtered (+ per-turn filtering)
-- Training: prime-rl, batch size 64, 300 steps, ~48 H100 hours
-- Data fixes: 16% turns had incorrect FINAL; 13% used FINAL_VAR incorrectly (fixed programmatically)
-- Domains: Unrelated to eval benchmarks
-- Result: Learned recursive strategies from minimal data
-
-**Performance boost:**
-
-- Base Qwen3-8B: 4% on CodeQA
-- RLM(Qwen3-8B) scaffold: 26%
-- **RLM-Qwen3-8B post-trained: 32%** 🚀
+<div style="display:flex; gap:12px; margin-top:12px;">
+  <div style="flex:2; background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:10px; padding:12px;">
+    <div style="font-size:1em; font-weight:700; color:#93c5fd; margin-bottom:8px;">🏋️ Training</div>
+    <div style="font-size:0.82em; color:#cbd5e1; line-height:1.6;">
+      <b>Base:</b> Qwen3-8B<br>
+      <b>Data:</b> ~1,072 RLM trajectories (filtered from 2,250)<br>
+      <b>Source:</b> Qwen3-Coder-480B-A35B · 750 LongBenchPro tasks<br>
+      <b>Run:</b> prime-rl · 300 steps · ~48 H100 hours<br>
+      <b>Domain:</b> Unrelated to eval benchmarks
+    </div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:10px; padding:12px;">
+    <div style="font-size:1em; font-weight:700; color:#86efac; margin-bottom:8px;">📈 CodeQA results</div>
+    <div style="font-size:0.85em; color:#cbd5e1; line-height:2;">
+      Base Qwen3-8B: <span style="color:#fca5a5;">4%</span><br>
+      + RLM scaffold: <span style="color:#fde68a;">26%</span><br>
+      + Post-trained: <span style="color:#86efac; font-weight:700; font-size:1.1em;">32% 🚀</span>
+    </div>
+  </div>
+</div>
 
 <!--
 NOTAS — Breakthrough: RLM-Qwen3-8B
@@ -771,23 +1107,48 @@ OBSERVACIÓN NUEVA: Entrenar RLMs en un dominio puede mejorar el rendimiento gen
 
 ---
 
-# 📊Qwen3-8B: Vanilla vs Scaffold vs Post-trained
+# 📊 Qwen3-8B: Vanilla vs Scaffold vs Post-trained
 
-From benchmarks (multiple tasks):
+<table style="width:100%; border-collapse:separate; border-spacing:0; margin-top:10px; font-size:1em;">
+  <thead>
+    <tr>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:8px 12px; text-align:center; color:#93c5fd; font-size:1em;">Task</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:8px 12px; text-align:center; color:#93c5fd; font-size:1em;">Base Model</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:8px 12px; text-align:center; color:#93c5fd; font-size:1em;">RLM Scaffold</th>
+      <th style="background:rgba(96,165,250,0.2); border:1px solid #3b82f6; padding:8px 12px; text-align:center; color:#93c5fd; font-size:1em;">RLM Fine-tuned</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">CodeQA</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fca5a5; font-size:1.1em;">4.0%<sup style="font-size:0.7em;">*</sup></td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fde68a; font-weight:700; font-size:1.2em;">26.0%</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">32.0%</td>
+    </tr>
+    <tr style="background:rgba(255,255,255,0.03);">
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">BrowseComp+</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fca5a5; font-size:1.1em;">0.0%<sup style="font-size:0.7em;">*</sup></td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fde68a; font-weight:700; font-size:1.2em;">2.0%</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">14.0%</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">OOLONG</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fca5a5; font-size:1.1em;">0.0%<sup style="font-size:0.7em;">*</sup></td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fde68a; font-weight:700; font-size:1.2em;">24.0%</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">32.0%</td>
+    </tr>
+    <tr style="background:rgba(255,255,255,0.03);">
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; font-weight:700; color:#e2e8f0; font-size:1.05em;">OOLONG-Pairs</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fcd34d; font-size:1.1em;">0.1%</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#fde68a; font-weight:700; font-size:1.2em;">4.3%</td>
+      <td style="border:1px solid #1e3a5f; padding:8px 12px; text-align:center; color:#86efac; font-weight:700; font-size:1.3em;">5.2%</td>
+    </tr>
+  </tbody>
+</table>
 
-```
-              Base Model    RLM Scaffold    RLM (fine-tuned)
-CodeQA:          4.0%*         26.0%            32.0%
-BrowseComp+:     0.0%*          2.0%            14.0%
-OOLONG:          0.0%*         24.0%            32.0%
-Pairs:           0.1%           4.3%             5.2%
-```
+<div style="color:#64748b; font-size:0.8em; margin-top:6px;">* Hit context limits — Source: Alex Zhang blog post (2026)</div>
 
-**Insight:** Fine-tuning teaches the model to use the scaffold more efficiently
-
-- Fewer subcalls needed
-- Better chunking strategies
-- Optimal from the first step
+<div style="margin-top:10px; color:#94a3b8; font-size:0.9em;">💡 Fine-tuning teaches fewer subcalls, better chunking, and optimal strategies from step one.</div>
 
 ---
 
@@ -1197,14 +1558,14 @@ TRANSICIÓN: "Veamos el impacto concreto en seguridad..."
 
 # 🛡️ Security: Before vs After
 
-| Threat | PythonREPL | MontyREPL |
-|--------|-----------|-----------|
-| Sandbox escape via `__builtins__` | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
-| Nested `exec()`/`eval()` | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
-| Introspection (`__class__.__bases__`) | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span> |
-| Infinite loop | <span style="color:#ef4444; font-weight:700;">HANGS</span> | <span style="color:#22c55e; font-weight:700;">TIMEOUT 5s</span> |
-| Memory bomb (`[0]*10**9`) | <span style="color:#ef4444; font-weight:700;">CRASH</span> | <span style="color:#22c55e; font-weight:700;">LIMIT 128MB</span> |
-| Import os/sys | <span style="color:#eab308;">Whitelist (bypasseable)</span> | <span style="color:#22c55e; font-weight:700;">NO IMPORTS</span> |
+| Threat                                | PythonREPL                                                      | MontyREPL                                                        |
+| ------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Sandbox escape via `__builtins__`     | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span>     |
+| Nested `exec()`/`eval()`              | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span>     |
+| Introspection (`__class__.__bases__`) | <span style="color:#ef4444; font-weight:700;">VULNERABLE</span> | <span style="color:#22c55e; font-weight:700;">BLOCKED</span>     |
+| Infinite loop                         | <span style="color:#ef4444; font-weight:700;">HANGS</span>      | <span style="color:#22c55e; font-weight:700;">TIMEOUT 5s</span>  |
+| Memory bomb (`[0]*10**9`)             | <span style="color:#ef4444; font-weight:700;">CRASH</span>      | <span style="color:#22c55e; font-weight:700;">LIMIT 128MB</span> |
+| Import os/sys                         | <span style="color:#eab308;">Whitelist (bypasseable)</span>     | <span style="color:#22c55e; font-weight:700;">NO IMPORTS</span>  |
 
 <div style="background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:10px; padding:10px; margin-top:10px; text-align:center !important; font-size:0.95em;">
   🔑 <strong>Secure by construction</strong> — not by blacklist
