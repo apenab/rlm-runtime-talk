@@ -7,7 +7,7 @@
     "build:html": "marp rlm-presentation.md --html -o index.html",
     "build:pdf": "marp rlm-presentation.md -o presentation.pdf --allow-local-files",
     "preview": "marp -p rlm-presentation.md",
-    "watch": "marp -w rlm-presentation.md -o index.html"
+    "watch": "marp -w rlm-presentation.md --html -o index.html"
   },
   "keywords": [
     "rlm",

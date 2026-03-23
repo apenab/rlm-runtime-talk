@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Project: RLM Runtime Talk
 
 Presentacion sobre Recursive Language Models (RLM) — del paper de MIT a implementacion practica con pyrlm-runtime.
@@ -6,7 +10,9 @@ Presentacion sobre Recursive Language Models (RLM) — del paper de MIT a implem
 
 - **Marp** para generar slides desde Markdown (`rlm-presentation.md`)
 - Theme: `uncover` con `class: invert`
-- Build: `make preview` (live), `make build` (HTML + PDF), `make html`, `make pdf`
+- Build: `make preview` (live), `make build` (HTML + PDF), `make html`, `make pdf`, `make watch` (watch mode)
+- Install: `npm install` (local) or `make install` (global)
+- **Important:** The `--html` flag is required for inline HTML (divs, spans) to render. The `npm run` scripts include it; if running `marp` directly, add `--html`.
 
 ## Preferencias de estilo en slides
 
@@ -45,7 +51,19 @@ Presentacion sobre Recursive Language Models (RLM) — del paper de MIT a implem
 
 Este es el main-project de la charla, el código de ejemplo y los benchmarks se encuentran en el repositorio de pyrlm-runtime: https://github.com/apenab/pyrlm-runtime
 
+## Paper source of truth
+
+**IMPORTANTE:** El paper original del MIT está disponible en `paper-mit.pdf` en la raíz del repositorio. Antes de inferir cualquier concepto técnico sobre RLM (arquitectura, algoritmos, propiedades, terminología, flujos de datos), **leer primero el paper**. No asumir ni inventar — si hay duda, consultar `paper-mit.pdf`.
+
+Conceptos clave del paper (Figure 2, Algorithm 1):
+- El **context** se carga como variable `P` en el Environment E (REPL) — nunca se envía directamente al LLM
+- El **query** llega al LLM como metadata del REPL (longitud, prefijo, estructura)
+- El LLM genera código → se ejecuta en el REPL → stdout vuelve al LLM (loop iterativo)
+- `llm_query(sub_context)` spawns child RLMs (recursión simbólica)
+- El loop termina cuando el LLM emite `FINAL:` o `FINAL_VAR:`
+
 ## Inspiration and references
 
-- Paper original de RLM: https://arxiv.org/pdf/2512.24601
+- Paper original de RLM (local): `paper-mit.pdf`
+- Paper original de RLM (arxiv): https://arxiv.org/pdf/2512.24601
 - Blog post: https://alexzhang13.github.io/blog/2025/rlm/
