@@ -122,18 +122,43 @@ style: |
 
 # 🤔 The Problem We All Know
 
-Imagine your bank has 50,000 loan contracts...
+Imagine your org has 50,000 GitHub issues across 300 repos...
 
-```
-Analyst: "Which clients have interest rate caps expiring before Q3 2025?"
-
-LLM:     "I'm sorry, the context is too long to process... 🤷"
-```
+<div style="background:#0f172a; border:1px solid #334155; border-radius:12px; overflow:hidden; margin-top:16px;">
+  <div style="background:#1e293b; border-bottom:1px solid #334155; padding:8px 14px; display:flex; align-items:center; gap:8px;">
+    <span style="color:#ef4444; font-size:0.7em;">●</span>
+    <span style="color:#eab308; font-size:0.7em;">●</span>
+    <span style="color:#22c55e; font-size:0.7em;">●</span>
+    <span style="color:#94a3b8; font-size:0.62em; margin-left:8px;">AI Assistant</span>
+  </div>
+  <div style="padding:16px;">
+  <div style="margin-bottom:14px;">
+    <div style="font-size:0.6em; color:#60a5fa; margin-bottom:5px; font-weight:bold;">Engineer</div>
+    <div style="background:rgba(96,165,250,0.12); border:1px solid #60a5fa; border-radius:2px 12px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
+      "Three teams reported unrelated failures last quarter. Are they connected?"
+    </div>
+  </div>
+  <div style="margin:8px 0 14px;">
+    <div style="display:flex; height:4px; border-radius:2px; overflow:hidden; margin-bottom:4px;">
+      <div style="width:2%; background:#60a5fa;"></div>
+      <div style="width:98%; background:#1e293b;"></div>
+    </div>
+    <div style="font-size:0.55em; color:#475569; text-align:center;">processing <span style="color:#60a5fa;">1,000</span> / 50,000 issues...</div>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end;">
+    <div style="font-size:0.6em; color:#22c55e; margin-bottom:5px; font-weight:bold;">LLM</div>
+    <div style="background:rgba(34,197,94,0.08); border:1px solid #22c55e; border-radius:12px 2px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
+      <div style="color:#22c55e; font-size:0.72em; margin-bottom:4px;">✓ Analysis complete</div>
+      "These failures appear to be <strong>unrelated incidents</strong> across different services."
+    </div>
+  </div>
+  </div>
+</div>
 
 <!--
-50.000 contratos de préstamo.
+50.000 issues en 300 repos.
 
-El analista necesita saber cuáles tienen techos de tipo de interés que vencen antes del Q3 2025.
+Un equipo reportó fallos en checkout, otro en inventario, otro en notificaciones. El engineer sospecha que están conectados.
 
 El problema: no es que el LLM no sea suficientemente listo. Es que la información simplemente no cabe en su ventana de contexto.
 
@@ -144,12 +169,7 @@ El problema: no es que el LLM no sea suficientemente listo. Es que la informaci�
 
 # 🤔 The Problem We All Know
 
-Imagine your bank has 50,000 loan contracts...
-
-```
-Analyst: "Which clients have interest rate caps expiring before Q3 2025?"
-LLM:     "I'm sorry, the context is too long to process... 🤷"
-```
+Imagine your org has 50,000 GitHub issues across 300 repos...
 
 **Current solutions:**
 
@@ -169,9 +189,9 @@ LLM:     "I'm sorry, the context is too long to process... 🤷"
 </div>
 
 <!--
-Truncation: lo más sencillo. Si los 50.000 contratos no caben, se procesan los primeros N. Si el contrato con el problema estaba en la posición 40.000, mala suerte.
+Truncation: lo más sencillo. Si los 50.000 issues no caben, se procesan los primeros N. Si el issue clave estaba en el repo 250, mala suerte.
 
-El banco habrá procesado una muestra sesgada sin saberlo — lo peor porque da una falsa sensación de seguridad.
+El engineer habrá analizado una muestra sesgada sin saberlo — lo peor porque da una falsa sensación de cobertura.
 
 → ¿Y si en vez de cortar, recuperamos solo lo relevante?
 -->
@@ -180,12 +200,7 @@ El banco habrá procesado una muestra sesgada sin saberlo — lo peor porque da 
 
 # 🤔 The Problem We All Know
 
-Imagine your bank has 50,000 loan contracts...
-
-```
-Analyst: "Which clients have interest rate caps expiring before Q3 2025?"
-LLM:     "I'm sorry, the context is too long to process... 🤷"
-```
+Imagine your org has 50,000 GitHub issues across 300 repos...
 
 **Current solutions:**
 
@@ -205,14 +220,15 @@ LLM:     "I'm sorry, the context is too long to process... 🤷"
 </div>
 
 <!--
-RAG busca "interest rate cap expiry". Pero en 50.000 contratos redactados en distintas épocas, países y bufetes, esa cláusula se llama:
-- "variable rate ceiling"
-- "floating rate maximum"
-- "techo de tipo variable"
-- "tipo de interés máximo pactado"
-- ... en 40 variantes distintas
+RAG busca... ¿qué exactamente? No hay un término para buscar. Los issues dicen:
+- "Checkout page hangs after a few hours"
+- "Inventory sync drifts by end of day"
+- "Push notifications arrive 30 min late"
+- "Had to restart the payments pod again"
 
-RAG solo encuentra lo que sabe buscar. Lo que no sabe buscar, lo pierde.
+Cada issue parece un bug distinto. La conexión — un servicio upstream que degrada bajo carga — solo emerge leyendo muchos issues juntos y correlacionando patrones.
+
+RAG necesita una query. Aquí no hay query posible.
 
 → ¿Y si simplemente ampliamos la ventana de contexto?
 -->
@@ -221,12 +237,7 @@ RAG solo encuentra lo que sabe buscar. Lo que no sabe buscar, lo pierde.
 
 # 🤔 The Problem We All Know
 
-Imagine your bank has 50,000 loan contracts...
-
-```
-Analyst: "Which clients have interest rate caps expiring before Q3 2025?"
-LLM:     "I'm sorry, the context is too long to process... 🤷"
-```
+Imagine your org has 50,000 GitHub issues across 300 repos...
 
 **Current solutions:**
 
