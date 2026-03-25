@@ -135,7 +135,7 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
   <div style="margin-bottom:14px;">
     <div style="font-size:0.6em; color:#60a5fa; margin-bottom:5px; font-weight:bold;">Engineer</div>
     <div style="background:rgba(96,165,250,0.12); border:1px solid #60a5fa; border-radius:2px 12px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
-      "Three teams reported unrelated failures last quarter. Are they connected?"
+      "Tres equipos reportaron fallas no relacionadas entre sí el trimestre pasado. ¿Existe alguna conexión entre ellas?"
     </div>
   </div>
   <div style="margin:8px 0 14px;">
@@ -149,7 +149,7 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
     <div style="font-size:0.6em; color:#22c55e; margin-bottom:5px; font-weight:bold;">LLM</div>
     <div style="background:rgba(34,197,94,0.08); border:1px solid #22c55e; border-radius:12px 2px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
       <div style="color:#22c55e; font-size:0.72em; margin-bottom:4px;">✓ Analysis complete</div>
-      "These failures appear to be <strong>unrelated incidents</strong> across different services."
+      "Estos fallos parecen ser <strong>incidentes no relacionados</strong> entre sí que ocurren en diferentes servicios."
     </div>
   </div>
   </div>
@@ -220,13 +220,9 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
 </div>
 
 <!--
-RAG busca... ¿qué exactamente? No hay un término para buscar. Los issues dicen:
-- "Checkout page hangs after a few hours"
-- "Inventory sync drifts by end of day"
-- "Push notifications arrive 30 min late"
-- "Had to restart the payments pod again"
+Que buscamos exactamente?
 
-Cada issue parece un bug distinto. La conexión — un servicio upstream que degrada bajo carga — solo emerge leyendo muchos issues juntos y correlacionando patrones.
+Cada issue parece un bug distinto, y el patron solo emerge leyendo muchos issues juntos y correlacionando patrones.
 
 RAG necesita una query. Aquí no hay query posible.
 
@@ -335,12 +331,6 @@ GPT-5: "Alice" ❌
 
 <div style="font-size: 2.4em; font-weight: 700; color: #60a5fa; text-shadow: 0 0 20px rgba(96,165,250,0.4);">What if we treat the context as part of the <em>environment</em> instead of loading it all into memory?</div>
 
-<!--
-Nadie carga un archivo de 10GB en memoria. Lo abres, buscas, filtras. ¿Por qué los LLMs no hacen lo mismo?
-
-→ Vamos a ver cómo.
--->
-
 ---
 
 # 💡 The Brilliant Insight from MIT
@@ -368,7 +358,7 @@ Like a programmer with a huge file:
 </div>
 
 <!--
-Si no metes el contexto en el prompt, la atención no se diluye. El modelo trabaja siempre sobre fragmentos pequeños.
+Nadie carga un archivo de 10GB en memoria. Lo abres, buscas, filtras. ¿Por qué los LLMs no hacen lo mismo?
 
 → Pero entonces, ¿cómo lo inspecciona? Buscando bajo demanda.
 -->
@@ -551,6 +541,17 @@ From the paper (MIT CSAIL 2025):
 <!--
 El REPL persiste entre iteraciones: variables, funciones, estado acumulado. No es one-shot, es un loop iterativo. El modelo construye su solución paso a paso.
 
+ Python
+  - ipython — más potente, con autocompletado
+  - jupyter — el notebook (celdas = iteraciones RLM)
+
+  JavaScript / Node
+  - node — REPL nativo de Node.js
+  - deno — alternativa moderna con TypeScript nativo
+
+  Java
+  - jshell — REPL oficial desde Java 9 (JEP 222)
+
 → Y cuando el problema es tan grande que ni el REPL puede de una vez...
 -->
 
@@ -657,7 +658,6 @@ El LLM genera código → se ejecuta en el REPL → stdout vuelve al LLM. El loo
 
 Cuando llama a llm_query(sub_context), se crea un RLM hijo con su propio REPL — recursión arbitraria.
 
-Es como un programador que no carga un archivo gigante en RAM: lo abre, busca con grep, y delega trozos.
 -->
 
 ---
@@ -737,40 +737,6 @@ Es como un programador que no carga un archivo gigante en RAM: lo abre, busca co
 <div style="text-align:center; margin-top:8px; font-size:14px; color:#94a3b8;">
   Root REPL: <code style="color:#f87171; font-weight:700; background:transparent;">r1 = llm_query(chunk1) &nbsp;·&nbsp; r2 = llm_query(chunk2) &nbsp;·&nbsp; ...</code>
 </div>
-
----
-
-<!-- slide: newspaper clippings -->
-<div style="position:relative; width:100%; height:88%; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; padding:6px;">
-
-  <div style="transform:rotate(-4deg); box-shadow:3px 4px 12px rgba(0,0,0,0.5); background:#f5f0e8; padding:8px 8px 32px 8px; flex-shrink:0;">
-    <img src="images/prime-intellect.png" style="display:block; max-height:290px; max-width:330px; object-fit:cover;">
-  </div>
-
-  <div style="transform:rotate(-10deg); box-shadow:4px 5px 14px rgba(0,0,0,0.5); background:#fefefe; padding:8px 8px 36px 8px; flex-shrink:0; margin-top:-20px;">
-    <img src="images/rlm-google-adk.png" style="display:block; max-height:420px; max-width:500px; object-fit:cover;">
-  </div>
-
-  <div style="transform:rotate(-1.8deg); box-shadow:2px 6px 10px rgba(0,0,0,0.45); background:#f8f4ee; padding:8px 8px 28px 8px; flex-shrink:0; margin-top:16px;">
-    <img src="images/x-yoav-goldberg.png" style="display:block; max-height:280px; max-width:320px; object-fit:cover;">
-  </div>
-
-  <div style="transform:rotate(3.2deg); box-shadow:5px 3px 13px rgba(0,0,0,0.5); background:#fffdf5; padding:8px 8px 34px 8px; flex-shrink:0; margin-top:-10px;">
-    <img src="images/chen-sun.png" style="display:block; max-height:280px; max-width:320px; object-fit:cover;">
-  </div>
-
-  <div style="transform:rotate(-2.5deg); box-shadow:3px 5px 11px rgba(0,0,0,0.48); background:#f6f1eb; padding:8px 8px 30px 8px; flex-shrink:0; margin-top:10px;">
-    <img src="images/joel-niklaus.png" style="display:block; max-height:285px; max-width:325px; object-fit:cover;">
-  </div>
-
-</div>
-
-<!--
-El paper salió en enero 2026 y en pocas semanas ya estaba generando conversación en toda la industria.
-Prime Intellect, Google ADK, Yoav Goldberg, la comunidad de ML — todos reaccionando al mismo paper.
-
-→ Veamos ahora cómo funciona por dentro — el loop iterativo que hace posible todo esto.
--->
 
 ---
 
@@ -856,10 +822,9 @@ Prime Intellect, Google ADK, Yoav Goldberg, la comunidad de ML — todos reaccio
 </table>
 
 <!--
-Esto es el Algorithm 1 del paper — el corazón del RLM. El contexto (P) NO está en el system prompt, está en el REPL como variable.
 El LM produce código Python crudo en cada iteración — no wrappers, no acciones explícitas. El hist acumula código + Metadata(stdout) para que el modelo se autocorrija.
+
 El loop termina cuando el LM escribe `Final = respuesta` — una asignación Python normal, no una función especial.
-→ Vamos a ver esto en acción con un ejemplo concreto.
 -->
 
 ---
@@ -894,8 +859,6 @@ El loop termina cuando el LM escribe `Final = respuesta` — una asignación Pyt
 
 <!--
 LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recibe un codebase completo y responde preguntas de opción múltiple sobre múltiples ficheros. Contextos de 23K a 4.2M tokens.
-
-GPT-5 = GPT-5 llamado directamente, limitado a ~272K tokens. RLM(GPT-5) = GPT-5 como raíz en el REPL loop, con GPT-5-mini para los subcalls recursivos.
 
 → GPT-5 24%* → RLM(GPT-5) 62%.
 -->
@@ -1222,8 +1185,6 @@ RLM genera código que itera sobre pares de chunks con extract_after() y peek().
 RLM gana en los 4 benchmarks. Patrón claro: cuanto más larga y compleja la tarea, mayor la ventaja.
 OOLONG (lineal) 1.3×, CodeQA (hasta 4.2M) 2.6×, OOLONG-Pairs (cuadrático) 580×, BrowseComp+ (6-11M) ∞.
 
-Coste: RLM(GPT-5) $0.11/query en CodeQA vs Summary Agent $1.31/query — 12× más barato y más preciso.
-
 -->
 
 ---
@@ -1293,12 +1254,6 @@ Coste: RLM(GPT-5) $0.11/query en CodeQA vs Summary Agent $1.31/query — 12× m�
   Past the 272K window (red zone), GPT-5 collapses. <strong style="color:#60a5fa;">RLM(GPT-5)</strong> stays flat at any context length — <em>processing inputs orders of magnitude beyond the base model's limit.</em>
 </div>
 
-<!--
-Observation 3 del paper: "LM performance degrades as a function of input length and problem complexity, while RLM performance scales better."
-GPT-5 empieza ~60% en OOLONG y declina gradualmente. A partir de 272K colapsa porque no puede procesar la entrada.
-RLM(GPT-5) se mantiene plano (~56-58%) desde 8K hasta 1M tokens — la línea es casi horizontal. La zona roja es donde GPT-5 ni puede intentarlo.
--->
-
 ---
 
 # 🧠 RLM-Qwen3-8B
@@ -1309,25 +1264,22 @@ RLM(GPT-5) se mantiene plano (~56-58%) desde 8K hasta 1M tokens — la línea es
     <div style="font-size:0.9em; color:#e2e8f0; line-height:1.5;">Qwen3-8B fine-tuned to <strong>natively operate as an RLM</strong></div>
     <div style="font-size:0.75em; color:#64748b; margin-top:8px;">First small model trained to be an RLM</div>
   </div>
-  <div style="flex:1; background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:12px; padding:20px 16px; text-align:center;">
-    <div style="font-size:0.7em; color:#22c55e; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px;">Result</div>
-    <div style="font-size:2.2em; font-weight:800; color:#22c55e;">+28.3%</div>
-    <div style="font-size:0.78em; color:#94a3b8; margin-top:4px;">avg vs base Qwen3-8B as RLM</div>
-  </div>
   <div style="flex:1; background:rgba(234,179,8,0.1); border:1px solid #eab308; border-radius:12px; padding:20px 16px; text-align:center;">
     <div style="font-size:0.7em; color:#eab308; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px;">Training</div>
     <div style="font-size:0.85em; color:#e2e8f0; line-height:1.5;">~1,000 trajectories from <strong>Qwen3-Coder-480B</strong></div>
     <div style="font-size:0.75em; color:#64748b; margin-top:8px;">Domain unrelated to eval benchmarks</div>
   </div>
+  <div style="flex:1; background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:12px; padding:20px 16px; text-align:center;">
+    <div style="font-size:0.7em; color:#22c55e; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px;">Result</div>
+    <div style="font-size:2.2em; font-weight:800; color:#22c55e;">+28.3%</div>
+    <div style="font-size:0.78em; color:#94a3b8; margin-top:4px;">avg vs base Qwen3-8B as RLM</div>
+  </div>
 </div>
 
 <!--
-Observation 6 del paper (sección 4, pág 7): "Training RLMs on one domain can improve general downstream RLM performance."
-
 Qué es RLM-Qwen3-8B:
 - Es un Qwen3-8B (modelo pequeño de 8B parámetros) que ha sido fine-tuned para operar NATIVAMENTE como un RLM.
 - Se entrena con ~1.000 trayectorias RLM generadas por Qwen3-Coder-480B-A35B (60× más grande) actuando como RLM.
-- Las tareas de entrenamiento son LongBenchPro — completamente distintas a los benchmarks de evaluación (CodeQA, OOLONG, etc.)
 
 Por qué importa:
 - Demuestra que el comportamiento RLM se puede DESTILIAR de un modelo grande a uno pequeño.
@@ -1357,32 +1309,22 @@ Insight clave para el público: no es solo un scaffold alrededor del modelo. El 
   <text x="50" y="78"  text-anchor="end" fill="#64748b" font-size="11">25%</text>
   <text x="50" y="23"  text-anchor="end" fill="#64748b" font-size="11">35%</text>
 
-  <!-- ── GROUP 1: CodeQA · centers at bars: x=99,127,155 ── -->
-  <!-- Base 4% → h=22, top=193 -->
   <rect x="99"  y="193" width="22" height="22" fill="#ef4444" rx="2"/>
   <text x="110" y="189" text-anchor="middle" fill="#fca5a5" font-size="10">4%</text>
-  <!-- Scaffold 26% → h=145, top=70 -->
   <rect x="127" y="70"  width="22" height="145" fill="#eab308" rx="2"/>
   <text x="138" y="66"  text-anchor="middle" fill="#fde68a" font-size="10">26%</text>
-  <!-- Fine-tuned 32% → h=178, top=37 -->
   <rect x="155" y="37"  width="22" height="178" fill="#60a5fa" rx="2"/>
   <text x="166" y="33"  text-anchor="middle" fill="#93c5fd" font-size="10">32%</text>
   <text x="138" y="230" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="600">CodeQA</text>
 
-  <!-- ── GROUP 2: BrowseComp+ · x=254,282,310 ── -->
-  <!-- Base 0% → tiny tick -->
   <line x1="254" y1="215" x2="276" y2="215" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
   <text x="265" y="210" text-anchor="middle" fill="#fca5a5" font-size="10">0%</text>
-  <!-- Scaffold 2% → h=11, top=204 -->
   <rect x="282" y="204" width="22" height="11" fill="#eab308" rx="2"/>
   <text x="293" y="200" text-anchor="middle" fill="#fde68a" font-size="10">2%</text>
-  <!-- Fine-tuned 14% → h=78, top=137 -->
   <rect x="310" y="137" width="22" height="78" fill="#60a5fa" rx="2"/>
   <text x="321" y="133" text-anchor="middle" fill="#93c5fd" font-size="10">14%</text>
   <text x="293" y="230" text-anchor="middle" fill="#94a3b8" font-size="11">BrowseComp+</text>
 
-  <!-- ── GROUP 3: OOLONG · x=409,437,465 ── -->
-  <!-- Base 0% → tiny tick -->
   <line x1="409" y1="215" x2="431" y2="215" stroke="#ef4444" stroke-width="2" opacity="0.5"/>
   <text x="420" y="210" text-anchor="middle" fill="#fca5a5" font-size="10">0%</text>
   <!-- Scaffold 24% → h=134, top=81 -->
@@ -1393,8 +1335,6 @@ Insight clave para el público: no es solo un scaffold alrededor del modelo. El 
   <text x="476" y="33"  text-anchor="middle" fill="#93c5fd" font-size="10">32%</text>
   <text x="448" y="230" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="600">OOLONG</text>
 
-  <!-- ── GROUP 4: OOLONG-Pairs · x=564,592,620 ── -->
-  <!-- Base 0.1% → h=1 -->
   <rect x="564" y="214" width="22" height="1" fill="#ef4444" rx="1"/>
   <text x="575" y="209" text-anchor="middle" fill="#fca5a5" font-size="10">0.1%</text>
   <!-- Scaffold 4.3% → h=24, top=191 -->
@@ -1412,25 +1352,39 @@ Insight clave para el público: no es solo un scaffold alrededor del modelo. El 
   <span><svg width="22" height="10" style="vertical-align:middle;"><rect x="0" y="1" width="18" height="8" fill="#60a5fa" rx="2"/></svg> RLM fine-tuned</span>
 </div>
 
+---
+
+<div style="position:relative; width:100%; height:88%; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; padding:6px;">
+
+  <div style="transform:rotate(-4deg); box-shadow:3px 4px 12px rgba(0,0,0,0.5); background:#f5f0e8; padding:8px 8px 32px 8px; flex-shrink:0;">
+    <img src="images/prime-intellect.png" style="display:block; max-height:290px; max-width:330px; object-fit:cover;">
+  </div>
+
+  <div style="transform:rotate(-10deg); box-shadow:4px 5px 14px rgba(0,0,0,0.5); background:#fefefe; padding:8px 8px 36px 8px; flex-shrink:0; margin-top:-20px;">
+    <img src="images/rlm-google-adk.png" style="display:block; max-height:420px; max-width:500px; object-fit:cover;">
+  </div>
+
+  <div style="transform:rotate(-1.8deg); box-shadow:2px 6px 10px rgba(0,0,0,0.45); background:#f8f4ee; padding:8px 8px 28px 8px; flex-shrink:0; margin-top:16px;">
+    <img src="images/x-yoav-goldberg.png" style="display:block; max-height:280px; max-width:320px; object-fit:cover;">
+  </div>
+
+  <div style="transform:rotate(3.2deg); box-shadow:5px 3px 13px rgba(0,0,0,0.5); background:#fffdf5; padding:8px 8px 34px 8px; flex-shrink:0; margin-top:-10px;">
+    <img src="images/chen-sun.png" style="display:block; max-height:280px; max-width:320px; object-fit:cover;">
+  </div>
+
+  <div style="transform:rotate(-2.5deg); box-shadow:3px 5px 11px rgba(0,0,0,0.48); background:#f6f1eb; padding:8px 8px 30px 8px; flex-shrink:0; margin-top:10px;">
+    <img src="images/joel-niklaus.png" style="display:block; max-height:285px; max-width:325px; object-fit:cover;">
+  </div>
+
+</div>
+
 <!--
-Datos de Table 1 del paper (sección Qwen3-8B):
-- Base Model: CodeQA 4%*, BrowseComp+ 0%*, OOLONG 0%*, OOLONG-Pairs 0.1% (* = hit context limits)
-- RLM (scaffold): CodeQA 26%, BrowseComp+ 2%, OOLONG 24%, OOLONG-Pairs 4.3%
-- RLM fine-tuned (RLM-Qwen3-8B): CodeQA 32%, BrowseComp+ 14%, OOLONG 32%, OOLONG-Pairs 5.2%
+El paper salió en enero 2026 y en pocas semanas ya estaba generando conversación en toda la industria.
+Prime Intellect, Google ADK, Yoav Goldberg, la comunidad de ML — todos reaccionando al mismo paper.
 
-Puntos a destacar:
-1. Base Qwen3-8B sin scaffold: prácticamente inútil en todas las tareas — el modelo no sabe operar el REPL.
-2. Solo con el scaffold RLM: mejora dramática en CodeQA (4→26%) y OOLONG (0→24%). El scaffold le enseña el mecanismo.
-3. Con fine-tuning (RLM-Qwen3-8B): mejora adicional notable. El salto más espectacular es BrowseComp+: 2%→14% (7×).
-4. OOLONG-Pairs: todos los valores son bajos porque esta tarea tiene complejidad O(N²). Qwen3-8B no tiene la potencia de GPT-5 para esta tarea cuadrática.
-
-Media del paper: +28.3% vs base Qwen3-8B como RLM con el fine-tuning.
-Coste inferencia de RLM-Qwen3-8B: comparable o menor al scaffold, por mejores decisiones desde el primer paso.
 -->
 
 ---
-
-<!-- _class: invert -->
 
 <div style="display:flex; align-items:center; justify-content:space-between; height:100%; padding:0 20px;">
 
@@ -1469,8 +1423,6 @@ Coste inferencia de RLM-Qwen3-8B: comparable o menor al scaffold, por mejores de
 </div>
 
 <!--
-Esta slide es el pivote entre la teoría del paper del MIT y la implementación práctica.
-
 Mencionar que en poco tiempo el proyecto ha evolucionado bastante: empezó como implementación mínima del paper y ahora tiene un ecosistema completo de producción.
 
 Puntos clave:
@@ -1622,9 +1574,6 @@ EXECUTION PROFILES:
 - HYBRID: Combina determinista y semántico. El más robusto para producción.
 - VERIFY: Usa recursive subcalls para double-check. El más preciso pero más lento.
 
-RouterResult devuelve: output, trace, method, profile, context_chars, tokens_used, elapsed. Muy útil para logging y métricas.
-
-Esto tiene sentido especialmente en pipelines donde tienes documentos de tamaño variable — pequeños van por baseline, grandes van por RLM.
 -->
 
 ---
@@ -1660,56 +1609,12 @@ Esto tiene sentido especialmente en pipelines donde tienes documentos de tamaño
 </div>
 
 <!--
-Esta slide explica por qué el paralelismo importa.
-
 EL PROBLEMA: En un loop RLM típico el LLM genera código que divide el contexto en N chunks y hace una subcall por chunk. Por ejemplo, 100 documentos → ~33 chunks de 3K chars. Si cada subcall tarda 2 segundos, el tiempo total es 66 segundos — inaceptable en producción.
 
-LA SOLUCIÓN: Con ThreadPoolExecutor y 10 workers, enviamos 10 subcalls a la vez. Esperamos el tiempo del más lento del batch (~2s), no la suma. 33 chunks / 10 workers = 4 batches × 2s = ~8s. Una mejora de ~8x.
+LA SOLUCIÓN: Con ThreadPoolExecutor y 10 workers, enviamos 10 subcalls a la vez. Esperamos el tiempo del más lento del batch (~2s), no la suma.
 
 ANALOGÍA: Es como pedir 10 platos en un restaurante. Si el chef cocina de uno en uno tardas 10 veces más que si cocina todos a la vez.
 
-La siguiente slide muestra cómo activarlo.
--->
-
----
-
-# ⚡ Parallel Subcalls: 3 Ways to Enable
-
-<div style="display:flex; gap:12px; margin-top:10px;">
-  <div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid #60a5fa; border-radius:10px; padding:14px;">
-    <div style="font-size:0.95em; font-weight:700; color:#93c5fd; margin-bottom:8px;">1. <code>llm_batch()</code></div>
-    <div style="font-size:0.8em; color:#94a3b8; line-height:1.5; margin-bottom:10px;">Always parallel. Auto-deduplication of identical prompts.</div>
-    <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:0.78em; color:#e2e8f0;">results = llm_batch([<br>  "Summarize doc 1",<br>  "Summarize doc 2",<br>  "Summarize doc 3",<br>])  # all 3 in parallel</div>
-  </div>
-  <div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid #60a5fa; border-radius:10px; padding:14px;">
-    <div style="font-size:0.95em; font-weight:700; color:#93c5fd; margin-bottom:8px;">2. <code>ask_chunks(parallel=True)</code></div>
-    <div style="font-size:0.8em; color:#94a3b8; line-height:1.5; margin-bottom:10px;">Opt-in per call. Keeps sequential calls sequential.</div>
-    <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:0.78em; color:#e2e8f0;">answers = ask_chunks(<br>  "Find the date",<br>  ctx.chunk(3000),<br>  parallel=True,<br>)</div>
-  </div>
-  <div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid #60a5fa; border-radius:10px; padding:14px;">
-    <div style="font-size:0.95em; font-weight:700; color:#93c5fd; margin-bottom:8px;">3. Global flag</div>
-    <div style="font-size:0.8em; color:#94a3b8; line-height:1.5; margin-bottom:10px;">All <code>ask_chunks</code> in the loop become parallel.</div>
-    <div style="background:#0f172a; border-radius:6px; padding:10px; font-family:monospace; font-size:0.78em; color:#e2e8f0;">rlm = RLM(<br>  adapter=adapter,<br>  parallel_subcalls=True,<br>  max_concurrent_subcalls=10,<br>)</div>
-  </div>
-</div>
-
-<div style="display:flex; gap:10px; margin-top:14px;">
-  <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:8px 12px; font-size:0.8em; color:#86efac;">✓ Thread-safe — Policy and Trace protected by locks</div>
-  <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:8px 12px; font-size:0.8em; color:#86efac;">✓ Auto-dedup — identical prompts sent only once</div>
-</div>
-
-<!--
-Tres opciones con diferente nivel de control:
-
-1. llm_batch(): la más explícita. El LLM llama directamente a llm_batch() en el código que genera. Siempre paralelo. Internamente usa ThreadPoolExecutor con max_concurrent_subcalls workers (default 10). Deduplica: si envías el mismo prompt dos veces, solo hace una llamada al API.
-
-2. ask_chunks(parallel=True): flag por llamada individual. Útil cuando quieres paralelizar solo algunas operaciones y mantener otras secuenciales (por ejemplo, primero una búsqueda secuencial, luego extracción paralela).
-
-3. RLM(parallel_subcalls=True): flag global en la inicialización. A partir de aquí, TODOS los ask_chunks del loop son paralelos automáticamente. No hace falta cambiar el código del prompt.
-
-THREAD SAFETY: Los contadores de Policy (max_subcalls, max_tokens) usan threading.Lock. El Trace usa locks para mutaciones concurrentes. El step_id counter es atómico. Se puede paralelizar sin preocuparte por race conditions.
-
-CONSEJO: Para producción, el flag global es el más cómodo. Para debugging o reproducibilidad determinista, conviene dejarlo en False.
 -->
 
 ---
@@ -1718,17 +1623,27 @@ CONSEJO: Para producción, el flag global es el más cómodo. Para debugging o r
 
 <div style="color:#94a3b8; font-size:0.88em; margin-bottom:12px;">Normal RLM loads all docs into memory. External Retrieval lets the LLM <strong style="color:#e2e8f0;">pull documents on demand</strong> from any index.</div>
 
-<div style="display:flex; gap:10px; align-items:center; justify-content:center; margin:18px 0 22px;">
-  <div style="background:rgba(234,179,8,0.12); border:2px solid #eab308; border-radius:10px; padding:10px 18px; text-align:center; font-size:0.85em; color:#fde68a; font-weight:600;">User Query</div>
-  <div style="color:#94a3b8;">→</div>
-  <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:10px; padding:10px 18px; text-align:center; font-size:0.85em; color:#86efac; font-weight:600;">RLM Orchestrator</div>
-  <div style="color:#94a3b8;">→</div>
-  <div style="background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:10px; padding:10px 18px; text-align:center; font-size:0.85em; color:#fca5a5; font-weight:600;">REPL<br><span style="font-weight:400; font-size:0.85em;">es_search · es_get</span></div>
-  <div style="color:#94a3b8;">→</div>
-  <div style="background:rgba(16,185,129,0.12); border:2px solid #10b981; border-radius:10px; padding:10px 18px; text-align:center; font-size:0.85em; color:#6ee7b7; font-weight:600;">Retriever<br><span style="font-weight:400; font-size:0.85em;">ES · Qdrant · custom</span></div>
-  <div style="color:#94a3b8;">↺</div>
+<br/>
+<div style="position:relative; margin:18px auto 22px; max-width:95%;">
+  <div style="display:flex; gap:8px; align-items:center; justify-content:center;">
+    <div style="background:rgba(234,179,8,0.12); border:2px solid #eab308; border-radius:10px; padding:8px 14px; text-align:center; font-size:0.82em; color:#fde68a; font-weight:600;">User<br>Query</div>
+    <div style="color:#eab308; font-size:0.9em;">→</div>
+    <!-- LLM + REPL wrapped in a loop border -->
+    <div style="display:flex; align-items:center; gap:8px; border:2px dashed rgba(34,197,94,0.5); border-radius:14px; padding:10px 14px; position:relative;">
+      <div style="position:absolute; top:-10px; left:14px; background:#1e1e2e; padding:0 6px; font-size:0.65em; color:#22c55e; font-weight:600;">loop until FINAL:</div>
+      <div style="background:rgba(96,165,250,0.12); border:2px solid #60a5fa; border-radius:10px; padding:8px 14px; text-align:center; font-size:0.82em; color:#93c5fd; font-weight:600;">LLM<br><span style="font-weight:400; font-size:0.82em; color:#94a3b8;">generates code</span></div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:1px;">
+        <span style="color:#60a5fa; font-size:0.7em;">code →</span>
+        <span style="color:#22c55e; font-size:0.7em;">← stdout</span>
+      </div>
+      <div style="background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:10px; padding:8px 14px; text-align:center; font-size:0.82em; color:#fca5a5; font-weight:600;">REPL<br><span style="font-weight:400; font-size:0.82em; color:#94a3b8;">es_search · es_get</span></div>
+    </div>
+    <div style="color:#10b981; font-size:0.9em;">⇄</div>
+    <div style="background:rgba(16,185,129,0.12); border:2px solid #10b981; border-radius:10px; padding:8px 14px; text-align:center; font-size:0.82em; color:#6ee7b7; font-weight:600;">Retriever<br><span style="font-weight:400; font-size:0.82em; color:#94a3b8;">ES · Qdrant · custom</span></div>
+  </div>
 </div>
 
+<br/>
 <div style="display:flex; gap:12px;">
   <div style="flex:1; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.4); border-radius:10px; padding:14px;">
     <div style="font-size:0.85em; font-weight:700; color:#6ee7b7; margin-bottom:10px;">RetrieverProtocol — 4 methods</div>
@@ -1756,153 +1671,8 @@ PROBLEMA: El approach RLM del paper asume que todo el contexto está disponible 
 
 LA SOLUCIÓN: En lugar de cargar todo en P, el LLM puede hacer búsquedas directamente desde el REPL. Las funciones de búsqueda se inyectan en el REPL igual que peek(), llm_query() o ask_chunks(). Para el LLM, llamar a es_hybrid_search() es exactamente igual que llamar a cualquier otra función Python.
 
-FLUJO DEL LOOP:
-1. La query llega al RLM. No hace falta context.
-2. El system prompt se extiende automáticamente con guía sobre cómo usar las funciones de búsqueda.
-3. LLM genera código que llama es_hybrid_search("lo que busca").
-4. El REPL ejecuta esa llamada, que va al backend (Elasticsearch, Qdrant...).
-5. Los resultados vuelven como stdout al LLM.
-6. El LLM puede hacer más búsquedas, ir a documentos específicos con es_get(), razonar sobre los resultados.
-7. FINAL cuando tiene la respuesta.
 
-RETRIEVERPROTOCOL: Interfaz agnóstica. Cualquier backend que implemente estos 4 métodos funciona como drop-in. Elasticsearch ya viene implementado. Para Qdrant, Pinecone o un sistema propio, solo hay que implementar los 4 métodos.
-
-CLAVE ARQUITECTURAL: El retrieval no es un pipeline separado ni una herramienta especial. Es simplemente código Python en el REPL. Esto lo hace composable: el LLM puede combinar búsquedas, filtrar resultados, paginar, etc. exactamente igual que haría con cualquier código Python.
--->
-
----
-
-# 🔍 External Retrieval: Elasticsearch
-
-<div style="color:#94a3b8; font-size:0.88em; margin-bottom:14px;">Built-in implementation of <code>RetrieverProtocol</code> — BM25, semantic and hybrid search out of the box.</div>
-
-<div style="display:flex; gap:14px; align-items:flex-start;">
-  <div style="flex:1;">
-
-```python
-from pyrlm_runtime import RLM
-from pyrlm_runtime.retrieval import ElasticsearchRetriever
-
-retriever = ElasticsearchRetriever(
-    host="https://my-cluster.es.cloud.com",
-    api_key="xxx",
-    index="legal_docs",
-    vector_field="embedding",
-    embedding_model="text-embedding-3-small",
-)
-
-# No context needed — retriever provides docs on demand
-rlm = RLM(adapter=adapter, retriever=retriever)
-answer, trace = rlm.run("Who signed the NDA on March 2024?")
-```
-
-  </div>
-  <div style="flex:0 0 220px; display:flex; flex-direction:column; gap:8px;">
-    <div style="background:rgba(16,185,129,0.1); border:1px solid #10b981; border-radius:8px; padding:10px;">
-      <div style="font-size:0.8em; font-weight:700; color:#6ee7b7; margin-bottom:6px;">REPL functions:</div>
-      <div style="font-size:0.75em; color:#94a3b8; line-height:1.7;"><code>es_search(q)</code> — BM25<br><code>es_vector_search(q)</code> — kNN<br><code>es_hybrid_search(q)</code> — RRF<br><code>es_get(doc_id)</code> — full doc</div>
-    </div>
-    <div style="background:rgba(16,185,129,0.1); border:1px solid #10b981; border-radius:8px; padding:10px;">
-      <div style="font-size:0.8em; font-weight:700; color:#6ee7b7; margin-bottom:6px;">All support:</div>
-      <div style="font-size:0.75em; color:#94a3b8; line-height:1.7;"><code>top_k=10</code><br><code>filters={"field": "val"}</code><br>Lazy import (optional dep)</div>
-    </div>
-  </div>
-</div>
-
-<!--
-
-ELASTICSEARCHRETRIEVER es la implementación incluida de RetrieverProtocol. Parámetros principales:
-- host + api_key: conexión al cluster
-- index: el índice donde están los documentos
-- content_field (default "content"): el campo con el texto del documento
-- vector_field + embedding_model: necesarios para vector_search y hybrid_search
-- preview_length: cuántos chars devuelve en los previews (default 500)
-- embedding_base_url: por defecto usa OpenAI, pero puede ser cualquier API compatible
-
-LAS FUNCIONES EN EL REPL:
-- es_search(): BM25 keyword. El LLM lo usa para búsquedas de términos exactos (nombres propios, números de contrato, fechas exactas).
-- es_vector_search(): kNN sobre dense_vector. Bueno cuando el LLM busca semánticamente ("cláusulas de confidencialidad").
-- es_hybrid_search(): Reciprocal Rank Fusion de BM25 + kNN. El más robusto para uso general.
-- es_get(doc_id): Fetch del documento completo. El LLM primero hace una búsqueda para encontrar IDs, luego va a buscar el documento entero si necesita más contexto.
-
-FILTERS: Todos los métodos aceptan filters dict para filtrar por metadatos. Ejemplo: {"date_after": "2024-01-01"} o {"department": "legal"}.
-
-LAZY IMPORT: Elasticsearch como dependencia opcional. Si no usas retrieval, no necesitas instalarlo.
-
-CASO REAL: "Who signed the NDA on March 2024?" — el LLM probablemente hace es_hybrid_search("NDA signed March 2024"), ve los previews, hace es_get() sobre el más prometedor, extrae el firmante del texto completo.
--->
-
----
-
-# 📡 Live Trace Visualization
-
-<div style="display:flex; gap:16px; align-items:flex-start; margin-top:10px;">
-
-<div style="flex:0 0 300px;">
-
-```python
-from pyrlm_runtime.rich_trace import (
-    RichTraceListener,
-)
-
-rlm = RLM(
-    adapter=adapter,
-    event_listener=RichTraceListener(),
-)
-answer, trace = rlm.run(query, context)
-```
-
-  <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-    <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:7px; padding:7px 10px; font-size:0.76em; color:#93c5fd;">Root Call → cyan panel + code</div>
-    <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:7px; padding:7px 10px; font-size:0.76em; color:#93c5fd;">In [N] / Out [N] → blue/green panels</div>
-    <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:7px; padding:7px 10px; font-size:0.76em; color:#93c5fd;">Parallel Subcalls → magenta panels</div>
-    <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:7px; padding:7px 10px; font-size:0.76em; color:#93c5fd;">Errors → red panel + traceback</div>
-  </div>
-</div>
-
-<div style="flex:1; background:#0a0a0a; border-radius:10px; padding:14px; font-family:monospace; font-size:0.7em; line-height:1.6; text-align:left; color:#e2e8f0;">
-<span style="color:#22d3ee;">──────────────── RLM Run ────────────────</span><br>
-<span style="color:#22d3ee;">╭────────────────────────────────────────╮</span><br>
-<span style="color:#22d3ee;">│</span> Query: Find the date in these docs <span style="color:#22d3ee;">&nbsp;&nbsp;&nbsp;&nbsp;│</span><br>
-<span style="color:#22d3ee;">│</span> REPL backend: monty &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#22d3ee;">│</span><br>
-<span style="color:#22d3ee;">╰────────────────────────────────────────╯</span><br>
-<span style="color:#22d3ee;">╭─ Root Call ──────── step=1 tokens=312 ─╮</span><br>
-<span style="color:#22d3ee;">│</span> <span style="color:#e2e8f0;">chunks = ctx.chunk(3000)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#22d3ee;">│</span><br>
-<span style="color:#22d3ee;">│</span> <span style="color:#e2e8f0;">answers = ask_chunks("date?", chunks)</span>&nbsp;&nbsp;<span style="color:#22d3ee;">│</span><br>
-<span style="color:#22d3ee;">╰────────────────────────────────────────╯</span><br>
-<span style="color:#c084fc;">──────── Parallel Subcalls (8) ──────────</span><br>
-<span style="color:#c084fc;">╭─ Parallel Subcall [3/8] ── cached ─────╮</span><br>
-<span style="color:#c084fc;">│</span> Output: <span style="color:#22c55e;">March 15, 2024</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c084fc;">│</span><br>
-<span style="color:#c084fc;">╰────────────────────────────────────────╯</span><br>
-<span style="color:#3b82f6;">╭─ In [1] ───────────────────────────────╮</span><br>
-<span style="color:#3b82f6;">│</span> <span style="color:#e2e8f0;">&nbsp;1 answer = pick_first_answer(answers)</span>&nbsp;<span style="color:#3b82f6;">│</span><br>
-<span style="color:#22c55e;">╭─ Out [1] ──────────────────────────────╮</span><br>
-<span style="color:#22c55e;">│</span> March 15, 2024 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#22c55e;">│</span><br>
-<span style="color:#22c55e;">╰────────────────────────────────────────╯</span>
-</div>
-
-</div>
-
-<!--
-Esta feature hace que el proceso RLM sea completamente transparente en tiempo real. Antes solo podías inspeccionar el trace después de que terminara. Ahora puedes ver cada step mientras ocurre.
-
-IMPLEMENTACIÓN: RichTraceListener implementa el protocolo RLMEventListener. Cada vez que el RLM genera un event (step start, repl exec, subcall, final), el listener lo renderiza en el terminal via Rich.
-
-LO QUE SE VE:
-- Step number y tipo (root_call, repl_exec, subcall, recursive_subcall)
-- El código generado por el LLM
-- El stdout del REPL
-- Para subcalls: indicador de si fueron paralelas, cuántas, qué respuesta dio cada una
-- Cache hits en verde
-- Errores en rojo con traceback
-- Token count por step y total
-- Tiempo de cada step
-
-THREAD SAFETY: El listener usa locks internos para que los renders de subcalls paralelas no se mezclen en el output.
-
-USO: Imprescindible durante desarrollo y debugging. En producción se puede desactivar simplemente no pasando event_listener=.
-
-Para demos en vivo: esta visualización hace que sea muy fácil ver lo que está haciendo el RLM — perfecto para mostrar en la charla.
+Lo importante es que el Retriever queda fuera del loop — es un servicio externo que el REPL consulta. El loop real es entre el LLM y el REPL, igual que en el RLM normal, solo que en vez de hacer peek() sobre un contexto en memoria, hace búsquedas sobre un índice externo.
 -->
 
 ---
@@ -1939,6 +1709,7 @@ An RLM executes **LLM-generated code** in a Python REPL. What could go wrong?
 <!--
 
 CONTEXTO: Este es un problema fundamental del approach RLM. Estamos dándole a un LLM la capacidad de ejecutar código arbitrario en un Python REPL. Incluso con un LLM "bueno" (GPT-5, Claude), hay riesgos:
+
 - Prompt injection: un documento malicioso podría engañar al LLM para que ejecute código peligroso.
 - Errores del modelo: el LLM podría generar accidentalmente un `while True: pass` o un `[0]*10**9`.
 - Sandbox escapes: `exec()` en CPython es notoriamente difícil de sandboxear. Hay exploits conocidos via `__builtins__.__import__('os')`, introspection con `__class__.__bases__`, etc.
@@ -2006,20 +1777,6 @@ TRANSICIÓN: "Veamos el impacto concreto en seguridad..."
 
 <!--
 
-RECORRER LA TABLA fila por fila:
-
-1. Sandbox escape: En CPython, puedes hacer `().__class__.__bases__[0].__subclasses__()` para acceder a todas las clases cargadas, y desde ahí importar `os` o `subprocess`. En Monty no existe el MRO de CPython — es un intérprete diferente.
-
-2. Nested exec/eval: En CPython, dentro de un `exec()` puedes llamar a otro `exec()`. Esto permite construir payloads dinámicos que evitan detección estática. Monty simplemente no implementa `exec()` ni `eval()`.
-
-3. Introspection: `__class__.__bases__` y `__subclasses__()` son las técnicas clásicas de Python jail escape. Monty no tiene acceso a estas dunder methods.
-
-4. Infinite loop: Un `while True: pass` en CPython con `exec()` cuelga el proceso indefinidamente (a menos que uses `multiprocessing` con timeout, que tiene sus propios problemas). Monty tiene un timeout configurable que mata la ejecución limpiamente.
-
-5. Memory bomb: `[0] * (10**9)` asigna ~8GB de RAM instantáneamente en CPython. Monty tiene un límite de memoria (128MB default) y un límite de allocations (1M).
-
-6. Imports: En CPython, la whitelist puede ser bypaseada por los escapes anteriores. En Monty, el concepto de "import" no existe.
-
 PUNTO CLAVE: "No es que Monty bloquee estos ataques — es que ni siquiera tiene los mecanismos que los hacen posibles. Es como preguntarle a una calculadora que hackee un servidor."
 -->
 
@@ -2069,27 +1826,8 @@ PUNTO CLAVE: "No es que Monty bloquee estos ataques — es que ni siquiera tiene
 
 <!--
 
-
-MICRO-BENCHMARK (REPL aislado, sin LLM):
-- Monty es ~3-4x más lento que CPython en ejecución cruda: 3ms vs 1ms para operaciones simples, hasta 25ms para multi-step.
-- Esto suena mal en aislamiento (3-4x!), pero los tiempos absolutos son milisegundos.
-
-LOOP RLM COMPLETO (con FakeAdapter):
-- Cuando mides el loop RLM completo, Monty solo es ~1.6x más lento. ¿Por qué? Porque el REPL es una fracción mínima del tiempo total.
-- Overhead promedio: +0.07ms por ejecución.
-
-EN PRODUCCIÓN REAL:
-- Una llamada al LLM toma entre 100ms y 5000ms (según modelo y tokens).
-- El REPL toma 0.2ms.
-- Proporción: 0.2ms / 1000ms = 0.02% del tiempo total.
-- El diagrama de tiempos lo muestra visualmente: las barras rojas (LLM) dominan, la barra verde (REPL) es casi invisible.
-
 MENSAJE CLAVE: "La integración de Monty elimina TODAS las vulnerabilidades de seguridad conocidas del REPL, a un costo de rendimiento de +0.07ms por ejecución — menos del 0.01% del tiempo total de un ciclo RLM en producción."
 
-BENCHMARK COMMANDS (para referencia):
-- REPL aislado: `uv run python examples/bench_repl_python_vs_monty.py`
-- Loop completo: `uv run python examples/bench_rlm_repl_backends.py`
-- Exportar: `RLM_EXPORT=1` prefijo
 -->
 
 ---
@@ -2191,39 +1929,13 @@ RULE OF THUMB: "Si el baseline falla o trunca, prueba RLM." Es la decisión más
   <div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:10px; padding:14px;">
     <div style="font-size:0.95em; font-weight:700; color:#93c5fd; margin-bottom:10px;">🔧 Next</div>
     <div style="display:flex; flex-direction:column; gap:6px;">
-      <div style="font-size:0.78em; color:#94a3b8;">→ Benchmarks: LongBench-Pro · BrowseComp-Plus</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ SmartRouter: adaptive routing improvements</div>
-      <div style="font-size:0.78em; color:#94a3b8;">→ RAG + RLM integration patterns</div>
+      <div style="font-size:0.78em; color:#94a3b8;">→ Agentic RAG</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ Token efficiency: prompt compression, evidence compression</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ Speed: faster subcall model, early stopping</div>
-      <div style="font-size:0.78em; color:#94a3b8;">→ Fine-tune larger models (Llama-70B, Qwen-480B)</div>
-      <div style="font-size:0.78em; color:#94a3b8;">→ Multi-modal RLMs · Collaborative agents</div>
     </div>
   </div>
 </div>
-
-<!--
-
-COLUMNA IZQUIERDA: Lo entregado. Todo esto está en v0.3.0, disponible hoy en pip.
-- MontyREPL: Rust sandbox. Secure by construction.
-- Parallel subcalls: llm_batch + ask_chunks paralelos + flag global. ThreadPoolExecutor con 10 workers.
-- Conversation history: Multi-turn self-correction. El LLM ve sus propios intentos previos.
-- Elasticsearch retrieval: BM25 + kNN + hybrid RRF. Context opcional cuando hay retriever.
-- VertexAI: Google Cloud support en v0.3.0.
-- Live trace: RichTraceListener, visualización en tiempo real.
-- SmartRouter: auto-selección baseline vs RLM. Configurable threshold.
-
-COLUMNA DERECHA: Lo que viene. Estos son los issues abiertos en GitHub (ver repo para estado actual).
-- Benchmarks (#10 BrowseComp-Plus): evaluación formal pendiente.
-- SmartRouter improvements (#23): routing más sofisticado basado en task complexity.
-- RAG + RLM (#22): patrones de integración formales (RAG como filtro, RLM como director, hybrid).
-- Token efficiency (#14, #18, #19, #20, #21): 5 issues con impacto estimado de 20-50% reducción.
-- Speed (#15, #16, #17): early stopping, subcall model más rápido, reduce max_steps.
-- Fine-tuning: modelos más grandes con el dataset RLM-Qwen3.
-- Multi-modal y collaborative: visión a más largo plazo.
-
-Ver el repo en GitHub para el estado actual de cada issue.
--->
 
 ---
 
@@ -2259,3 +1971,71 @@ answer, trace = rlm.run("Your question", context)
 </div>
 
 </div>
+
+---
+
+# 🤔 "But... isn't an RLM just an Agent?"
+
+<div style="display:flex; gap:12px; margin-top:14px;">
+  <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.4); border-radius:10px; padding:12px;">
+    <div style="font-size:1em; font-weight:700; color:#fca5a5; margin-bottom:10px;">🤖 Agent (CodeAct + sub-agents)</div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#ef4444;">✗</span> &nbsp;Prompt P loaded into LLM context (hist)</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#ef4444;">✗</span> &nbsp;Output generated autoregressively (<code>Finish</code> action)</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#ef4444;">✗</span> &nbsp;Sub-agent = separate tool call (JSON action)</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#ef4444;">✗</span> &nbsp;1M files → 1M sequential tool invocations</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#ef4444;">✗</span> &nbsp;Context window = hard ceiling</div>
+    </div>
+  </div>
+  <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.4); border-radius:10px; padding:12px;">
+    <div style="font-size:1em; font-weight:700; color:#86efac; margin-bottom:10px;">🔄 RLM</div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#22c55e;">✓</span> &nbsp;P is a <strong>variable</strong> in the REPL — never enters context</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#22c55e;">✓</span> &nbsp;Output via <code>FINAL_VAR</code> — unbounded length</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#22c55e;">✓</span> &nbsp;<strong>Symbolic recursion</strong>: <code>llm_query()</code> lives inside the REPL</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#22c55e;">✓</span> &nbsp;1M files → <code>for</code>-loop / <code>parallel_map</code> in code</div>
+      <div style="font-size:0.78em; color:#94a3b8;"><span style="color:#22c55e;">✓</span> &nbsp;Scales to Ω(|P|) or Ω(|P|²) semantic work</div>
+    </div>
+  </div>
+</div>
+
+<div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:10px; padding:10px 14px; margin-top:14px;">
+  <div style="font-size:0.82em; color:#93c5fd; font-weight:600;">💡 The key insight (Alex Zhang, MIT — paper author):</div>
+  <div style="font-size:0.78em; color:#e2e8f0; margin-top:4px;"><em>"The REPL and sub-calling being separate is not a good thing. Sub-calling should be a feature of the language [the REPL], not a separate tool. It is strictly less expressive than the RLM design."</em></div>
+</div>
+
+<!--
+
+NOTAS — RLM vs Agent
+
+ESTA ES LA PREGUNTA que todo el mundo hace: "¿pero esto no es simplemente un agente con REPL y subagentes?"
+
+La respuesta corta es NO. Parece igual por fuera, pero hay 3 diferencias arquitecturales fundamentales que el paper del MIT llama "Flaws" en el Algorithm 2 (el scaffold de agente convencional):
+
+FLAW 1 — DÓNDE VIVE EL CONTEXTO:
+Un agente (CodeAct, Claude Code, Codex) mete el prompt del usuario directamente en el historial del LLM (hist). Esto significa que el LLM TIENE que leer todo el contexto con atención. Si el contexto es un libro de 1M de tokens, mala suerte — lo tienes en tu context window o haces compaction (que pierde información).
+
+En un RLM, el prompt P se carga como VARIABLE en el REPL. El LLM nunca lo ve directamente. Solo recibe metadata constante: longitud, tipo, prefijo corto. Para ver partes del contexto, el LLM escribe código: print(P[:1000]), regex sobre P, etc. Esto es lo que permite escalar a contextos de 10M+ tokens.
+
+FLAW 2 — CÓMO SE GENERA EL OUTPUT:
+El agente genera su respuesta final de forma autoregresiva — la acción "Finish" produce texto token a token. Esto limita el output a lo que cabe en la ventana del modelo.
+
+El RLM puede devolver una variable del REPL (FINAL_VAR). Esa variable puede ser un string enorme construido programáticamente — concatenando outputs de subcalls, transformaciones, etc. El output es potencialmente ilimitado.
+
+FLAW 3 — RECURSIÓN SIMBÓLICA (la más importante):
+En un agente, los sub-agentes son tool calls separadas. El LLM dice "llama al sub-agente con este prompt" y el framework hace la llamada externamente. El LLM no puede poner esa llamada dentro de un for-loop o un parallel_map.
+
+En un RLM, llm_query() es una función Python dentro del REPL. El LLM puede escribir:
+  results = [llm_query(f"Analiza {chunk}") for chunk in chunks]
+  o incluso:
+  with ThreadPoolExecutor() as pool:
+      results = list(pool.map(lambda c: llm_query(f"Analiza {c}"), chunks))
+
+Esto es RECURSIÓN SIMBÓLICA. La sub-llamada vive dentro de lógica programática. Un agente con 1M de archivos haría 1M de tool calls secuenciales en su contexto. Un RLM escribe un for-loop.
+
+Como dice Alex Zhang (el autor del paper): "Desde una perspectiva de lenguajes de programación, la forma en que Codex/Claude Code manejan sub-agentes es casi tonta. Si pensamos en el REPL como un 'lenguaje', las sub-llamadas deberían ser una feature de ese lenguaje, no algo separado."
+
+ANALOGÍA ÚTIL: Pensad en un data scientist haciendo EDA en un Jupyter notebook. No carga todo el dataset en una celda — hace print(df.head()), describe(), filtros, groupby. Cada celda es una iteración. Eso es exactamente lo que hace un RLM. El agente sería como pegar todo el CSV en el chat de ChatGPT.
+
+TRANSICIÓN: Esta distinción puede parecer sutil, pero es lo que permite que RLM escale donde los agentes colapsan. Y con eso cerramos — preguntas?
+-->
