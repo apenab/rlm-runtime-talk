@@ -156,11 +156,6 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
 </div>
 
 <!--
-50.000 issues en 300 repos.
-
-Un equipo reportó fallos en checkout, otro en inventario, otro en notificaciones. El engineer sospecha que están conectados.
-
-El problema: no es que el LLM no sea suficientemente listo. Es que la información simplemente no cabe en su ventana de contexto.
 
 ¿Cuáles son las opciones que tenemos hoy?
 -->
@@ -224,7 +219,7 @@ Que buscamos exactamente?
 
 Cada issue parece un bug distinto, y el patron solo emerge leyendo muchos issues juntos y correlacionando patrones.
 
-RAG necesita una query. Aquí no hay query posible.
+RAG necesita una query y aqui no sabemos que preguntar — el patrón es lo que buscamos.
 
 → ¿Y si simplemente ampliamos la ventana de contexto?
 -->
@@ -358,9 +353,6 @@ Like a programmer with a huge file:
 </div>
 
 <!--
-Nadie carga un archivo de 10GB en memoria. Lo abres, buscas, filtras. ¿Por qué los LLMs no hacen lo mismo?
-
-→ Pero entonces, ¿cómo lo inspecciona? Buscando bajo demanda.
 -->
 
 ---
@@ -391,9 +383,6 @@ Like a programmer with a huge file:
 
 <!--
 
-Escribe código: peek(), grep(), filtrar. Solo ve lo que necesita, cuando lo necesita.
-
-→ Y si el problema es tan grande que ni grep alcanza: divide, delega, combina.
 -->
 
 ---
@@ -478,7 +467,7 @@ From the paper (MIT CSAIL 2025):
     <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
       <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
       <div>
-        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Symbolic Programming environment</div>
         <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
       </div>
     </div>
@@ -517,7 +506,7 @@ From the paper (MIT CSAIL 2025):
     <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
       <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
       <div>
-        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Symbolic Programming environment</div>
         <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
       </div>
     </div>
@@ -570,7 +559,7 @@ From the paper (MIT CSAIL 2025):
     <div style="background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:12px; padding:14px 16px; flex:1; display:flex; align-items:center; gap:14px;">
       <div style="font-size:2em; min-width:48px; text-align:center !important;">⚙️</div>
       <div>
-        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Turing-complete environment</div>
+        <div style="font-size:1.05em; font-weight:700; color:#86efac;">2 · Persistent Symbolic Programming environment</div>
         <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Python REPL that persists across iterations — define functions, accumulate state, build logic</div>
       </div>
     </div>
@@ -587,9 +576,6 @@ From the paper (MIT CSAIL 2025):
 </div>
 
 <!--
-llm_query() lanza un RLM hijo con su propio REPL. Divide y vencerás a cualquier profundidad. Esto es lo que permite escalar a 10M+ tokens.
-
-→ Veamos cómo encaja todo en la arquitectura.
 -->
 
 ---
@@ -598,7 +584,6 @@ llm_query() lanza un RLM hijo con su propio REPL. Divide y vencerás a cualquier
 
 <div style="display:flex; gap:18px; height:82%;">
 
-  <!-- LEFT: Classic tool-based agents -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <div style="text-align:center; background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:8px 8px 0 0; padding:6px 10px; font-size:0.72em; font-weight:700; color:#fca5a5;">Claude Code · Codex · most agents</div>
     <div style="border:2px solid #475569; border-top:none; padding:12px 14px; background:rgba(30,41,59,0.5); flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -607,20 +592,17 @@ llm_query() lanza un RLM hijo con su propio REPL. Divide y vencerás a cualquier
       <div style="font-size:0.62em; color:#94a3b8;">decides → verbalizes task</div>
       <div style="background:rgba(239,68,68,0.1); border:1px dashed #ef4444; border-radius:8px; padding:7px 14px; font-size:0.72em; color:#fca5a5; font-family:monospace; width:80%; text-align:center;">use_tool("sub_agent", …)</div>
     </div>
-    <!-- boundary crossing visual -->
     <div style="text-align:center; padding:2px 0; position:relative;">
       <div style="border-top:2px dashed #ef4444; margin:0 24px; position:relative; top:10px;"></div>
       <span style="background:#0f172a; padding:0 8px; font-size:0.58em; color:#ef4444; position:relative; z-index:1;">── crosses runtime boundary ──</span>
       <div style="color:#ef4444; font-size:1.3em; margin-top:2px;">↓</div>
     </div>
-    <!-- External sub-agent — outside -->
     <div style="border:2px dashed #ef4444; border-radius:8px; padding:10px 14px; background:rgba(239,68,68,0.05); text-align:center;">
       <div style="font-size:0.78em; font-weight:600; color:#fca5a5;">Sub-Agent</div>
       <div style="font-size:0.58em; color:#64748b; margin-top:2px;">separate process · separate context · no shared state</div>
     </div>
   </div>
 
-  <!-- RIGHT: RLM symbolic recursion — HIDDEN in slide 15 -->
   <div style="flex:1; display:flex; flex-direction:column; visibility:hidden;">
     <div style="text-align:center; background:rgba(96,165,250,0.12); border:2px solid #60a5fa; border-radius:8px 8px 0 0; padding:6px 10px; font-size:0.72em; font-weight:700; color:#93c5fd;">RLM</div>
     <div style="border:2px solid #60a5fa; border-top:none; border-radius:0 0 10px 10px; padding:12px 14px; background:rgba(96,165,250,0.04); flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -645,9 +627,9 @@ llm_query() lanza un RLM hijo con su propio REPL. Divide y vencerás a cualquier
 
 </div>
 
-<!-- NOTES — Symbolic Recursion: slide 15 (solo agents)
+<!--
 
-Presentar el patrón clásico: en Claude Code, Codex y la mayoría de los agentes con sub-agents, el flujo es:
+En Claude Code, Codex y la mayoría de los agentes con sub-agents, el flujo es:
 1. El LLM "decide" en lenguaje natural invocar un sub-agente
 2. El framework intercepta esa decisión y lanza el sub-agente en un proceso separado
 3. El sub-agente tiene su propio contexto, su propio runtime — no comparte estado con el padre
@@ -655,7 +637,7 @@ Presentar el patrón clásico: en Claude Code, Codex y la mayoría de los agente
 
 El problema: está acotado por la ventana de output. El LLM solo puede delegar lo que cabe en un turno, las tareas que nombra explícitamente.
 
-Pregunta retórica al público: ¿cómo haría Claude Code para procesar un libro de 10M tokens? Tendría que nombrar cada capítulo uno a uno. No puede escribir un loop que llame a sus propios sub-agents programáticamente.
+¿cómo haría Claude Code para procesar un libro de 10M tokens? Tendría que nombrar cada capítulo uno a uno. No puede escribir un loop que llame a sus propios sub-agents programáticamente.
 
 → RLM lo resuelve de otra manera...
 -->
@@ -666,7 +648,6 @@ Pregunta retórica al público: ¿cómo haría Claude Code para procesar un libr
 
 <div style="display:flex; gap:18px; height:82%;">
 
-  <!-- LEFT: Classic tool-based agents -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <div style="text-align:center; background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:8px 8px 0 0; padding:6px 10px; font-size:0.72em; font-weight:700; color:#fca5a5;">Claude Code · Codex · most agents</div>
     <div style="border:2px solid #475569; border-top:none; padding:12px 14px; background:rgba(30,41,59,0.5); flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -675,20 +656,17 @@ Pregunta retórica al público: ¿cómo haría Claude Code para procesar un libr
       <div style="font-size:0.62em; color:#94a3b8;">decides → verbalizes task</div>
       <div style="background:rgba(239,68,68,0.1); border:1px dashed #ef4444; border-radius:8px; padding:7px 14px; font-size:0.72em; color:#fca5a5; font-family:monospace; width:80%; text-align:center;">use_tool("sub_agent", …)</div>
     </div>
-    <!-- boundary crossing visual -->
     <div style="text-align:center; padding:2px 0; position:relative;">
       <div style="border-top:2px dashed #ef4444; margin:0 24px; position:relative; top:10px;"></div>
       <span style="background:#0f172a; padding:0 8px; font-size:0.58em; color:#ef4444; position:relative; z-index:1;">── crosses runtime boundary ──</span>
       <div style="color:#ef4444; font-size:1.3em; margin-top:2px;">↓</div>
     </div>
-    <!-- External sub-agent — outside -->
     <div style="border:2px dashed #ef4444; border-radius:8px; padding:10px 14px; background:rgba(239,68,68,0.05); text-align:center;">
       <div style="font-size:0.78em; font-weight:600; color:#fca5a5;">Sub-Agent</div>
       <div style="font-size:0.58em; color:#64748b; margin-top:2px;">separate process · separate context · no shared state</div>
     </div>
   </div>
 
-  <!-- RIGHT: RLM symbolic recursion — VISIBLE in slide 16 -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <div style="text-align:center; background:rgba(96,165,250,0.12); border:2px solid #60a5fa; border-radius:8px 8px 0 0; padding:6px 10px; font-size:0.72em; font-weight:700; color:#93c5fd;">RLM</div>
     <div style="border:2px solid #60a5fa; border-top:none; border-radius:0 0 10px 10px; padding:12px 14px; background:rgba(96,165,250,0.04); flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -713,19 +691,16 @@ Pregunta retórica al público: ¿cómo haría Claude Code para procesar un libr
 
 </div>
 
-<!-- NOTES — Symbolic Recursion: slide 16 (comparación completa)
+<!--
 
-Ahora mostrar el contraste. En RLM:
+En RLM:
 - El LLM genera CÓDIGO que incluye llamadas a llm_query() como funciones normales de Python
 - Ese código se ejecuta dentro del REPL — la recursión ES el programa, no una decisión verbal
 - El for loop puede generar Ω(|P|) child RLMs sin que el LLM los nombre uno a uno
 - Los resultados vuelven como variables al REPL padre — estado compartido, no mensajes externos
 
-La diferencia visual clave: en el diagrama de la izquierda, la flecha cruza la frontera del runtime (línea de puntos roja). En el de la derecha, todo queda dentro del recuadro azul del REPL.
 
-Cita del paper (pág. 3): "code running inside E must be able to invoke M on programmatically constructed transformations of P — e.g., inside arbitrarily large loops"
-
-Para el público: es la diferencia entre decirle a un colega "busca eso en el cap. 1, busca aquello en el cap. 2..." (nombrar cada tarea) vs escribir un script que itera sobre todos los capítulos automáticamente (programático).
+Es la diferencia entre decirle a un colega "busca eso en el cap. 1, busca aquello en el cap. 2..." (nombrar cada tarea) vs escribir un script que itera sobre todos los capítulos automáticamente (programático).
 
 → Esto lleva directamente a la arquitectura de alto nivel del sistema.
 -->
@@ -740,7 +715,6 @@ Para el público: es la diferencia entre decirle a un colega "busca eso en el ca
 
 <div style="display:flex; gap:18px; height:72%;">
 
-  <!-- LEFT: Classic agent -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <div style="text-align:center; background:rgba(239,68,68,0.12); border:2px solid #ef4444; border-radius:8px 8px 0 0; padding:5px 10px; font-size:0.70em; font-weight:700; color:#fca5a5;">Claude Code · classic agent</div>
     <div style="border:2px solid #475569; border-top:none; border-radius:0 0 8px 8px; padding:10px 12px; background:rgba(30,41,59,0.5); flex:1; display:flex; flex-direction:column; gap:6px;">
@@ -762,7 +736,6 @@ Para el público: es la diferencia entre decirle a un colega "busca eso en el ca
     </div>
   </div>
 
-  <!-- RIGHT: RLM -->
   <div style="flex:1; display:flex; flex-direction:column;">
     <div style="text-align:center; background:rgba(96,165,250,0.12); border:2px solid #60a5fa; border-radius:8px 8px 0 0; padding:5px 10px; font-size:0.70em; font-weight:700; color:#93c5fd;">RLM</div>
     <div style="border:2px solid #60a5fa; border-top:none; border-radius:0 0 8px 8px; padding:10px 12px; background:rgba(96,165,250,0.04); flex:1; display:flex; flex-direction:column; gap:6px;">
@@ -810,7 +783,6 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
 
 <table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-radius:14px;">
   <tr><td colspan="5" style="border:none; padding:8px 14px; font-size:20px; font-weight:800; color:#93c5fd;">RLM (root / depth = 0)</td></tr>
-  <!-- Row 1: query → LM → response -->
   <tr style="vertical-align:middle;">
     <td style="border:none; padding:8px 10px; width:16%; text-align:center;">
       <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">📋 query</div>
@@ -835,12 +807,10 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
       <div style="font-size:13px; color:#94a3b8; font-style:italic; margin-top:6px;">FINAL: / FINAL_VAR:</div>
     </td>
   </tr>
-  <!-- Row 2: spacer -->
   <tr>
     <td style="border:none; padding:6px;"></td>
     <td style="border:none;"></td>
   </tr>
-  <!-- Row 3: context → Environment -->
   <tr style="vertical-align:middle;">
     <td style="border:none; padding:8px 10px; text-align:center;">
       <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">📄 context<br><span style="font-size:15px; font-weight:400;">(1M tokens)</span></div>
@@ -873,7 +843,6 @@ Cuando llama a llm_query(sub_context), se crea un RLM hijo con su propio REPL �
 
 <div style="display:flex; flex-direction:column; gap:10px;">
 
-  <!-- Child 1 -->
   <div style="flex:1; background:rgba(148,163,184,0.08); border:2px dashed #64748b; border-radius:12px; padding:12px;">
     <div style="font-size:18px; font-weight:700; color:#cbd5e1; margin-bottom:8px; text-align:center;">RLM (depth=1)</div>
     <table style="width:100%; border-collapse:collapse;">
@@ -904,7 +873,6 @@ Cuando llama a llm_query(sub_context), se crea un RLM hijo con su propio REPL �
     <div style="text-align:center; margin-top:8px; font-size:13px; color:#64748b;">can spawn depth=2 children ↓</div>
   </div>
 
-  <!-- Child 2 -->
   <div style="flex:1; background:rgba(148,163,184,0.08); border:2px dashed #64748b; border-radius:12px; padding:12px;">
     <div style="font-size:18px; font-weight:700; color:#cbd5e1; margin-bottom:8px; text-align:center;">RLM (depth=1)</div>
     <table style="width:100%; border-collapse:collapse;">
@@ -935,7 +903,6 @@ Cuando llama a llm_query(sub_context), se crea un RLM hijo con su propio REPL �
     <div style="text-align:center; margin-top:8px; font-size:13px; color:#64748b;">can spawn depth=2 children ↓</div>
   </div>
 
-  <!-- ellipsis -->
   <div style="text-align:center; font-size:22px; color:#475569; letter-spacing:8px;">⋯</div>
 
 </div>
