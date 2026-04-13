@@ -756,9 +756,7 @@ Es la diferencia entre decirle a un colega "busca eso en el cap. 1, busca aquell
 
 </div>
 
-<!-- NOTES — Ejemplo concreto: monorepo
-
-El escenario: tenés un monorepo con mil millones de archivos. Recordás lo que hace una función pero no su nombre ni su ubicación. grep y regex no sirven — no hay un patrón de texto fijo que buscar, es semántico.
+<!--
 
 Por qué falla el agente clásico:
 - Tiene que nombrar cada archivo explícitamente en cada sub-call ("lee este archivo", "lee ese otro")

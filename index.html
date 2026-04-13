@@ -11341,11 +11341,7 @@ El problema: está acotado por la ventana de output. El LLM solo puede delegar l
 
 Es la diferencia entre decirle a un colega &quot;busca eso en el cap. 1, busca aquello en el cap. 2...&quot; (nombrar cada tarea) vs escribir un script que itera sobre todos los capítulos automáticamente (programático).
 
-→ Esto lleva directamente a la arquitectura de alto nivel del sistema.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>NOTES — Ejemplo concreto: monorepo
-
-El escenario: tenés un monorepo con mil millones de archivos. Recordás lo que hace una función pero no su nombre ni su ubicación. grep y regex no sirven — no hay un patrón de texto fijo que buscar, es semántico.
-
-Por qué falla el agente clásico:
+→ Esto lleva directamente a la arquitectura de alto nivel del sistema.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>Por qué falla el agente clásico:
 - Tiene que nombrar cada archivo explícitamente en cada sub-call (&quot;lee este archivo&quot;, &quot;lee ese otro&quot;)
 - El contexto del LLM se llena con el contenido de los archivos que va leyendo
 - Al quedarse sin contexto, el modelo olvida qué archivos ya revisó
