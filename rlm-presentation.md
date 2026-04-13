@@ -173,9 +173,10 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
     <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
   </div>
-  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
-    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
-    <div style="color:#94a3b8; font-size:0.85em;">Misses what it can't search for</div>
+  <div style="flex:1; background:rgba(234,179,8,0.1); border:1px solid #eab308; border-radius:10px; padding:12px; visibility:hidden;">
+    <div style="font-size:1.3em; margin-bottom:4px;">⚠️ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Needs a query — but the pattern is the unknown</div>
+    <div style="display:inline-block; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.4); border-radius:5px; padding:2px 8px; font-size:0.7em; color:#eab308; margin-top:6px;">🔍 query generation problem</div>
   </div>
   <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
@@ -204,9 +205,10 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
     <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
   </div>
-  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
-    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
-    <div style="color:#94a3b8; font-size:0.85em;">Misses what it can't search for</div>
+  <div style="flex:1; background:rgba(234,179,8,0.1); border:1px solid #eab308; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">⚠️ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Needs a query — but the pattern is the unknown</div>
+    <div style="display:inline-block; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.4); border-radius:5px; padding:2px 8px; font-size:0.7em; color:#eab308; margin-top:6px;">🔍 query generation problem</div>
   </div>
   <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px; visibility:hidden;">
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
@@ -219,7 +221,7 @@ Que buscamos exactamente?
 
 Cada issue parece un bug distinto, y el patron solo emerge leyendo muchos issues juntos y correlacionando patrones.
 
-RAG necesita una query y aqui no sabemos que preguntar — el patrón es lo que buscamos.
+RAG necesita una query y aqui no sabemos que preguntar — el patrón es lo que buscamos. No es que RAG esté roto — es que para tareas de descubrimiento donde no sabes qué buscar, no puedes formular la query. Es un problema semántico de generación de query, no de infraestructura.
 
 → ¿Y si simplemente ampliamos la ventana de contexto?
 -->
@@ -237,9 +239,10 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Truncation</div>
     <div style="color:#94a3b8; font-size:0.85em;">Loses crucial information</div>
   </div>
-  <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
-    <div style="font-size:1.3em; margin-bottom:4px;">❌ RAG</div>
-    <div style="color:#94a3b8; font-size:0.85em;">Misses what it can't search for</div>
+  <div style="flex:1; background:rgba(234,179,8,0.1); border:1px solid #eab308; border-radius:10px; padding:12px;">
+    <div style="font-size:1.3em; margin-bottom:4px;">⚠️ RAG</div>
+    <div style="color:#94a3b8; font-size:0.85em;">Needs a query — but the pattern is the unknown</div>
+    <div style="display:inline-block; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.4); border-radius:5px; padding:2px 8px; font-size:0.7em; color:#eab308; margin-top:6px;">🔍 query generation problem</div>
   </div>
   <div style="flex:1; background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:12px;">
     <div style="font-size:1.3em; margin-bottom:4px;">❌ Long-context</div>
