@@ -1025,13 +1025,12 @@ El loop termina cuando el LM escribe `Final = respuesta` — una asignación Pyt
 </svg>
 
 <div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">CodeQA</strong> — Q&amp;A over long documents and codebases (23K–4.2M tokens). Tests retrieval and multi-hop reasoning at scale.
+  <strong style="color:#60a5fa;">CodeQA</strong> — Q&amp;A over long codebases (23K–4.2M tokens).
 </div>
 
 <!--
 LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recibe un codebase completo y responde preguntas de opción múltiple sobre múltiples ficheros. Contextos de 23K a 4.2M tokens.
 
-→ GPT-5 24%* → RLM(GPT-5) 62%.
 -->
 
 ---
@@ -1069,11 +1068,6 @@ LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recib
 </div>
 
 <!--
-RLM(GPT-5) 62% vs GPT-5 24%*. El asterisco significa que GPT-5 alcanzó su límite de ventana en muchos casos.
-
-2.6× mejor en un benchmark donde GPT-5 ya puede intentarlo. Cuando el contexto supera la ventana, la ventaja se dispara aún más.
-
-→ Ahora vamos a ver qué pasa con contextos de 6 a 11 millones de tokens.
 -->
 
 ---
@@ -1107,7 +1101,7 @@ RLM(GPT-5) 62% vs GPT-5 24%*. El asterisco significa que GPT-5 alcanzó su lími
 </svg>
 
 <div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">BrowseComp+</strong> — Multi-hop questions over 1K web documents (6M–11M tokens total). GPT-5: 0% — context too large for any LLM window.
+  <strong style="color:#60a5fa;">BrowseComp+</strong> — Multi-hop questions over 1K web documents (6M–11M tokens total).
 </div>
 
 <!--
@@ -1196,13 +1190,11 @@ De 0% a 91.3% simplemente por el cambio de arquitectura.
 </svg>
 
 <div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">OOLONG</strong> — "One-Off Long cONtext": needle-in-a-haystack in 131K token documents. GPT-5: 44% — RLM(GPT-5): 56.5%.
+  <strong style="color:#60a5fa;">OOLONG</strong> — "One-Off Long cONtext": needle-in-a-haystack in 131K token documents.
 </div>
 
 <!--
 OOLONG — razonamiento sobre textos largos que requiere transformar chunks del input y agregar el resultado. Complejidad lineal. Documentos de 131K tokens.
-
-131K cabe en la ventana de GPT-5 → GPT-5 llega a 44%. Por eso la ventaja de RLM es menor aquí.
 
 -->
 
@@ -1249,11 +1241,6 @@ OOLONG — razonamiento sobre textos largos que requiere transformar chunks del 
 </div>
 
 <!--
-RLM(GPT-5) 56.5% vs GPT-5 44%. +12.5 puntos. Mejora moderada — 131K es manejable para GPT-5.
-
-RLM sigue siendo mejor y más barato incluso cuando el contexto cabe en la ventana.
-
-→ OOLONG-Pairs — donde la complejidad es cuadrática y GPT-5 colapsa.
 -->
 
 ---
@@ -1295,7 +1282,7 @@ RLM sigue siendo mejor y más barato incluso cuando el contexto cabe en la venta
 </svg>
 
 <div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">OOLONG-Pairs</strong> — Paired comparison: identify differences between two long documents (32K tokens each). GPT-5: 0.1% — two contexts at once is impossible.
+  <strong style="color:#60a5fa;">OOLONG-Pairs</strong> — Paired comparison: identify differences between two long documents (32K tokens each).
 </div>
 
 <!--
@@ -1349,7 +1336,7 @@ RLM genera código que itera sobre pares de chunks con extract_after() y peek().
 </svg>
 
 <div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  RLM wins on <strong style="color:#22c55e;">every benchmark</strong> — and at a <strong style="color:#22c55e;">lower cost per query</strong> than summary-based agents.
+  RLM wins on <strong style="color:#22c55e;">every benchmark</strong> — Clear pattern: the longer and more complex the task, the greater the advantage.
 </div>
 
 <!--
@@ -2212,4 +2199,81 @@ Como dice Alex Zhang (el autor del paper): "Desde una perspectiva de lenguajes d
 ANALOGÍA ÚTIL: Pensad en un data scientist haciendo EDA en un Jupyter notebook. No carga todo el dataset en una celda — hace print(df.head()), describe(), filtros, groupby. Cada celda es una iteración. Eso es exactamente lo que hace un RLM. El agente sería como pegar todo el CSV en el chat de ChatGPT.
 
 TRANSICIÓN: Esta distinción puede parecer sutil, pero es lo que permite que RLM escale donde los agentes colapsan. Y con eso cerramos — preguntas?
+-->
+
+---
+
+# 🧪 Not All Scaffolds are RLMs
+
+<div style="font-size:0.82em; color:#94a3b8; margin-bottom:10px;">The 3 defining properties — who actually has them?</div>
+
+<div style="width:100%;">
+  <!-- Header row -->
+  <div style="display:flex; gap:6px; margin-bottom:8px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; font-weight:700; color:#e2e8f0;"></div>
+    <div style="flex:1; background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:6px; padding:6px 8px; text-align:center; font-size:0.68em; font-weight:700; color:#fde68a;">📌 Symbolic<br>Handle</div>
+    <div style="flex:1; background:rgba(34,197,94,0.1); border:1px solid #22c55e; border-radius:6px; padding:6px 8px; text-align:center; font-size:0.68em; font-weight:700; color:#86efac;">⚙️ Persistent<br>Symb. Prog.</div>
+    <div style="flex:1; background:rgba(96,165,250,0.1); border:1px solid #3b82f6; border-radius:6px; padding:6px 8px; text-align:center; font-size:0.68em; font-weight:700; color:#93c5fd;">🔄 Symbolic<br>Recursion</div>
+  </div>
+  <!-- Vanilla LLM -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; color:#94a3b8;">Vanilla LLM</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+  </div>
+  <!-- Summary Agent -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; color:#94a3b8;">Summary Agent</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+  </div>
+  <!-- CodeAct -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; color:#94a3b8;">CodeAct</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e;">✓</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+  </div>
+  <!-- CodeAct + sub-calls -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; color:#94a3b8;">CodeAct + sub-calls</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+    <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e;">✓</div>
+    <div style="flex:1; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#ef4444;">✗</div>
+  </div>
+  <!-- Codelet + subroutines -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; color:#94a3b8;">Codelet + subs</div>
+    <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e;">✓</div>
+    <div style="flex:1; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.3); border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e;">✓</div>
+    <div style="flex:1; background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.4); border-radius:6px; padding:5px; text-align:center; font-size:0.78em; color:#eab308;">~partial</div>
+  </div>
+  <!-- RLM -->
+  <div style="display:flex; gap:6px; margin-bottom:5px;">
+    <div style="width:28%; padding:6px 10px; font-size:0.78em; font-weight:700; color:#e2e8f0;">RLM</div>
+    <div style="flex:1; background:rgba(34,197,94,0.15); border:2px solid #22c55e; border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e; font-weight:700;">✓</div>
+    <div style="flex:1; background:rgba(34,197,94,0.15); border:2px solid #22c55e; border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e; font-weight:700;">✓</div>
+    <div style="flex:1; background:rgba(34,197,94,0.15); border:2px solid #22c55e; border-radius:6px; padding:5px; text-align:center; font-size:0.82em; color:#22c55e; font-weight:700;">✓</div>
+  </div>
+</div>
+
+<div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:7px 12px; font-size:0.75em; color:#e2e8f0; margin-top:10px;">
+  Source: Table 1 & Section 2, <em>Recursive Language Models</em> — Zhang, Kraska & Khattab (MIT CSAIL, 2025)
+</div>
+
+<!--
+1. VANILLA LLM: El caso base. Metes todo el prompt directo al LLM. No hay REPL, no hay recursión, no hay nada. Funciona bien hasta que el contexto excede la ventana — después se degrada catastróficamente (Figura 1 del paper). Ejemplos: ChatGPT con un PDF largo, Claude con un codebase pegado.
+
+2. SUMMARY AGENT: Chunking + compaction iterativa (Sun et al., 2025). El agente va leyendo chunks y acumulando resúmenes. Problema: no tiene symbolic handle (el contexto pasa por el LLM directamente), no tiene REPL persistente, y no tiene recursión real — solo itera secuencialmente. Cuando un chunk individual es más grande que la ventana, colapsa. Y la compaction pierde detalles que pueden ser críticos.
+
+3. CODEACT: El agente puede ejecutar código en un REPL (por eso tiene ✓ en Persistent Symbolic Programming). PERO el prompt del usuario se mete directamente en el historial del LLM (hist), no como variable externa. Esto significa que sigue limitado por la ventana de contexto para el input. Ejemplo: Codex de OpenAI, Claude Code en modo agente.
+
+4. CODEACT + SUB-CALLS: Igual que CodeAct pero puede invocar sub-LLMs. Sin embargo, las sub-llamadas son tool calls externas (acciones JSON), no código dentro del REPL. El LLM no puede poner una sub-llamada dentro de un for-loop o un parallel_map. Por eso no tiene symbolic recursion — tiene "delegation", que es estrictamente menos expresivo.
+
+5. CODELET + SUBROUTINES: Este es el más cercano a un RLM. Offloadea el contexto como variable en el REPL (✓ symbolic handle), tiene REPL persistente (✓), pero las sub-llamadas cargan el contexto directamente en el modelo en vez de mantenerlo simbólico. Por eso la recursión es "parcial" — puede hacer sub-calls, pero pierde la propiedad de que el contexto nunca entra en la ventana neural.
+
+6. RLM: El único que cumple las 3. El contexto es variable (P), el REPL persiste, y llm_query() vive DENTRO del REPL como función Python. Esto permite for-loops, parallel_map, recursión a cualquier profundidad.
+
 -->
