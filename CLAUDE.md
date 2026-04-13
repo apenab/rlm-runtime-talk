@@ -298,6 +298,22 @@ For connected component flows. Use `border-collapse:separate` and `border-spacin
 
 ---
 
+### 13. Code block with syntax highlighting
+
+Inside a flex column container (`align-items:center`), always add `align-self:stretch` and `text-align:left` to the code block. The `uncover` theme applies `text-align:center` globally — without `text-align:left` the indentation renders centered. Use one `<div>` per line and `padding-left` for indentation (not `&nbsp;` or `<br>`).
+
+```html
+<div style="background:#0f172a; border:1px solid #334155; border-radius:6px; padding:8px 12px; font-family:monospace; font-size:0.75em; line-height:1.8; align-self:stretch; box-sizing:border-box; text-align:left;">
+  <div><span style="color:#60a5fa;">for</span> chunk <span style="color:#60a5fa;">in</span> <span style="color:#fbbf24;">P</span>.chunks():</div>
+  <div style="padding-left:1.5em;">r = <span style="color:#c084fc;">llm_query</span>(chunk)</div>
+  <div style="padding-left:1.5em;">results.append(r)</div>
+</div>
+```
+
+Token colors: keywords `#60a5fa`, variables `#fbbf24`, functions `#c084fc`, strings `#86efac`, comments `#475569`.
+
+---
+
 ### General rules
 
 - Always use the `--html` flag in Marp to render inline HTML
