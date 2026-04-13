@@ -322,7 +322,7 @@ GPT-5: "Alice" ❌
 </div>
 
 <!--
-→ La solución brillante del MIT: ¿y si el contexto nunca entra en la red neuronal?
+Estudios realizados con benchmars del estilo "needle-in-a-haystack", han revelado que el fenomeno de Context Rot es real: a medida que el contexto crece, la calidad de las respuestas cae estrepitosamente, incluso antes de llegar al límite de tokens.
 -->
 
 ---
@@ -495,11 +495,6 @@ From the paper (MIT CSAIL 2025):
 </div>
 
 <!--
-NOTAS — The 3 Defining Properties of RLM (1/3)
-
-El contexto vive como variable P en el REPL. El LLM solo ve metadatos: longitud, prefijo. Para leer el contenido, escribe código. Nunca entra en el prompt.
-
-→ ¿Dónde vive ese código? En un entorno persistente.
 -->
 
 ---
@@ -539,7 +534,7 @@ From the paper (MIT CSAIL 2025):
 </div>
 
 <!--
-El REPL persiste entre iteraciones: variables, funciones, estado acumulado. No es one-shot, es un loop iterativo. El modelo construye su solución paso a paso.
+Una de las cosas mas interesantes en este punto es que estamos combinando el aspecto "difuso" de los LLms con un verificador "simbolico" tradicional.
 
  Python
   - ipython — más potente, con autocompletado
