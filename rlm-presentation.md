@@ -974,13 +974,13 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
 
 <div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:6px;">🎯 Architecture: RLM High-Level View</div>
 
-<!-- Grid: 5 columns × 4 rows — inputs outside, RLM box spans center -->
-<div style="display:grid; grid-template-columns:140px 45px 1fr 45px 120px; grid-template-rows:auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
+<!-- Grid: 5 columns — inputs outside, RLM box spans center. CLEAN version: no tools, no FINAL -->
+<div style="display:grid; grid-template-columns:140px 45px 1fr 45px 130px; grid-template-rows:auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
 
-  <!-- Row 1: RLM title (spans the center column) -->
+  <!-- Row 1: RLM title -->
   <div style="grid-column:3; grid-row:1; font-size:14px; font-weight:800; color:#93c5fd; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-bottom:none; border-radius:14px 14px 0 0; padding:10px 16px 6px 16px;">RLM (root / depth = 0)</div>
 
-  <!-- Row 2: query → Language Model              + output arrow + final response -->
+  <!-- Row 2: query → Language Model -->
   <div style="grid-column:1; grid-row:2; text-align:center;">
     <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📋 query</div>
   </div>
@@ -994,18 +994,80 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
     <span style="font-size:26px; color:#a855f7;">⟶</span>
   </div>
   <div style="grid-column:5; grid-row:2/5; text-align:center;">
-    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:12px; font-weight:600; font-size:17px;">✅ final<br>response</div>
-    <div style="font-size:11px; color:#94a3b8; font-style:italic; margin-top:5px;">FINAL: /<br>FINAL_VAR:</div>
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:10px 8px; font-weight:600; font-size:16px;">✅ response</div>
   </div>
 
-  <!-- Row 3: loop indicator (inside RLM) -->
-  <div style="grid-column:1; grid-row:3;"></div>
-  <div style="grid-column:2; grid-row:3;"></div>
+  <!-- Row 3: loop indicator -->
   <div style="grid-column:3; grid-row:3; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:4px 16px; text-align:center;">
     <span style="font-size:16px; color:#94a3b8;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#60a5fa; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</span>
   </div>
 
-  <!-- Row 4: context → Environment E -->
+  <!-- Row 4: context → Environment E (clean — no tools listed) -->
+  <div style="grid-column:1; grid-row:4; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:13px; font-weight:400;">(1M tokens)</span></div>
+  </div>
+  <div style="grid-column:2; grid-row:4; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+  <div style="grid-column:3; grid-row:4; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:6px 16px;">
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px 14px; font-weight:600; font-size:17px; text-align:center;">⚙️ Environment E (Python REPL)</div>
+  </div>
+
+  <!-- Row 5: RLM bottom border -->
+  <div style="grid-column:3; grid-row:5; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-top:none; border-radius:0 0 14px 14px; padding:6px 16px 10px 16px; text-align:center; font-size:13px; color:#94a3b8;">
+    &nbsp;
+  </div>
+
+</div>
+
+<!--
+NOTAS — Slide 21: Arquitectura limpia
+
+Esta es la vista de alto nivel del RLM — la arquitectura base sin detalles de implementación.
+
+Tres componentes externos: query (lo que se pregunta), context (los datos, hasta 1M tokens), y el response final.
+
+Dentro del RLM hay dos piezas: el Language Model y el Environment (un REPL de Python). El LM genera código, el REPL lo ejecuta, y el stdout vuelve al LM — ese loop es el corazón del sistema.
+
+Lo importante: el context NO se envía al LLM. Se carga como variable P en el REPL. El LLM solo ve metadata.
+
+En la siguiente slide vamos a ver qué herramientas tiene disponible el REPL y cómo termina el proceso.
+-->
+
+---
+
+<div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:6px;">🎯 Architecture: RLM High-Level View — Tools & Termination</div>
+
+<!-- Grid: 5 columns — same layout, now WITH tools and FINAL details -->
+<div style="display:grid; grid-template-columns:140px 45px 1fr 45px 130px; grid-template-rows:auto auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
+
+  <!-- Row 1: RLM title -->
+  <div style="grid-column:3; grid-row:1; font-size:14px; font-weight:800; color:#93c5fd; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-bottom:none; border-radius:14px 14px 0 0; padding:10px 16px 6px 16px;">RLM (root / depth = 0)</div>
+
+  <!-- Row 2: query → Language Model -->
+  <div style="grid-column:1; grid-row:2; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📋 query</div>
+  </div>
+  <div style="grid-column:2; grid-row:2; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+  <div style="grid-column:3; grid-row:2; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:6px 16px;">
+    <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px 14px; font-weight:600; font-size:19px; text-align:center;">🧠 Language Model</div>
+  </div>
+  <div style="grid-column:4; grid-row:2/6; text-align:center;">
+    <span style="font-size:26px; color:#a855f7;">⟶</span>
+  </div>
+  <div style="grid-column:5; grid-row:2/6; text-align:center;">
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:10px 8px; font-weight:600; font-size:16px;">✅ final<br>response</div>
+    <div style="font-size:11px; color:#94a3b8; font-style:italic; margin-top:5px;">FINAL: /<br>FINAL_VAR:</div>
+  </div>
+
+  <!-- Row 3: loop indicator -->
+  <div style="grid-column:3; grid-row:3; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:4px 16px; text-align:center;">
+    <span style="font-size:16px; color:#94a3b8;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#60a5fa; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</span>
+  </div>
+
+  <!-- Row 4: context → Environment E (WITH tools) -->
   <div style="grid-column:1; grid-row:4; text-align:center;">
     <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:13px; font-weight:400;">(1M tokens)</span></div>
   </div>
@@ -1019,7 +1081,7 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
     </div>
   </div>
 
-  <!-- Row 5: RLM footer (child spawning note) -->
+  <!-- Row 5: RLM footer — child spawning -->
   <div style="grid-column:3; grid-row:5; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-top:none; border-radius:0 0 14px 14px; padding:6px 16px 10px 16px; text-align:center; font-size:13px; color:#94a3b8;">
     REPL calls <code style="color:#f87171; font-weight:700; background:transparent;">llm_query(sub_context)</code> → spawns child RLMs ↓
   </div>
@@ -1027,14 +1089,17 @@ Frase clave: el LLM no "lee" los archivos — escribe el programa que los lee. E
 </div>
 
 <!--
-El context en RLM no es input, es memoria accesible bajo demanda.
+NOTAS — Slide 22: Arquitectura con tools y terminación
 
-El contexto NO se envía al LLM — se almacena como variable P en el REPL. El LLM solo ve metadata: longitud, estructura, nº de documentos.
+Ahora sí, los detalles. El Environment tiene estas herramientas disponibles:
+- P = context (la variable donde vive el contexto completo)
+- llm_query() — para crear RLMs hijos (recursión)
+- extract_after() — para extraer fragmentos del contexto
+- peek() — para inspeccionar sin consumir
 
-El LLM genera código → se ejecuta en el REPL → stdout vuelve al LLM. El loop termina cuando emite FINAL: o FINAL_VAR:.
+El proceso termina cuando el LLM emite FINAL: (texto libre) o FINAL_VAR: (referencia a variable en el REPL).
 
-Cuando llama a llm_query(sub_context), se crea un RLM hijo con su propio REPL — recursión arbitraria.
-
+Lo clave: llm_query(sub_context) spawns un RLM hijo con su propio REPL — recursión arbitraria con depth ilimitada en teoría.
 -->
 
 ---
