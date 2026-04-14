@@ -1928,7 +1928,7 @@ Prime Intellect, Google ADK, Yoav Goldberg, la comunidad de ML — todos reaccio
     </div>
     <div style="display:flex; align-items:center; gap:10px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:8px; padding:10px 14px;">
       <span style="color:#22c55e; font-size:1.1em;">✓</span>
-      <span style="font-size:0.85em; color:#e2e8f0;"><strong>Parallel subcalls</strong> · <strong>SmartRouter</strong> · <strong>Elasticsearch retrieval</strong> · <strong>Live trace</strong></span>
+      <span style="font-size:0.85em; color:#e2e8f0;"><strong>Parallel subcalls</strong> · <strong>Elasticsearch retrieval</strong> · <strong>Live trace</strong></span>
     </div>
     <div style="display:flex; align-items:center; gap:10px; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:8px; padding:10px 14px;">
       <span style="color:#22c55e; font-size:1.1em;">✓</span>
@@ -1952,9 +1952,9 @@ Mencionar que en poco tiempo el proyecto ha evolucionado bastante: empezó como 
 Puntos clave:
 - v0.3.0 es la versión disponible el día de la charla.
 - Los adapters ahora cubren todos los grandes proveedores: cualquier API OpenAI-compatible, Azure, VertexAI (Google Cloud), Ollama/vLLM para local, y GenericChatAdapter para APIs custom con formato no estándar.
-- Las features nuevas (parallel subcalls, SmartRouter, Elasticsearch, live trace) van más allá del paper original — son las cosas que hicieron falta al usarlo en proyectos reales.
+- Las features nuevas (parallel subcalls, Elasticsearch, live trace) van más allá del paper original — son las cosas que hicieron falta al usarlo en proyectos reales.
 - El QR lleva directamente al repo — invitar al público a explorarlo y contribuir.
-- Las slides siguientes van componente por componente: arquitectura, SmartRouter, subcalls paralelas, retrieval, visualización en vivo.
+- Las slides siguientes van componente por componente: arquitectura, subcalls paralelas, retrieval, visualización en vivo.
 -->
 
 ---
@@ -1964,8 +1964,6 @@ Puntos clave:
 <table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.4); border:2px solid #3b82f6; border-radius:14px; margin-top:4px;">
 <tr><td colspan="5" style="padding:6px 14px; border:none; text-align:center;">
   <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:6px 20px; font-weight:600; font-size:16px; display:inline-block;">📋 User Query + Context</div>
-  <div style="font-size:18px; color:#94a3b8;">↓</div>
-  <div style="background:rgba(96,165,250,0.15); border:2px solid #60a5fa; color:#93c5fd; border-radius:10px; padding:6px 20px; font-weight:600; font-size:16px; display:inline-block; margin-bottom:4px;">🔀 SmartRouter — baseline vs RLM auto-selection</div>
   <div style="font-size:18px; color:#94a3b8;">↓</div>
   <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:8px; font-weight:600; font-size:18px;">🧠 RLM Orchestrator — Main loop · Conversation history · FINAL detection</div>
   <div style="font-size:18px; color:#94a3b8;">↓</div>
@@ -1997,9 +1995,7 @@ Puntos clave:
 
 1. USER QUERY + CONTEXT entra al sistema.
 
-2. SMARTROUTER: Primera decisión — ¿el contexto es pequeño (<8K chars)? Si sí, va directo al LLM como baseline (más rápido, menos tokens). Si no, activa el RLM completo. Ahorra tokens y latencia en casos simples automáticamente.
-
-3. RLM ORCHESTRATOR (rlm.py): El corazón del sistema. Implementa el loop del paper: InitREPL → LLM genera código → REPL ejecuta → stdout vuelve al LLM → hasta FINAL. También gestiona conversation history multi-turn para autocorrección.
+2. RLM ORCHESTRATOR (rlm.py): El corazón del sistema. Implementa el loop del paper: InitREPL → LLM genera código → REPL ejecuta → stdout vuelve al LLM → hasta FINAL. También gestiona conversation history multi-turn para autocorrección.
 
 4. CINCO COMPONENTES:
    - REPL: PythonREPL (exec sandbox) o MontyREPL (Rust, secure by construction). Disponibles: peek(), ask_chunks(), llm_query() y ahora también es_search() si hay retriever.
@@ -2051,53 +2047,6 @@ Puntos a destacar:
 - `repl_backend="monty"` activa el sandbox en Rust. Lo explicamos en detalle en las slides de seguridad.
 - El `trace` devuelve el historial completo: qué código generó el LLM en cada step, qué salió del REPL, cuántos tokens se usaron.
 - El modelo `gpt-4o` es solo un ejemplo. Funciona con cualquier adapter: Azure, VertexAI, Ollama...
--->
-
----
-
-# 🔀 SmartRouter: Baseline vs RLM
-
-<div style="color:#94a3b8; font-size:0.88em; margin-bottom:14px;">Automatically selects the cheapest execution mode — no manual switching needed.</div>
-
-<div style="display:flex; gap:14px; margin-bottom:14px;">
-  <div style="flex:1; background:rgba(96,165,250,0.1); border:2px solid #60a5fa; border-radius:10px; padding:14px;">
-    <div style="font-size:1em; font-weight:700; color:#93c5fd; margin-bottom:8px;">⚡ Short context <span style="color:#94a3b8; font-weight:400; font-size:0.85em;">(&lt; 8K chars)</span></div>
-    <div style="font-size:0.82em; color:#94a3b8; line-height:1.6;">→ Direct LLM call<br>→ 1 API call, minimal tokens<br>→ Method: <code style="color:#60a5fa;">"baseline"</code></div>
-  </div>
-  <div style="flex:1; background:rgba(34,197,94,0.1); border:2px solid #22c55e; border-radius:10px; padding:14px;">
-    <div style="font-size:1em; font-weight:700; color:#86efac; margin-bottom:8px;">🧠 Long context <span style="color:#94a3b8; font-weight:400; font-size:0.85em;">(≥ 8K chars)</span></div>
-    <div style="font-size:0.82em; color:#94a3b8; line-height:1.6;">→ Full RLM loop<br>→ REPL + subcalls + trace<br>→ Method: <code style="color:#22c55e;">"rlm"</code></div>
-  </div>
-</div>
-
-```python
-from pyrlm_runtime import SmartRouter, RouterConfig, ExecutionProfile
-
-router = SmartRouter(adapter, config=RouterConfig(baseline_threshold=8000))
-result = router.run(query, context, profile=ExecutionProfile.DETERMINISTIC_FIRST)
-
-print(f"Method: {result.method}")      # "baseline" or "rlm"
-print(f"Tokens: {result.tokens_used}")
-```
-
-<div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-  <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:6px 10px; font-size:0.78em; color:#93c5fd;"><strong>DETERMINISTIC_FIRST</strong> — regex first, fallback to RLM</div>
-  <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:6px 10px; font-size:0.78em; color:#93c5fd;"><strong>SEMANTIC_BATCHES</strong> — parallel subcalls</div>
-  <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:6px 10px; font-size:0.78em; color:#93c5fd;"><strong>HYBRID</strong> — deterministic + semantic fallback</div>
-  <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:6px 10px; font-size:0.78em; color:#93c5fd;"><strong>VERIFY</strong> — double-check with recursive subcalls</div>
-</div>
-
-<!--
-El SmartRouter es una capa de decisión inteligente por encima del RLM. Muchas veces el contexto no es tan grande y no hace falta todo el loop RLM — una llamada directa al LLM es suficiente y mucho más barata.
-
-THRESHOLD: Por defecto 8000 chars. Si el contexto es menor, va directo al LLM. Si es mayor, activa el RLM completo. Este threshold es configurable vía RouterConfig.
-
-EXECUTION PROFILES:
-- DETERMINISTIC_FIRST: Intenta primero extracción determinista (regex, extract_after). Si no encuentra respuesta, cae al RLM. Cero tokens en el caso base. Ideal para extracción de campos.
-- SEMANTIC_BATCHES: Usa subcalls en paralelo para clasificación semántica. Bueno para tareas de clasificación/filtrado.
-- HYBRID: Combina determinista y semántico. El más robusto para producción.
-- VERIFY: Usa recursive subcalls para double-check. El más preciso pero más lento.
-
 -->
 
 ---
@@ -2424,13 +2373,13 @@ MENSAJE CLAVE: "La integración de Monty elimina TODAS las vulnerabilidades de s
 <!--
 
 CUÁNDO NO:
-- Context fits in window: Si tienes <50K tokens, un baseline directo es más rápido y barato. El SmartRouter hace esto automáticamente.
+- Context fits in window: Si tienes <50K tokens, un baseline directo es más rápido y barato.
 - Simple search: Para preguntas tipo "¿cuál es el valor del campo X en este JSON?" no necesitas un loop iterativo. Un regex o extract_after() es suficiente.
 - Info localized: Si sabes que la respuesta está en una sección concreta, RAG (BM25 + LLM) es más eficiente que un RLM completo.
 - Real-time: El loop RLM tarda entre 10s y 2 minutos según la complejidad. No es adecuado para respuestas en tiempo real.
 - Trivial: Extraer un campo de un formulario de 2 páginas no merece un RLM.
 
-RULE OF THUMB: "Si el baseline falla o trunca, prueba RLM." Es la decisión más simple posible. El SmartRouter implementa esto automáticamente con el threshold configurable.
+RULE OF THUMB: "Si el baseline falla o trunca, prueba RLM." Es la decisión más simple posible.
 -->
 
 ---
@@ -2447,13 +2396,12 @@ RULE OF THUMB: "Si el baseline falla o trunca, prueba RLM." Es la decisión más
       <div style="font-size:0.78em; color:#94a3b8;">✓ Elasticsearch retrieval — BM25 + kNN + hybrid</div>
       <div style="font-size:0.78em; color:#94a3b8;">✓ VertexAI adapter — Google Cloud support</div>
       <div style="font-size:0.78em; color:#94a3b8;">✓ Live trace — RichTraceListener</div>
-      <div style="font-size:0.78em; color:#94a3b8;">✓ SmartRouter — auto baseline vs RLM</div>
     </div>
   </div>
   <div style="flex:1; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:10px; padding:14px;">
     <div style="font-size:0.95em; font-weight:700; color:#93c5fd; margin-bottom:10px;">🔧 Next</div>
     <div style="display:flex; flex-direction:column; gap:6px;">
-      <div style="font-size:0.78em; color:#94a3b8;">→ SmartRouter: adaptive routing improvements</div>
+      <div style="font-size:0.78em; color:#94a3b8;">→ Smart routing: auto baseline vs RLM selection</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ Agentic RAG</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ Token efficiency: prompt compression, evidence compression</div>
       <div style="font-size:0.78em; color:#94a3b8;">→ Speed: faster subcall model, early stopping</div>
