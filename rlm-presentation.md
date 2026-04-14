@@ -1268,9 +1268,9 @@ El loop termina cuando el LM escribe `Final = respuesta` — una asignación Pyt
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1303,9 +1303,9 @@ LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recib
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1332,7 +1332,7 @@ LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recib
 </svg>
 
 <div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">CodeQA</strong> — RLM(GPT-5) <strong style="color:#22c55e;">62%</strong> vs GPT-5 24%* — <strong style="color:#22c55e;">2.6× better</strong>
+  <strong style="color:#60a5fa;">CodeQA</strong> — RLM(GPT-5 + mini) <strong style="color:#22c55e;">62%</strong> vs GPT-5 24%* — <strong style="color:#22c55e;">2.6× better</strong>
 </div>
 
 <!--
@@ -1340,9 +1340,9 @@ LongBench-v2 CodeQA — comprensión de repositorios de código. El modelo recib
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1379,9 +1379,9 @@ BrowseComp-Plus: preguntas multi-salto sobre 1.000 documentos web — 6 a 11 mil
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1412,11 +1412,11 @@ BrowseComp-Plus: preguntas multi-salto sobre 1.000 documentos web — 6 a 11 mil
 </svg>
 
 <div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">BrowseComp+</strong> — RLM(GPT-5) <strong style="color:#22c55e;">91.3%</strong> vs GPT-5 0%* — <strong style="color:#22c55e;">∞ improvement</strong>
+  <strong style="color:#60a5fa;">BrowseComp+</strong> — RLM(GPT-5 + mini) <strong style="color:#22c55e;">91.3%</strong> vs GPT-5 0%* — <strong style="color:#22c55e;">∞ improvement</strong>
 </div>
 
 <!--
-RLM(GPT-5) 91.3% vs GPT-5 0%*. El resultado más espectacular del paper.
+RLM(GPT-5 + mini) 91.3% vs GPT-5 0%*. El resultado más espectacular del paper.
 
 De 0% a 91.3% simplemente por el cambio de arquitectura.
 
@@ -1425,9 +1425,9 @@ De 0% a 91.3% simplemente por el cambio de arquitectura.
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1468,9 +1468,9 @@ OOLONG — razonamiento sobre textos largos que requiere transformar chunks del 
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1505,7 +1505,7 @@ OOLONG — razonamiento sobre textos largos que requiere transformar chunks del 
 </svg>
 
 <div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:3px;">
-  <strong style="color:#60a5fa;">OOLONG</strong> — RLM(GPT-5) <strong style="color:#22c55e;">56.5%</strong> vs GPT-5 44% — <strong style="color:#22c55e;">1.3× better</strong>
+  <strong style="color:#60a5fa;">OOLONG</strong> — RLM(GPT-5 + mini) <strong style="color:#22c55e;">56.5%</strong> vs GPT-5 44% — <strong style="color:#22c55e;">1.3× better</strong>
 </div>
 
 <!--
@@ -1513,9 +1513,9 @@ OOLONG — razonamiento sobre textos largos que requiere transformar chunks del 
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1563,9 +1563,9 @@ RLM genera código que itera sobre pares de chunks con extract_after() y peek().
 
 ---
 
-<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5) vs GPT-5 Base — Accuracy (%)</div>
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">RLM(GPT-5 + mini) vs GPT-5 Base — Accuracy (%)</div>
 <div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
-  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM(GPT-5 + mini)</span>
   <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5</span>
 </div>
 
@@ -1615,6 +1615,101 @@ OOLONG (lineal) 1.3×, CodeQA (hasta 4.2M) 2.6×, OOLONG-Pairs (cuadrático) 580
 
 ---
 
+<div style="font-size:0.6em; color:#60a5fa; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px;">💰 RLM(GPT-5 + GPT-5-mini) vs GPT-5 Base — Accuracy (%)</div>
+<div style="display:flex; gap:18px; justify-content:flex-end; font-size:0.65em; color:#94a3b8; margin-bottom:2px;">
+  <span><span style="display:inline-block; width:10px; height:10px; background:#60a5fa; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>RLM (GPT-5 root + GPT-5-mini sub-calls)</span>
+  <span><span style="display:inline-block; width:10px; height:10px; background:#475569; border-radius:2px; vertical-align:middle; margin-right:3px;"></span>GPT-5 Base</span>
+</div>
+
+<svg viewBox="0 0 700 275" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-height:550px;">
+  <line x1="65" y1="250" x2="685" y2="250" stroke="#334155" stroke-width="1.5"/>
+  <line x1="65" y1="15" x2="65" y2="250" stroke="#334155" stroke-width="1"/>
+  <line x1="65" y1="191" x2="685" y2="191" stroke="#1e293b" stroke-dasharray="4,3" stroke-width="1"/>
+  <line x1="65" y1="133" x2="685" y2="133" stroke="#1e293b" stroke-dasharray="4,3" stroke-width="1"/>
+  <line x1="65" y1="74"  x2="685" y2="74"  stroke="#1e293b" stroke-dasharray="4,3" stroke-width="1"/>
+  <line x1="65" y1="15"  x2="685" y2="15"  stroke="#1e293b" stroke-dasharray="4,3" stroke-width="1"/>
+  <text x="60" y="254" text-anchor="end" fill="#64748b" font-size="11">0</text>
+  <text x="60" y="195" text-anchor="end" fill="#64748b" font-size="11">25</text>
+  <text x="60" y="137" text-anchor="end" fill="#64748b" font-size="11">50</text>
+  <text x="60" y="78"  text-anchor="end" fill="#64748b" font-size="11">75</text>
+  <text x="60" y="19"  text-anchor="end" fill="#64748b" font-size="11">100</text>
+  <rect x="96" y="104" width="44" height="146" fill="#60a5fa" rx="3"/>
+  <text x="118" y="98" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">62</text>
+  <rect x="146" y="194" width="44" height="56" fill="#475569" rx="3"/>
+  <text x="168" y="188" text-anchor="middle" fill="#94a3b8" font-size="12">24</text>
+  <rect x="251" y="35" width="44" height="215" fill="#60a5fa" rx="3"/>
+  <text x="273" y="29" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">91.3</text>
+  <rect x="301" y="248" width="44" height="2" fill="#475569" rx="3"/>
+  <text x="323" y="242" text-anchor="middle" fill="#94a3b8" font-size="12">0</text>
+  <rect x="406" y="117" width="44" height="133" fill="#60a5fa" rx="3"/>
+  <text x="428" y="111" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">56.5</text>
+  <rect x="456" y="147" width="44" height="103" fill="#475569" rx="3"/>
+  <text x="478" y="141" text-anchor="middle" fill="#94a3b8" font-size="12">44</text>
+  <rect x="561" y="114" width="44" height="136" fill="#60a5fa" rx="3"/>
+  <text x="583" y="108" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">58</text>
+  <rect x="611" y="248" width="44" height="2" fill="#475569" rx="3"/>
+  <text x="633" y="242" text-anchor="middle" fill="#94a3b8" font-size="12">0.1</text>
+  <text x="143" y="268" text-anchor="middle" fill="#93c5fd" font-size="13">CodeQA</text>
+  <text x="298" y="268" text-anchor="middle" fill="#93c5fd" font-size="13">BrowseComp+</text>
+  <text x="453" y="268" text-anchor="middle" fill="#93c5fd" font-size="13">OOLONG</text>
+  <text x="608" y="268" text-anchor="middle" fill="#93c5fd" font-size="13">OOLONG-Pairs</text>
+</svg>
+
+<!-- Cost comparison in HTML below the chart -->
+<div style="display:flex; justify-content:space-around; margin-top:4px; padding:6px 60px 6px 60px;">
+  <div style="text-align:center; flex:1;">
+    <span style="color:#60a5fa; font-size:0.7em; font-weight:700;">$0.11</span>
+    <span style="color:#475569; font-size:0.65em;"> / </span>
+    <span style="color:#94a3b8; font-size:0.7em;">$0.13</span>
+  </div>
+  <div style="text-align:center; flex:1;">
+    <span style="color:#60a5fa; font-size:0.7em; font-weight:700;">$0.99</span>
+    <span style="color:#475569; font-size:0.65em;"> / </span>
+    <span style="color:#ef4444; font-size:0.7em;">N/A</span>
+  </div>
+  <div style="text-align:center; flex:1;">
+    <span style="color:#60a5fa; font-size:0.7em; font-weight:700;">$0.43</span>
+    <span style="color:#475569; font-size:0.65em;"> / </span>
+    <span style="color:#94a3b8; font-size:0.7em;">$0.14</span>
+  </div>
+  <div style="text-align:center; flex:1;">
+    <span style="color:#60a5fa; font-size:0.7em; font-weight:700;">$0.33</span>
+    <span style="color:#475569; font-size:0.65em;"> / </span>
+    <span style="color:#94a3b8; font-size:0.7em;">$0.16</span>
+  </div>
+</div>
+<div style="text-align:center; font-size:0.55em; color:#64748b; margin-top:-2px;">↑ avg. cost per query (RLM / Base) — Table 1, MIT paper</div>
+
+<div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:5px 14px; font-size:0.7em; color:#e2e8f0; margin-top:6px;">
+  Sub-calls use <strong style="color:#22c55e;">GPT-5-mini</strong> (cheap). CodeQA: RLM is <strong style="color:#22c55e;">cheaper AND 2.6× better</strong>. GPT-5 Summary Agent costs $0.13–$1.31 on same tasks.
+</div>
+
+<!--
+NOTAS — Slide 33: Performance vs Cost
+
+📌 Los costes son TOTALES: root GPT-5 + todas las sub-calls GPT-5-mini sumadas.
+   Fuente: Table 1, "average API cost ± standard deviation". No es solo el root, es todo el pipeline.
+
+💡 CodeQA es el dato más sorprendente: RLM cuesta MENOS que el baseline ($0.11 vs $0.13) y es 2.6× mejor.
+   Por qué: el root GPT-5 nunca toca los 4.2M tokens directamente — los chunka en el REPL y manda trozos pequeños a GPT-5-mini.
+   Efecto paradójico: más capas de procesamiento = menos coste total.
+
+🚫 BrowseComp+: el baseline directamente no puede correr (context > ventana del modelo). RLM lo hace por $0.99.
+   No es "RLM gana" — es que el problema era irresolvible sin RLM.
+
+⚠️ OOLONG y OOLONG-Pairs: aquí sí hay overhead real (3× y 2× respectivamente).
+   Pero hay que leer el contexto: OOLONG-Pairs paga el doble y obtiene 580× más accuracy (58% vs 0.1%).
+
+📊 Comparativa con Summary Agent (GPT-5): $0.13–$1.31 en las mismas tareas.
+   En CodeQA el Summary Agent cuesta $1.31 vs RLM $0.11 — 12× más caro.
+   OJO: bajo Qwen3-Coder el Summary Agent llega a $8.98 en BrowseComp+ — dato útil si alguien pregunta por otros modelos.
+
+🔬 El paper usa OpenAI pricing para GPT-5 y Fireworks AI para otros modelos (precios de diciembre 2024).
+   Los números absolutos son de ese momento — lo que importa es la relación entre columnas, no el valor exacto.
+-->
+
+---
+
 <div style="font-size:0.65em; color:#ef4444; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">Observation 3 — Performance degrades with context length (OOLONG)</div>
 
 <svg viewBox="0 0 680 265" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-height:400px;">
@@ -1658,7 +1753,7 @@ OOLONG (lineal) 1.3×, CodeQA (hasta 4.2M) 2.6×, OOLONG-Pairs (cuadrático) 580
   <circle cx="496" cy="164" r="4" fill="#ef4444"/>
   <circle cx="581" cy="196" r="4" fill="#ef4444" opacity="0.5"/>
   <circle cx="660" cy="212" r="4" fill="#ef4444" opacity="0.5"/>
-  <!-- RLM(GPT-5) line (blue, flat) -->
+  <!-- RLM(GPT-5 + mini) line (blue, flat) -->
   <polyline points="70,104 155,106 239,106 324,108 412,108 496,110 581,108 660,110"
             fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linejoin="round"/>
   <circle cx="70"  cy="104" r="4" fill="#60a5fa"/>
@@ -1673,11 +1768,11 @@ OOLONG (lineal) 1.3×, CodeQA (hasta 4.2M) 2.6×, OOLONG-Pairs (cuadrático) 580
 
 <div style="display:flex; gap:20px; justify-content:center; font-size:0.7em; color:#94a3b8; margin-top:4px;">
   <span><svg width="24" height="10" style="vertical-align:middle;"><line x1="0" y1="5" x2="18" y2="5" stroke="#ef4444" stroke-width="2.5"/><circle cx="9" cy="5" r="3" fill="#ef4444"/></svg> GPT-5 (direct)</span>
-  <span><svg width="24" height="10" style="vertical-align:middle;"><line x1="0" y1="5" x2="18" y2="5" stroke="#60a5fa" stroke-width="2.5"/><circle cx="9" cy="5" r="3" fill="#60a5fa"/></svg> RLM(GPT-5)</span>
+  <span><svg width="24" height="10" style="vertical-align:middle;"><line x1="0" y1="5" x2="18" y2="5" stroke="#60a5fa" stroke-width="2.5"/><circle cx="9" cy="5" r="3" fill="#60a5fa"/></svg> RLM(GPT-5 + mini)</span>
 </div>
 
 <div style="background:rgba(239,68,68,0.06); border-left:3px solid #ef4444; border-radius:0 6px 6px 0; padding:6px 14px; font-size:0.72em; color:#e2e8f0; margin-top:4px;">
-  Past the 272K window (red zone), GPT-5 collapses. <strong style="color:#60a5fa;">RLM(GPT-5)</strong> stays flat at any context length — <em>processing inputs orders of magnitude beyond the base model's limit.</em>
+  Past the 272K window (red zone), GPT-5 collapses. <strong style="color:#60a5fa;">RLM(GPT-5 + mini)</strong> stays flat at any context length — <em>processing inputs orders of magnitude beyond the base model's limit.</em>
 </div>
 
 ---
