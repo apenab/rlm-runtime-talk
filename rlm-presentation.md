@@ -1959,7 +1959,7 @@ Puntos clave:
 
 ---
 
-# 🏗️ rlm-runtime Architecture
+# 🏗️ pyrlm-runtime Architecture
 
 <table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.4); border:2px solid #3b82f6; border-radius:14px; margin-top:4px;">
 <tr><td colspan="5" style="padding:6px 14px; border:none; text-align:center;">
