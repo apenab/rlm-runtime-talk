@@ -5094,51 +5094,46 @@ strong {
   gap: 1rem;
 }
 ;" data-marpit-pagination-total="50">
-<div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:8px;">🎯 Architecture: RLM High-Level View</div>
-<br />
-<table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-radius:14px;">
-  <tr><td colspan="5" style="border:none; padding:8px 14px; font-size:20px; font-weight:800; color:#93c5fd;">RLM (root / depth = 0)</td></tr>
-  <tr style="vertical-align:middle;">
-    <td style="border:none; padding:8px 10px; width:16%; text-align:center;">
-      <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">📋 query</div>
-    </td>
-    <td style="border:none; width:9%; text-align:center">
-      <span style="font-size:26px; color:#94a3b8;">→</span><br />
-      <span style="font-size:10px; color:#94a3b8;">S.P + P.M</span>
-    </td>
-    <td style="border:none; padding:8px 10px; text-align:center;" rowspan="3">
-      <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:12px; font-weight:600; font-size:22px; margin-bottom:8px;">🧠 Language Model</div>
-      <div style="font-size:18px; color:#94a3b8; margin-bottom:8px;">code ↓ &nbsp;&nbsp;<span style="font-size:30px; color:#60a5fa; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</div>
-      <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">
-        ⚙️ Environment E (Python REPL)<br />
-        <span style="font-size:14px; font-weight:400; color:#cbd5e1;">P = context · llm_query() · extract_after() · peek()</span>
-      </div>
-    </td>
-    <td style="border:none; width:6%; text-align:center;" rowspan="3">
-      <span style="font-size:28px; color:#94a3b8;">→</span>
-    </td>
-    <td style="border:none; padding:8px 10px; width:16%; text-align:center;" rowspan="3">
-      <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">✅ final<br />response</div>
-      <div style="font-size:13px; color:#94a3b8; font-style:italic; margin-top:6px;">FINAL: / FINAL_VAR:</div>
-    </td>
-  </tr>
-  <tr>
-    <td style="border:none; padding:6px;"></td>
-    <td style="border:none;"></td>
-  </tr>
-  <tr style="vertical-align:middle;">
-    <td style="border:none; padding:8px 10px; text-align:center;">
-      <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:12px; font-weight:600; font-size:20px;">📄 context<br /><span style="font-size:15px; font-weight:400;">(1M tokens)</span></div>
-    </td>
-    <td style="border:none; text-align:center;">
-      <span style="font-size:26px; color:#94a3b8;">→</span><br />
-      <span style="font-size:12px; color:#94a3b8;">var P</span>
-    </td>
-  </tr>
-  <tr><td colspan="5" style="border:none; text-align:center; padding:8px 0; font-size:16px; color:#94a3b8;">
+<div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:6px;">🎯 Architecture: RLM High-Level View</div>
+<div style="display:grid; grid-template-columns:140px 45px 1fr 45px 120px; grid-template-rows:auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
+  <div style="grid-column:3; grid-row:1; font-size:14px; font-weight:800; color:#93c5fd; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-bottom:none; border-radius:14px 14px 0 0; padding:10px 16px 6px 16px;">RLM (root / depth = 0)</div>
+  <div style="grid-column:1; grid-row:2; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📋 query</div>
+  </div>
+  <div style="grid-column:2; grid-row:2; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+  <div style="grid-column:3; grid-row:2; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:6px 16px;">
+    <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:10px 14px; font-weight:600; font-size:19px; text-align:center;">🧠 Language Model</div>
+  </div>
+  <div style="grid-column:4; grid-row:2/5; text-align:center;">
+    <span style="font-size:26px; color:#a855f7;">⟶</span>
+  </div>
+  <div style="grid-column:5; grid-row:2/5; text-align:center;">
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:12px; font-weight:600; font-size:17px;">✅ final<br />response</div>
+    <div style="font-size:11px; color:#94a3b8; font-style:italic; margin-top:5px;">FINAL: /<br />FINAL_VAR:</div>
+  </div>
+  <div style="grid-column:1; grid-row:3;"></div>
+  <div style="grid-column:2; grid-row:3;"></div>
+  <div style="grid-column:3; grid-row:3; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:4px 16px; text-align:center;">
+    <span style="font-size:16px; color:#94a3b8;">code ↓ &nbsp;&nbsp;<span style="font-size:28px; color:#60a5fa; font-weight:900;">⟳</span>&nbsp;&nbsp; ↑ stdout</span>
+  </div>
+  <div style="grid-column:1; grid-row:4; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📄 context<br /><span style="font-size:13px; font-weight:400;">(1M tokens)</span></div>
+  </div>
+  <div style="grid-column:2; grid-row:4; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+  <div style="grid-column:3; grid-row:4; background:rgba(30,58,95,0.5); border-left:2px solid #3b82f6; border-right:2px solid #3b82f6; padding:6px 16px;">
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:10px 14px; font-weight:600; font-size:17px; text-align:center;">
+      ⚙️ Environment E (Python REPL)<br />
+      <span style="font-size:12px; font-weight:400; color:#cbd5e1;">P = context · llm_query() · extract_after() · peek()</span>
+    </div>
+  </div>
+  <div style="grid-column:3; grid-row:5; background:rgba(30,58,95,0.5); border:2px solid #3b82f6; border-top:none; border-radius:0 0 14px 14px; padding:6px 16px 10px 16px; text-align:center; font-size:13px; color:#94a3b8;">
     REPL calls <code style="color:#f87171; font-weight:700; background:transparent;">llm_query(sub_context)</code> → spawns child RLMs ↓
-  </td></tr>
-</table>
+  </div>
+</div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-class="invert" data-paginate="true" data-theme="uncover" data-style="section {
   font-size: 24px;
@@ -12427,7 +12422,7 @@ Por qué funciona RLM:
 - El estado (qué archivos se procesaron, qué resultados se obtuvieron) vive en variables del REPL padre — nunca en el contexto del LLM
 - Escala: Ω(|P|) — el loop puede iterar sobre 1B archivos sin que el LLM padre se quede sin contexto
 
-Frase clave: el LLM no &quot;lee&quot; los archivos — escribe el programa que los lee. Es la diferencia entre un dev que abre archivos uno a uno vs uno que escribe un script que los procesa en batch.</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>El context en RLM no es input, es memoria accesible bajo demanda.
+Frase clave: el LLM no &quot;lee&quot; los archivos — escribe el programa que los lee. Es la diferencia entre un dev que abre archivos uno a uno vs uno que escribe un script que los procesa en batch.</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>Grid: 5 columns × 4 rows — inputs outside, RLM box spans center</p><p>Row 1: RLM title (spans the center column)</p><p>Row 2: query → Language Model              + output arrow + final response</p><p>Row 3: loop indicator (inside RLM)</p><p>Row 4: context → Environment E</p><p>Row 5: RLM footer (child spawning note)</p><p>El context en RLM no es input, es memoria accesible bajo demanda.
 
 El contexto NO se envía al LLM — se almacena como variable P en el REPL. El LLM solo ve metadata: longitud, estructura, nº de documentos.
 
