@@ -112,199 +112,6 @@ style: |
   }
 ---
 
-# 🧠 ¿Qué es un LLM?
-
-<div style="font-size:0.82em; color:#94a3b8; margin-bottom:10px;">Large Language Model — explicado con una analogía médica</div>
-
-<div style="display:flex; gap:14px; margin-top:8px;">
-  <div style="flex:1.2; display:flex; flex-direction:column; gap:10px;">
-    <div style="background:rgba(96,165,250,0.1); border:2px solid #60a5fa; border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px;">
-      <div style="font-size:2.2em; min-width:50px; text-align:center !important;">👨‍⚕️</div>
-      <div>
-        <div style="font-size:0.95em; font-weight:700; color:#93c5fd;">Imaginad un médico que...</div>
-        <div style="font-size:0.82em; color:#e2e8f0; margin-top:4px; line-height:1.5;">Ha leído <strong>todos</strong> los libros de medicina, revistas y casos clínicos jamás publicados. Harrison, Robbins, UpToDate, PubMed — absolutamente todo.</div>
-      </div>
-    </div>
-    <div style="background:rgba(234,179,8,0.1); border:2px solid #eab308; border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px;">
-      <div style="font-size:2.2em; min-width:50px; text-align:center !important;">📝</div>
-      <div>
-        <div style="font-size:0.95em; font-weight:700; color:#fde68a;">Pero solo puede comunicarse por notas escritas</div>
-        <div style="font-size:0.82em; color:#e2e8f0; margin-top:4px; line-height:1.5;">Sin acceso al paciente. Sin analíticas. Sin pruebas de imagen. Le escribes una pregunta y te responde <strong>solo de memoria</strong>.</div>
-      </div>
-    </div>
-  </div>
-  <div style="flex:0.8; display:flex; flex-direction:column; justify-content:center;">
-    <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; overflow:hidden;">
-      <div style="background:#1e293b; border-bottom:1px solid #334155; padding:6px 12px; display:flex; align-items:center; gap:6px;">
-        <span style="color:#ef4444; font-size:0.6em;">●</span>
-        <span style="color:#eab308; font-size:0.6em;">●</span>
-        <span style="color:#22c55e; font-size:0.6em;">●</span>
-        <span style="color:#94a3b8; font-size:0.55em; margin-left:6px;">LLM</span>
-      </div>
-      <div style="padding:12px;">
-        <div style="margin-bottom:10px;">
-          <div style="font-size:0.55em; color:#60a5fa; margin-bottom:3px; font-weight:bold;">Tú</div>
-          <div style="background:rgba(96,165,250,0.12); border:1px solid #60a5fa; border-radius:2px 10px 10px 10px; padding:8px 10px; font-size:0.72em;">Paciente con dolor torácico irradiado al brazo izquierdo, diaforesis...</div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end;">
-          <div style="font-size:0.55em; color:#22c55e; margin-bottom:3px; font-weight:bold;">LLM</div>
-          <div style="background:rgba(34,197,94,0.08); border:1px solid #22c55e; border-radius:10px 2px 10px 10px; padding:8px 10px; font-size:0.72em;">Según los síntomas descritos, el cuadro es compatible con un <strong>IAM</strong>. Se recomienda realizar ECG de 12 derivaciones y determinación de troponinas...</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center; margin-top:8px; font-size:0.7em; color:#475569;">Respuesta brillante — pero <strong style="color:#eab308;">solo de memoria</strong></div>
-  </div>
-</div>
-
-<div style="background:rgba(96,165,250,0.08); border-left:3px solid #60a5fa; border-radius:0 6px 6px 0; padding:7px 12px; font-size:0.78em; color:#e2e8f0; margin-top:10px;">
-  💡 Un LLM es un <strong>modelo estadístico</strong> entrenado con texto. Predice la siguiente palabra basándose en todo lo que ha leído — como el autocompletado del móvil, pero increíblemente sofisticado.
-</div>
-
-<!--
-
-ANALOGÍA: Un LLM es como un médico que ha leído TODOS los libros de medicina que existen. Sabe de todo: cardiología, neurología, patología, farmacología. Pero solo puede comunicarse por notas escritas — le escribes una pregunta y te responde de memoria.
-
-No puede ver al paciente, no puede pedir analíticas, no puede ver una resonancia. Solo trabaja con lo que le escribes y lo que recuerda de sus lecturas. Eso es GPT, Claude, Gemini — modelos de lenguaje entrenados sobre texto.
-
-Lo impresionante: sus respuestas son increíblemente buenas. Pero tienen un límite fundamental — la cantidad de texto que pueden "leer" de una vez (la ventana de contexto). Es como si ese médico solo pudiera leer notas de máximo 3 páginas — si el historial del paciente tiene 100 páginas, no puede procesarlo todo.
-
-TRANSICIÓN: "Vale, pero ¿qué pasa si le damos herramientas a ese médico?"
--->
-
----
-
-# 🤖 ¿Qué es un Agente?
-
-<div style="font-size:0.82em; color:#94a3b8; margin-bottom:10px;">Cuando el LLM recibe <strong style="color:#e2e8f0;">herramientas</strong> — como ChatGPT</div>
-
-<div style="display:flex; gap:14px; margin-top:8px;">
-  <div style="flex:1;">
-    <div style="background:rgba(34,197,94,0.1); border:2px solid #22c55e; border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-      <div style="font-size:2em; min-width:48px; text-align:center !important;">🏥</div>
-      <div>
-        <div style="font-size:0.95em; font-weight:700; color:#86efac;">Ahora dadle un hospital a ese médico</div>
-        <div style="font-size:0.82em; color:#e2e8f0; margin-top:4px; line-height:1.5;">Puede pedir analíticas, solicitar pruebas de imagen, consultar con otros especialistas y acceder al historial completo del paciente.</div>
-      </div>
-    </div>
-    <div style="font-size:0.78em; font-weight:600; color:#94a3b8; margin-bottom:8px; margin-left:4px;">El médico <span style="color:#22c55e;">decide</span> qué herramientas usar y cuándo:</div>
-    <div style="display:flex; flex-wrap:wrap; gap:6px;">
-      <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:5px 10px; font-size:0.72em; color:#93c5fd;">🔍 <strong>Buscar</strong> — navegar por internet</div>
-      <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:5px 10px; font-size:0.72em; color:#93c5fd;">💻 <strong>Código</strong> — ejecutar cálculos</div>
-      <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:5px 10px; font-size:0.72em; color:#93c5fd;">🎨 <strong>DALL·E</strong> — generar imágenes</div>
-      <div style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.3); border-radius:6px; padding:5px 10px; font-size:0.72em; color:#93c5fd;">📁 <strong>Ficheros</strong> — leer documentos</div>
-    </div>
-  </div>
-  <div style="flex:0.9;">
-    <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; overflow:hidden;">
-      <div style="background:#1e293b; border-bottom:1px solid #334155; padding:6px 12px; display:flex; align-items:center; gap:6px;">
-        <span style="color:#ef4444; font-size:0.6em;">●</span>
-        <span style="color:#eab308; font-size:0.6em;">●</span>
-        <span style="color:#22c55e; font-size:0.6em;">●</span>
-        <span style="color:#94a3b8; font-size:0.55em; margin-left:6px;">ChatGPT</span>
-      </div>
-      <div style="padding:12px;">
-        <div style="margin-bottom:10px;">
-          <div style="font-size:0.55em; color:#60a5fa; margin-bottom:3px; font-weight:bold;">Tú</div>
-          <div style="background:rgba(96,165,250,0.12); border:1px solid #60a5fa; border-radius:2px 10px 10px 10px; padding:8px 10px; font-size:0.72em;">¿Cuáles son los últimos ensayos clínicos de terapia CAR-T para linfoma?</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:6px; margin:8px 0; padding:4px 8px; background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.3); border-radius:6px;">
-          <span style="font-size:0.65em; color:#eab308;">🔍</span>
-          <span style="font-size:0.65em; color:#94a3b8;">Buscando: <em>"CAR-T linfoma ensayos clínicos 2025"</em></span>
-        </div>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom:10px; padding:4px 8px; background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.3); border-radius:6px;">
-          <span style="font-size:0.65em; color:#eab308;">📄</span>
-          <span style="font-size:0.65em; color:#94a3b8;">Leyendo: <em>clinicaltrials.gov, NEJM, PubMed...</em></span>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:flex-end;">
-          <div style="font-size:0.55em; color:#22c55e; margin-bottom:3px; font-weight:bold;">ChatGPT</div>
-          <div style="background:rgba(34,197,94,0.08); border:1px solid #22c55e; border-radius:10px 2px 10px 10px; padding:8px 10px; font-size:0.72em;">Según <strong>3 fuentes que acabo de leer</strong>, los ensayos más prometedores son... <span style="color:#60a5fa;">[1]</span> <span style="color:#60a5fa;">[2]</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div style="background:rgba(34,197,94,0.08); border-left:3px solid #22c55e; border-radius:0 6px 6px 0; padding:7px 12px; font-size:0.78em; color:#e2e8f0; margin-top:10px;">
-  💡 Un <strong>Agente</strong> = LLM + herramientas + la capacidad de <strong>decidir</strong> qué hacer. ChatGPT, Claude o Gemini — cuando buscan, ejecutan código o leen ficheros — están actuando como agentes.
-</div>
-
-<!--
-ANALOGÍA: Si el LLM es un médico que solo responde de memoria, un AGENTE es ese mismo médico pero ahora está en un hospital con acceso a todo: puede pedir analíticas, pedir una resonancia, consultar con otros especialistas, y revisar el historial completo del paciente.
-
-El punto clave es que el médico DECIDE qué hacer: "Primero voy a pedir un hemograma, luego si veo X, pido una resonancia." Nadie le dice paso a paso qué herramientas usar — él decide basándose en lo que va viendo.
-
-EJEMPLO CONCRETO CON CHATGPT: Cuando le preguntas a ChatGPT algo y ves que dice "Buscando..." — eso es el agente decidiendo que necesita buscar en internet. No le dijiste "busca en internet", él decidió que era necesario. Luego lee los resultados y te da una respuesta con fuentes.
-
-LIMITACIÓN (que conecta con la charla): Ese médico-agente sigue teniendo un límite: solo puede tener ABIERTAS unas pocas páginas del historial a la vez. Si el historial tiene 500 páginas, tiene que ir pasando páginas y recordar lo que leyó. Y a medida que lee más, empieza a olvidar lo del principio. ESO es el problema de contexto que vamos a resolver.
-
--->
-
----
-
-<div style="display:flex; align-items:stretch; justify-content:center; height:85%; gap:40px;">
-
-  <div style="flex:1; max-width:320px; display:flex; flex-direction:column; align-items:center;">
-    <div style="font-size:0.75em; color:#60a5fa; font-weight:700; letter-spacing:1px; margin-bottom:12px;">LLM</div>
-    <div style="flex:1; background:rgba(96,165,250,0.08); border:2px solid #60a5fa; border-radius:16px; padding:24px 20px; width:100%; text-align:center; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
-      <div style="font-size:3.5em; margin-bottom:8px;">🧠</div>
-      <div style="font-size:0.9em; font-weight:600; color:#93c5fd;">Conocimiento</div>
-      <div style="font-size:0.72em; color:#94a3b8; margin-top:4px;">Entrenado con texto masivo</div>
-      <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="background:rgba(96,165,250,0.06); border:1px solid #334155; border-radius:8px; padding:6px; font-size:0.68em; color:#64748b; display:flex; align-items:center; gap:6px;">
-          <span>📥</span> Texto entrada
-        </div>
-        <div style="text-align:center; color:#334155; font-size:0.9em;">↓</div>
-        <div style="background:rgba(96,165,250,0.06); border:1px solid #334155; border-radius:8px; padding:6px; font-size:0.68em; color:#64748b; display:flex; align-items:center; gap:6px;">
-          <span>📤</span> Texto salida
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:6px 12px; font-size:0.68em; color:#fca5a5; text-align:center; width:100%; box-sizing:border-box;">
-      Sin acceso al mundo exterior
-    </div>
-  </div>
-
-  <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-width:100px;">
-    <div style="font-size:1.8em; color:#475569;">⟶</div>
-    <div style="background:rgba(234,179,8,0.12); border:1px solid #eab308; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; font-size:0.75em; font-weight:700; color:#fde68a;">+🔧</div>
-    <div style="font-size:1.8em; color:#475569;">⟶</div>
-  </div>
-
-  <div style="flex:1; max-width:320px; display:flex; flex-direction:column; align-items:center;">
-    <div style="font-size:0.75em; color:#22c55e; font-weight:700; letter-spacing:1px; margin-bottom:12px;">AGENTE</div>
-    <div style="flex:1; background:rgba(34,197,94,0.08); border:2px solid #22c55e; border-radius:16px; padding:24px 20px; width:100%; text-align:center; display:flex; flex-direction:column; justify-content:center; box-sizing:border-box;">
-      <div style="font-size:3.5em; margin-bottom:8px;">🤖</div>
-      <div style="font-size:0.9em; font-weight:600; color:#86efac;">Conocimiento + Acción</div>
-      <div style="font-size:0.72em; color:#94a3b8; margin-top:4px;">Decide qué herramientas usar</div>
-      <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;">
-        <div style="background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:8px; padding:5px 8px; font-size:0.62em; color:#93c5fd;">🔍 Buscar</div>
-        <div style="background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:8px; padding:5px 8px; font-size:0.62em; color:#93c5fd;">💻 Código</div>
-        <div style="background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:8px; padding:5px 8px; font-size:0.62em; color:#93c5fd;">📁 Ficheros</div>
-        <div style="background:rgba(96,165,250,0.1); border:1px solid #60a5fa; border-radius:8px; padding:5px 8px; font-size:0.62em; color:#93c5fd;">🌐 APIs</div>
-      </div>
-    </div>
-    <div style="margin-top:12px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:8px; padding:6px 12px; font-size:0.68em; color:#86efac; text-align:center; width:100%; box-sizing:border-box;">
-      Interactúa con el mundo real
-    </div>
-  </div>
-
-</div>
-
-<div style="text-align:center; font-size:0.72em; color:#475569; margin-top:4px;">
-  <strong style="color:#94a3b8;">ChatGPT, Claude, Gemini</strong> — son agentes cuando usan herramientas
-</div>
-
-<!--
-
-- A la izquierda: el LLM puro. Un cerebro aislado. Solo puede recibir texto y devolver texto. Sin acceso a nada externo.
-- A la derecha: el mismo cerebro, pero ahora con herramientas. Puede buscar, ejecutar código, leer ficheros, llamar APIs.
-- La flecha del medio muestra que un agente es simplemente un LLM + herramientas + capacidad de decidir.
-
-"Cuando usáis ChatGPT y veis que busca en internet o ejecuta código — eso es un agente en acción."
--->
-
----
-
 # 🧠 When Context Becomes a Systems Problem: Recursive Language Models
 
 ## From MIT Paper to Practical Implementation
@@ -328,7 +135,7 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
   <div style="margin-bottom:14px;">
     <div style="font-size:0.6em; color:#60a5fa; margin-bottom:5px; font-weight:bold;">Engineer</div>
     <div style="background:rgba(96,165,250,0.12); border:1px solid #60a5fa; border-radius:2px 12px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
-      "Tres equipos reportaron fallos no relacionadas entre sí el trimestre pasado. ¿Existe alguna conexión entre ellos?"
+      "Checkout, inventario y Notificaciones tuvieron incidentes el Q3. ¿Hay algún patrón común?"
     </div>
   </div>
   <div style="margin:8px 0 14px;">
@@ -342,7 +149,9 @@ Imagine your org has 50,000 GitHub issues across 300 repos...
     <div style="font-size:0.6em; color:#22c55e; margin-bottom:5px; font-weight:bold;">LLM</div>
     <div style="background:rgba(34,197,94,0.08); border:1px solid #22c55e; border-radius:12px 2px 12px 12px; padding:10px 14px; max-width:75%; font-size:0.82em;">
       <div style="color:#22c55e; font-size:0.72em; margin-bottom:4px;">✓ Analysis complete</div>
-      "Estos fallos parecen ser <strong>incidentes no relacionados</strong> entre sí que ocurren en diferentes servicios."
+      "<strong>Checkout</strong> tuvo un pico de errores 503 en semana 8.  <strong>Inventario</strong> reportó timeouts no relacionados. <strong>Notificaciones</strong>: fallo puntual de integración. No se detecta patrón común."
+      <br/>
+      <div style="color:#facc15; font-size:0.72em; margin-bottom:4px;">⚠ 49,000 issues not analyzed</div>
     </div>
   </div>
   </div>
