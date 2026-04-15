@@ -323,6 +323,10 @@ GPT-5: "Alice" ❌
 
 <!--
 Estudios realizados con benchmars del estilo "needle-in-a-haystack", han revelado que el fenomeno de Context Rot es real: a medida que el contexto crece, la calidad de las respuestas cae estrepitosamente, incluso antes de llegar al límite de tokens.
+
+Hablar de Context Anxiety
+
+Algunos modelos también muestran "ansiedad contextual", en la que comienzan a finalizar el trabajo prematuramente a medida que se acercan a lo que creen que es su límite contextual.
 -->
 
 ---
