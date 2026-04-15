@@ -1869,25 +1869,37 @@ Puntos clave:
 <table style="width:100%; border-collapse:separate; border-spacing:0; background:rgba(30,58,95,0.4); border:2px solid #3b82f6; border-radius:14px; margin-top:4px;">
 <tr><td colspan="5" style="padding:6px 14px; border:none; text-align:center;">
   <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:6px 20px; font-weight:600; font-size:16px; display:inline-block;">📋 User Query + Context</div>
+  <div style="font-size:11px; color:#94a3b8; margin-top:2px;">context loaded as <code style="color:#fde68a;">P</code> in REPL — never sent to LLM</div>
   <div style="font-size:18px; color:#94a3b8;">↓</div>
-  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:8px; font-weight:600; font-size:18px;">🧠 RLM Orchestrator — Main loop · Conversation history · FINAL detection</div>
+  <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:8px; font-weight:600; font-size:18px;">🧠 RLM Orchestrator — Main loop · Conversation history · stop on <code style="color:#fde68a;">FINAL:</code></div>
   <div style="font-size:18px; color:#94a3b8;">↓</div>
 </td></tr>
 <tr>
+  <td colspan="2" style="border:none; padding:0 6px; text-align:center;">
+    <div style="font-size:10px; color:#60a5fa; letter-spacing:0.15em; text-transform:uppercase; font-weight:700;">Core loop</div>
+  </td>
+  <td colspan="2" style="border:none; padding:0 6px; text-align:center;">
+    <div style="font-size:10px; color:#a855f7; letter-spacing:0.15em; text-transform:uppercase; font-weight:700;">Cross-cutting</div>
+  </td>
+  <td style="border:none; padding:0 6px; text-align:center;">
+    <div style="font-size:10px; color:#10b981; letter-spacing:0.15em; text-transform:uppercase; font-weight:700;">Optional</div>
+  </td>
+</tr>
+<tr>
   <td style="border:none; padding:6px; width:20%; vertical-align:top;">
-    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px;">⚙️ REPL<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Python · Monty 🦀<br>peek · ask_chunks<br>llm_query · es_search</span></div>
+    <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; color:#fca5a5; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px; min-height:110px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">⚙️ REPL<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Python · Monty 🦀<br>peek · ask_chunks<br>llm_query · es_search</span></div>
   </td>
   <td style="border:none; padding:6px; width:20%; vertical-align:top;">
-    <div style="background:rgba(59,130,246,0.15); border:2px solid #3b82f6; color:#93c5fd; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px;">🔌 Adapters<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">OpenAI · Azure<br>VertexAI · Ollama<br>vLLM · Generic</span></div>
+    <div style="background:rgba(59,130,246,0.15); border:2px solid #3b82f6; color:#93c5fd; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px; min-height:110px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">🔌 Adapters<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">OpenAI-compatible<br>(incl. Ollama/vLLM)<br>Azure · VertexAI · Generic</span></div>
   </td>
   <td style="border:none; padding:6px; width:20%; vertical-align:top;">
-    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px;">🛡️ Policy<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">max_steps<br>max_tokens<br>max_subcalls</span></div>
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px; min-height:110px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">🛡️ Policy<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">max_steps<br>max_subcalls<br>max_recursion_depth</span></div>
   </td>
   <td style="border:none; padding:6px; width:20%; vertical-align:top;">
-    <div style="background:rgba(234,179,8,0.15); border:2px solid #f59e0b; color:#fde68a; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px;">📊 Trace + Cache<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Full trace<br>FileCache<br>RichTraceListener</span></div>
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #f59e0b; color:#fde68a; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px; min-height:110px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">📊 Trace + Cache<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Full trace<br>FileCache<br>RichTraceListener</span></div>
   </td>
   <td style="border:none; padding:6px; width:20%; vertical-align:top;">
-    <div style="background:rgba(16,185,129,0.15); border:2px solid #10b981; color:#6ee7b7; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px;">🔍 Retriever<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Elasticsearch<br>BM25 · kNN<br>Hybrid RRF</span></div>
+    <div style="background:rgba(16,185,129,0.1); border:2px dashed #10b981; color:#6ee7b7; border-radius:10px; padding:8px; text-align:center; font-weight:600; font-size:14px; min-height:110px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;">🔍 Retriever<br><span style="font-size:12px; font-weight:400; color:#cbd5e1;">Elasticsearch<br>BM25 · kNN<br>Hybrid RRF</span></div>
   </td>
 </tr>
 <tr><td colspan="5" style="border:none; padding:4px 14px; text-align:center;">
@@ -1920,27 +1932,22 @@ Puntos clave:
 from pyrlm_runtime import RLM, Context
 from pyrlm_runtime.adapters import OpenAICompatAdapter
 
-# Load your long documents
-documents = [
-    "Document 1: Very long content...",
-    "Document 2: More content...",
-    # ... 100s of documents, millions of tokens
-]
-context = Context.from_documents(documents)
+# 1. Load your long documents as context
+context = Context.from_documents([
+    "Document 1: very long content...",
+    "Document 2: more content...",
+    # ... hundreds of docs, millions of tokens
+])
 
-# Initialize RLM
-adapter = OpenAICompatAdapter(model="gpt-4o")
-rlm = RLM(
-    adapter=adapter,
-    conversation_history=True,   # LLM sees its own previous attempts
-    repl_backend="monty",        # Rust sandbox (secure by default)
-)
+# 2. Initialize the RLM with any OpenAI-compatible model
+adapter = OpenAICompatAdapter(model="gpt-5.1")
+rlm = RLM(adapter=adapter)
 
-# Ask questions over the entire context
+# 3. Ask questions over the entire context
 answer, trace = rlm.run("What is the key term defined in these documents?", context)
 
 print(f"Answer: {answer}")
-print(f"Steps: {len(trace.steps)}  |  Tokens: {trace.total_tokens}")
+print(f"Steps:  {len(trace.steps)}")
 ```
 
 <!--
