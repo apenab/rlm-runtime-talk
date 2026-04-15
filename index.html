@@ -2816,7 +2816,7 @@ strong {
       <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
       <div>
         <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
-        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> inside an environtment — never inside the neural network</div>
       </div>
     </div>
   </div>
@@ -3061,7 +3061,7 @@ strong {
       <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
       <div>
         <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
-        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> inside an environtment — never inside the neural network</div>
       </div>
     </div>
   </div>
@@ -3306,7 +3306,7 @@ strong {
       <div style="font-size:2em; min-width:48px; text-align:center !important;">📌</div>
       <div>
         <div style="font-size:1.05em; font-weight:700; color:#fde68a;">1 · Symbolic handle to the prompt</div>
-        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> in memory — never inside the neural network</div>
+        <div style="font-size:0.85em; color:#94a3b8; margin-top:2px;">Context stored as variable <code style="background:rgba(255,255,255,0.08); color:#fbbf24;">P</code> inside an environtment — never inside the neural network</div>
       </div>
     </div>
   </div>
@@ -12384,7 +12384,7 @@ Algunos modelos también muestran &quot;ansiedad contextual&quot;, en la que com
   Java
   - jshell — REPL oficial desde Java 9 (JEP 222)
 
-→ Y cuando el problema es tan grande que ni el REPL puede de una vez...</p></div><div class="bespoke-marp-note" data-index="13" tabindex="0"><p></p></div><div class="bespoke-marp-note" data-index="14" tabindex="0"><p>Grid: 5 columns — normal flow: query + context → LLM directly → response</p><p>Row 1: title</p><p>Row 2: query → Language Model</p><p>Row 3: spacer</p><p>Row 4: context → Language Model</p><p>Row 5: bottom border</p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>Grid: 5 columns — inputs outside, RLM box spans center. CLEAN version: no tools, no FINAL</p><p>Row 1: RLM title</p><p>Row 2: query → Language Model</p><p>Row 3: loop indicator</p><p>Row 4: context → Environment E (clean — no tools listed)</p><p>Row 5: RLM bottom border</p><p>NOTAS — Slide 21: Arquitectura limpia
+→ Y cuando el problema es tan grande que ni el REPL puede de una vez...</p></div><div class="bespoke-marp-note" data-index="13" tabindex="0"><p></p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>NOTAS — Slide 21: Arquitectura limpia
 
 Esta es la vista de alto nivel del RLM — la arquitectura base sin detalles de implementación.
 
@@ -12394,7 +12394,7 @@ Dentro del RLM hay dos piezas: el Language Model y el Environment (un REPL de Py
 
 Lo importante: el context NO se envía al LLM. Se carga como variable P en el REPL. El LLM solo ve metadata.
 
-En la siguiente slide vamos a ver qué herramientas tiene disponible el REPL y cómo termina el proceso.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>Grid: 5 columns — same layout, now WITH tools and FINAL details</p><p>Row 1: RLM title</p><p>Row 2: query → Language Model</p><p>Row 3: loop indicator</p><p>Row 4: context → Environment E (WITH tools)</p><p>Row 5: RLM footer — child spawning</p><p>NOTAS — Slide 22: Arquitectura con tools y terminación
+En la siguiente slide vamos a ver qué herramientas tiene disponible el REPL y cómo termina el proceso.</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>NOTAS — Slide 22: Arquitectura con tools y terminación
 
 Ahora sí, los detalles. El Environment tiene estas herramientas disponibles:
 - P = context (la variable donde vive el contexto completo)
