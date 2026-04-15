@@ -585,7 +585,54 @@ From the paper (MIT CSAIL 2025):
 
 ---
 
+<div style="font-size:1em; color:#94a3b8; font-weight:600; margin-bottom:6px;">⚡ Architecture: Standard LLM</div>
+<br>
+
+<!-- Grid: 5 columns — normal flow: query + context → LLM directly → response -->
+<div style="display:grid; grid-template-columns:140px 45px 1fr 45px 130px; grid-template-rows:auto auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
+
+  <!-- Row 1: title -->
+  <div style="grid-column:3; grid-row:1; font-size:14px; font-weight:800; color:#94a3b8; background:rgba(15,23,42,0.5); border:2px solid #475569; border-bottom:none; border-radius:14px 14px 0 0; padding:10px 16px 6px 16px;">Standard LLM</div>
+
+  <!-- Row 2: query → Language Model -->
+  <div style="grid-column:1; grid-row:2; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📋 query</div>
+  </div>
+  <div style="grid-column:2; grid-row:2; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+  <div style="grid-column:3; grid-row:2/5; background:rgba(15,23,42,0.5); border-left:2px solid #475569; border-right:2px solid #475569; padding:6px 16px; display:flex; align-items:center; justify-content:center;">
+    <div style="background:rgba(34,197,94,0.15); border:2px solid #22c55e; color:#86efac; border-radius:10px; padding:14px; font-weight:600; font-size:19px; text-align:center; width:100%;">🧠 Language Model<br><span style="font-size:0.65em; font-weight:400; color:#94a3b8;">context window</span></div>
+  </div>
+  <div style="grid-column:4; grid-row:2/5; text-align:center;">
+    <span style="font-size:26px; color:#a855f7;">⟶</span>
+  </div>
+  <div style="grid-column:5; grid-row:2/5; text-align:center;">
+    <div style="background:rgba(168,85,247,0.15); border:2px solid #a855f7; color:#d8b4fe; border-radius:10px; padding:10px 8px; font-weight:600; font-size:16px;">✅ response</div>
+  </div>
+
+  <!-- Row 3: spacer -->
+  <div style="grid-column:1; grid-row:3; height:40px;"></div>
+
+  <!-- Row 4: context → Language Model -->
+  <div style="grid-column:1; grid-row:4; text-align:center;">
+    <div style="background:rgba(234,179,8,0.15); border:2px solid #eab308; color:#fde68a; border-radius:10px; padding:10px 12px; font-weight:600; font-size:18px;">📄 context<br><span style="font-size:13px; font-weight:400;">(1M tokens)</span></div>
+  </div>
+  <div style="grid-column:2; grid-row:4; text-align:center;">
+    <span style="font-size:24px; color:#eab308;">⟶</span>
+  </div>
+
+  <!-- Row 5: bottom border -->
+  <div style="grid-column:3; grid-row:5; background:rgba(15,23,42,0.5); border:2px solid #475569; border-top:none; border-radius:0 0 14px 14px; padding:6px 16px 10px 16px; text-align:center; font-size:13px; color:#94a3b8;">
+    &nbsp;
+  </div>
+
+</div>
+
+---
+
 <div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:6px;">🎯 Architecture: RLM High-Level View</div>
+<br>
 
 <!-- Grid: 5 columns — inputs outside, RLM box spans center. CLEAN version: no tools, no FINAL -->
 <div style="display:grid; grid-template-columns:140px 45px 1fr 45px 130px; grid-template-rows:auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
@@ -650,6 +697,7 @@ En la siguiente slide vamos a ver qué herramientas tiene disponible el REPL y c
 ---
 
 <div style="font-size:1em; color:#93c5fd; font-weight:600; margin-bottom:6px;">🎯 Architecture: RLM High-Level View — Tools & Termination</div>
+<br/>
 
 <!-- Grid: 5 columns — same layout, now WITH tools and FINAL details -->
 <div style="display:grid; grid-template-columns:140px 45px 1fr 45px 130px; grid-template-rows:auto auto auto auto auto; align-items:center; gap:0; width:100%; margin-top:8px;">
