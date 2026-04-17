@@ -112,11 +112,25 @@ style: |
   }
 ---
 
-# 🧠 When Context Becomes a Systems Problem: Recursive Language Models
+<div style="margin-top:40px;">
+  <div style="font-size:1.5em; font-weight:700; color:#60a5fa; line-height:1.3; text-shadow:0 0 20px rgba(96,165,250,0.3);">
+    🧠 When Context Becomes a Systems Problem
+  </div>
+  <div style="font-size:1em; color:#93c5fd; margin-top:10px;">
+    Recursive Language Models
+  </div>
+  <div style="height:2px; background:linear-gradient(to right, #60a5fa, transparent); margin:18px 0; width:70%;"></div>
+  <div style="font-size:0.78em; color:#94a3b8; margin-bottom:6px;">From MIT Paper to Practical Implementation</div>
+  <div style="font-size:0.72em; color:#64748b;">Rethinking how LLMs handle long contexts</div>
+</div>
 
-## From MIT Paper to Practical Implementation
-
-**Rethinking how LLMs handle long contexts**
+<div style="position:absolute; bottom:28px; left:48px; right:48px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid #1e293b; padding-top:16px;">
+  <div>
+    <div style="font-size:0.82em; font-weight:600; color:#e2e8f0;">Antonio Peña</div>
+    <div style="font-size:0.68em; color:#60a5fa; margin-top:3px;">github.com/apenab</div>
+  </div>
+  <img src="images/qr-github.png" style="width:130px; height:130px; border-radius:10px; border:2px solid #60a5fa; padding:5px; background:white;" />
+</div>
 
 ---
 
