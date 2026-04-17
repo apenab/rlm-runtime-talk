@@ -2500,3 +2500,15 @@ TRANSICIÓN: Esta distinción puede parecer sutil, pero es lo que permite que RL
 6. RLM: El único que cumple las 3. El contexto es variable (P), el REPL persiste, y llm_query() vive DENTRO del REPL como función Python. Esto permite for-loops, parallel_map, recursión a cualquier profundidad.
 
 -->
+
+---
+
+<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; height:100%;">
+  <img src="images/post-anthropic.png" style="max-width:55%; max-height:30%; object-fit:contain; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.4);" />
+  <img src="images/RLM-citation.png" style="max-width:95%; max-height:60%; object-fit:contain; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.4);" />
+</div>
+
+<!-- NOTES — Post Anthropic + RLM citation
+Cerrar con dos referencias visuales: el post de Anthropic arriba y la cita del paper RLM abajo. Mencionar brevemente ambas como validación externa del enfoque.
+-->
+
